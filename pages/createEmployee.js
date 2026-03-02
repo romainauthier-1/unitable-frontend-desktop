@@ -28,11 +28,12 @@ import {
 } from "@/components/ui/select";
 
 export default function CreateEmployee() {
-	const [formData, setFormData] = useState({
+	const initialFormState = {
 		firstName: "",
 		lastName: "",
 		email: "",
 		secuNumber: "",
+		startDate: "",
 		address: {
 			street: "",
 			city: "",
@@ -43,9 +44,11 @@ export default function CreateEmployee() {
 		profil: "user", // Valeur par défaut sur le rôle de l'employé.e
 		dateContract: "",
 		typeContract: "",
-		hourVolumn: "",
+		hourVolume: "",
 		contact: "",
-	});
+	};
+
+	const [formData, setFormData] = useState(initialFormState);
 
 	// Gestion des inputs standards (prénom, nom, etc.)
 	const handleChange = (event) => {
@@ -72,10 +75,16 @@ export default function CreateEmployee() {
 		setFormData((prev) => ({ ...prev, profil: value }));
 	};
 
+	// Envoie des données du formulaire
 	const handleSubmit = (event) => {
 		event.preventDefault();
 		console.log("Données de l'employé :", formData);
 		alert("Employé créé avec succès (voir console) !");
+	};
+
+	// Reset le formulaire
+	const handleReset = () => {
+		setFormData(initialFormState);
 	};
 
 	return (
@@ -90,7 +99,7 @@ export default function CreateEmployee() {
 				</CardHeader>
 
 				<form onSubmit={handleSubmit}>
-					<CardContent className="space-y-4">
+					<CardContent className="space-y-4 pb-6">
 						<div className="grid grid-cols-2 gap-4">
 							<div className="space-y-2">
 								<Label htmlFor="firstName">
@@ -376,7 +385,11 @@ export default function CreateEmployee() {
 					</CardContent>
 
 					<CardFooter className="flex justify-between border-t px-6 py-4">
-						<Button variant="outline" type="button">
+						<Button
+							variant="outline"
+							type="button"
+							onClick={handleReset}
+						>
 							Annuler
 						</Button>
 						<Button type="submit">Créer l'employé</Button>
