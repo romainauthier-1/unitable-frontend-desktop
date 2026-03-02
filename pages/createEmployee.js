@@ -31,9 +31,9 @@ export default function CreateEmployee() {
 	const initialFormState = {
 		firstName: "",
 		lastName: "",
+		birthDate: "",
 		email: "",
 		secuNumber: "",
-		startDate: "",
 		address: {
 			street: "",
 			city: "",
@@ -126,6 +126,16 @@ export default function CreateEmployee() {
 									required
 								/>
 							</div>
+						</div>
+
+						<div className="space-y-2">
+							<Label htmlFor="birthDate">Date de naissance</Label>
+							<Input
+								id="birthDate"
+								type="date"
+								value={formData.birthDate}
+								onChange={handleChange}
+							/>
 						</div>
 
 						<div className="space-y-2">
