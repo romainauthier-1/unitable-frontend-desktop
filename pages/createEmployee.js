@@ -44,7 +44,7 @@ export default function CreateEmployee() {
 		profil: "user", // Valeur par défaut sur le rôle de l'employé.e
 		dateContract: "",
 		typeContract: "",
-		hourVolume: "",
+		hourVolumn: "",
 		contact: "",
 	};
 
@@ -326,11 +326,11 @@ export default function CreateEmployee() {
 						</div>
 
 						<div className="space-y-2">
-							<Label htmlFor="hourVolume">
+							<Label htmlFor="hourVolumn">
 								Volume horaire hebdomadaire
 							</Label>
 							<Input
-								id="hourVolume"
+								id="hourVolumn"
 								type="number"
 								min="0"
 								max="50"
