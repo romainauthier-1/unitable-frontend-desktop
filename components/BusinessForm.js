@@ -1,5 +1,6 @@
 import styles from "../styles/BusinessForm.module.css";
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { useDispatch } from "react-redux";
 import { addBusiness } from "../reducers/business";
 import { Button } from "./ui/button";
@@ -13,13 +14,15 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
-  Field,
-  FieldContent,
-  FieldDescription,
-  FieldLabel,
-  FieldGroup,
-  FieldTitle,
-} from "@/components/ui/field";
+  useFormField,
+  Form,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormDescription,
+  FormMessage,
+  FormField,
+} from "@/components/ui/form";
 import { Label } from "@/components/ui/label";
 import { Toaster } from "sonner";
 import { toast } from "sonner";
@@ -37,6 +40,7 @@ export default function BusinessForm() {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [error, setError] = useState({});
   const [logo, setLogo] = useState(null);
+  const [canNavigate, setCanNavigate] = useState(false);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -194,7 +198,8 @@ export default function BusinessForm() {
       dispatch(addBusiness({ businessCommercialName, owner }));
       emptyForm();
       toast.success(data.message);
-      console.log(data.message);
+      setCanNavigate(true);
+      // console.log(data.message);
     }
   };
 
@@ -212,9 +217,9 @@ export default function BusinessForm() {
   };
 
   return (
-    <div className="min-h-screen bg-blue-primary flex items-center justify-center p-4">
+    <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <Toaster richColors />
-      <div className="w-full max-w-2xl bg-white p-8 rounded-xl shadow-lg border border-blue-light">
+      <div className="w-full max-w-2xl bg-background p-8 rounded-xl shadow-lg border border-primary">
         <h1 className="text-2xl font-bold text-slate-800 mb-6 text-center">
           Renseignez les informations de votre établissement
         </h1>
@@ -237,7 +242,7 @@ export default function BusinessForm() {
           className="space-y-6"
         >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Field>
+            <div className="flex flex-col gap-2">
               <Label>SIRET</Label>
               <Input
                 className="mt-1"
@@ -253,9 +258,9 @@ export default function BusinessForm() {
               {error.siret && (
                 <p className="text-destructive text-xs mt-1">{error.siret}</p>
               )}
-            </Field>
+            </div>
 
-            <Field>
+            <div className="flex flex-col gap-2">
               <Label>Nom de la société</Label>
               <Input
                 className="mt-1"
@@ -264,9 +269,9 @@ export default function BusinessForm() {
                 onChange={(e) => setBusinessName(e.target.value)}
                 value={businessName}
               />
-            </Field>
+            </div>
 
-            <Field>
+            <div className="flex flex-col gap-2">
               <Label>Nom de l'établissement</Label>
               <Input
                 className="mt-1"
@@ -275,8 +280,8 @@ export default function BusinessForm() {
                 onChange={(e) => setBusinessCommercialName(e.target.value)}
                 value={businessCommercialName}
               />
-            </Field>
-            <Field>
+            </div>
+            <div className="flex flex-col gap-2">
               <Label>Catégorie</Label>
               <Select
                 onValueChange={(value) => setCategory(value)}
@@ -304,7 +309,7 @@ export default function BusinessForm() {
                   </SelectGroup>
                 </SelectContent>
               </Select>
-            </Field>
+            </div>
           </div>
           <div className="grid grid-cols-4 gap-2">
             <div className="col-span-1">
@@ -343,13 +348,13 @@ export default function BusinessForm() {
                 value={zipCode}
               />
               {error.zipCode && (
-                <p className={styles.errorMessage}>{error.zipCode}</p>
+                <p className="text-destructive text-xs mt-1">{error.zipCode}</p>
               )}
             </div>
             <div className="col-span-1">
               <Label>Ville</Label>
               <Input
-                placeholder="Ville"
+                placeholder="Marseille"
                 onChange={(e) => setCity(e.target.value)}
                 value={city}
               />
@@ -359,13 +364,15 @@ export default function BusinessForm() {
               <Input
                 required
                 inputMode="numeric"
-                placeholder="Numéro de téléphone"
+                placeholder="0612345678"
                 onChange={(e) => setPhoneNumber(e.target.value)}
                 onBlur={(e) => validationPhoneNumber(e.target.value)}
                 value={phoneNumber}
               />
               {error.phoneNumber && (
-                <p className={styles.errorMessage}>{error.phoneNumber}</p>
+                <p className="text-destructive text-xs mt-1">
+                  {error.phoneNumber}
+                </p>
               )}
             </div>
           </div>
@@ -377,14 +384,14 @@ export default function BusinessForm() {
             accept="image/*"
             onChange={(e) => setLogo(e.target.files[0])}
             ></input> */}
-          <Field className="flex-row items-center justify-between gap-4 pt-4 border-t">
+          <div className="flex w-full flex-row items-center justify-between gap-4 pt-4 border-t ">
             <Button type="button" variant="ghost" onClick={emptyForm}>
               Vider tous les champs
             </Button>
             <Button type="submit" className="px-8">
               Valider
             </Button>
-          </Field>
+          </div>
         </form>
       </div>
     </div>
