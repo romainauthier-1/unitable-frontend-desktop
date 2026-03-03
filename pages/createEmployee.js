@@ -26,6 +26,16 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
+import {
+	Drawer,
+	DrawerClose,
+	DrawerContent,
+	DrawerDescription,
+	DrawerFooter,
+	DrawerHeader,
+	DrawerTitle,
+	DrawerTrigger,
+} from "@/components/ui/drawer";
 
 export default function CreateEmployee() {
 	const initialFormState = {
@@ -77,9 +87,28 @@ export default function CreateEmployee() {
 
 	// Envoie des données du formulaire
 	const handleSubmit = (event) => {
+		// Fetch le backend http://localhost:3000/users/signup pour créer un nouvel utilisateur/employé
 		event.preventDefault();
-		console.log("Données de l'employé :", formData);
-		alert("Employé créé avec succès (voir console) !");
+		fetch("http://localhost:3000/users/employee", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(formData),
+		})
+			.then((response) => {
+				if (!response.ok) {
+					throw new Error("Erreur lors de la création de l'employé");
+				}
+				return response.json();
+			})
+			.then((data) => {
+				setFormData(initialFormState); // Reset le formulaire après création
+				console.log("Employé créé :", data);
+			})
+			.catch((error) => {
+				console.error("Erreur:", error);
+			});
 	};
 
 	// Reset le formulaire
@@ -88,22 +117,38 @@ export default function CreateEmployee() {
 	};
 
 	return (
-		<div className="container mx-auto py-10 flex justify-center">
-			<Card className="w-full max-w-2xl">
-				<CardHeader>
-					<CardTitle>Ajout d'un nouvel employé</CardTitle>
-					<CardDescription>
+		<Drawer direction="right">
+			<DrawerTrigger asChild>
+				<Button variant="outline">Ajouter un employé</Button>
+			</DrawerTrigger>
+
+			<DrawerContent>
+				<DrawerHeader>
+					<DrawerTitle>Ajout d'un nouvel employé</DrawerTitle>
+					<DrawerDescription>
 						Remplissez les informations pour ajouter un nouvel
 						employé.
-					</CardDescription>
-				</CardHeader>
+					</DrawerDescription>
+				</DrawerHeader>
 
-				<form onSubmit={handleSubmit}>
-					<CardContent className="space-y-4 pb-6">
+				<div className="no-scrollbar overflow-y-auto px-4 space-y-4">
+					<form id="employeeForm" className="space-y-4">
 						<div className="grid grid-cols-2 gap-4">
 							<div className="space-y-2">
+								<Label htmlFor="lastName">
+									Nom <span className="text-red-500">*</span>
+								</Label>
+								<Input
+									id="lastName"
+									placeholder="Dupont"
+									value={formData.lastName}
+									onChange={handleChange}
+									required
+								/>
+							</div>
+							<div className="space-y-2">
 								<Label htmlFor="firstName">
-									Prénom
+									Prénom{" "}
 									<span className="text-red-500">*</span>
 								</Label>
 								<Input
@@ -114,18 +159,20 @@ export default function CreateEmployee() {
 									required
 								/>
 							</div>
-							<div className="space-y-2">
-								<Label htmlFor="lastName">
-									Nom<span className="text-red-500">*</span>
-								</Label>
-								<Input
-									id="lastName"
-									placeholder="Dupont"
-									value={formData.lastName}
-									onChange={handleChange}
-									required
-								/>
-							</div>
+						</div>
+
+						<div className="space-y-2">
+							<Label htmlFor="email">
+								Email <span className="text-red-500">*</span>
+							</Label>
+							<Input
+								id="email"
+								type="email"
+								placeholder="jean.dupont@exemple.com"
+								value={formData.email}
+								onChange={handleChange}
+								required
+							/>
 						</div>
 
 						<div className="space-y-2">
@@ -139,22 +186,8 @@ export default function CreateEmployee() {
 						</div>
 
 						<div className="space-y-2">
-							<Label htmlFor="email">
-								Email<span className="text-red-500">*</span>
-							</Label>
-							<Input
-								id="email"
-								type="email"
-								placeholder="jean.dupont@exemple.com"
-								value={formData.email}
-								onChange={handleChange}
-								required
-							/>
-						</div>
-
-						<div className="space-y-2">
 							<Label htmlFor="phone">
-								Numéro de téléphone
+								Numéro de téléphone{" "}
 								<span className="text-red-500">*</span>
 							</Label>
 							<Input
@@ -170,42 +203,31 @@ export default function CreateEmployee() {
 
 						<div className="grid grid-cols-3 gap-4">
 							<div className="space-y-2 col-span-2">
-								<Label htmlFor="street">
-									Rue<span className="text-red-500">*</span>
-								</Label>
+								<Label htmlFor="street">Rue</Label>
 								<Input
 									id="street"
 									placeholder="1 rue de Paris"
 									value={formData.address.street}
 									onChange={handleAddressChange}
-									required
 								/>
 							</div>
 							<div className="space-y-2">
-								<Label htmlFor="zipCode">
-									Code postal
-									<span className="text-red-500">*</span>
-								</Label>
+								<Label htmlFor="zipCode">Code postal</Label>
 								<Input
 									id="zipCode"
-									inputMode="numeric"
-									pattern="[0-9]{5}"
 									placeholder="75000"
 									value={formData.address.zipCode}
 									onChange={handleAddressChange}
-									required
+									pattern="[0-9]{5}"
 								/>
 							</div>
 							<div className="space-y-2 col-span-3">
-								<Label htmlFor="city">
-									Ville<span className="text-red-500">*</span>
-								</Label>
+								<Label htmlFor="city">Ville</Label>
 								<Input
 									id="city"
 									placeholder="Paris"
 									value={formData.address.city}
 									onChange={handleAddressChange}
-									required
 								/>
 							</div>
 						</div>
@@ -217,9 +239,9 @@ export default function CreateEmployee() {
 							<Input
 								id="secuNumber"
 								placeholder="123456789"
-								pattern="[1-2][0-9]{14}"
 								value={formData.secuNumber}
 								onChange={handleChange}
+								pattern="[1-2][0-9]{14}"
 							/>
 						</div>
 
@@ -237,7 +259,7 @@ export default function CreateEmployee() {
 
 						<div className="space-y-2">
 							<Label>
-								Type de contrat
+								Type de contrat{" "}
 								<span className="text-red-500">*</span>
 							</Label>
 							<Select
@@ -273,7 +295,7 @@ export default function CreateEmployee() {
 
 						<div className="space-y-2">
 							<Label>
-								Emploi<span className="text-red-500">*</span>
+								Emploi <span className="text-red-500">*</span>
 							</Label>
 							<Select
 								onValueChange={(value) =>
@@ -290,43 +312,33 @@ export default function CreateEmployee() {
 										<SelectItem value="runner">
 											Runner
 										</SelectItem>
-
 										<SelectItem value="serveur">
 											Serveur.se
 										</SelectItem>
-
 										<SelectItem value="chefRang">
 											Chef.fe de rang
 										</SelectItem>
-
 										<SelectItem value="manager">
 											Manager
 										</SelectItem>
-
 										<SelectItem value="barman">
 											Barman/Barmaid
 										</SelectItem>
-
 										<SelectItem value="chefCuisine">
 											Chef.fe de cuisine
 										</SelectItem>
-
 										<SelectItem value="secondCuisine">
 											Second.e de cuisine
 										</SelectItem>
-
 										<SelectItem value="chefPartie">
 											Chef.fe de partie
 										</SelectItem>
-
 										<SelectItem value="commisCuisine">
 											Commis de cuisine
 										</SelectItem>
-
 										<SelectItem value="plongeur">
 											Plongeur
 										</SelectItem>
-
 										<SelectItem value="direction">
 											Direction
 										</SelectItem>
@@ -352,7 +364,7 @@ export default function CreateEmployee() {
 
 						<div className="space-y-2">
 							<Label>
-								Rôle de l'employé.e
+								Rôle de l'employé.e{" "}
 								<span className="text-red-500">*</span>
 							</Label>
 							<RadioGroup
@@ -392,20 +404,27 @@ export default function CreateEmployee() {
 								</FieldLabel>
 							</RadioGroup>
 						</div>
-					</CardContent>
+					</form>
+				</div>
 
-					<CardFooter className="flex justify-between border-t px-6 py-4">
-						<Button
-							variant="outline"
-							type="button"
-							onClick={handleReset}
-						>
-							Annuler
-						</Button>
-						<Button type="submit">Créer l'employé</Button>
-					</CardFooter>
-				</form>
-			</Card>
-		</div>
+				<DrawerFooter className="flex flex-row border-t px-4">
+					<Button
+						variant="outline"
+						onClick={handleReset}
+						className="flex-1"
+					>
+						Annuler
+					</Button>
+
+					<Button
+						onClick={handleSubmit}
+						type="button"
+						className="flex-1"
+					>
+						Créer l'employé
+					</Button>
+				</DrawerFooter>
+			</DrawerContent>
+		</Drawer>
 	);
 }
