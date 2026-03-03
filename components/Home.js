@@ -1,13 +1,7 @@
-import styles from '../styles/Home.module.css';
-
 function Home() {
   return (
-    <div>
-      <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
-      </main>
+    <div className="min-h-screen flex items-center justify-center bg-black">
+      <h1 className="text-4xl font-bold text-white">Tailwind fonctionne 🚀</h1>
     </div>
   );
 }
