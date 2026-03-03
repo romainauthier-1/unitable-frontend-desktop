@@ -1,7 +1,15 @@
+import styles from "../styles/Home.module.css";
+import Link from "next/Link";
+import BusinessForm from "./BusinessForm";
+
 function Home() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-black">
-      <h1 className="text-4xl font-bold text-white">Tailwind fonctionne 🚀</h1>
+    <div>
+      <main className={styles.main}>
+        <Link href="/businessForm">
+          Aller sur le formulaire d'enregistrement du restaurant
+        </Link>
+      </main>
     </div>
   );
 }

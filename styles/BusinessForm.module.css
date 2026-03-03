@@ -1,0 +1,51 @@
+.main {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100vw;
+}
+
+.title {
+  margin: 100px;
+}
+.formContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 80%;
+  height: 90%;
+  overflow-y: scroll;
+}
+
+.formInput {
+  width: 80%;
+  padding: 20px;
+  margin: 20px;
+}
+
+.errorMessage {
+  color: red;
+  font-size: x-small;
+}
+
+.missingInput {
+  width: 80%;
+  padding: 20px;
+  margin: 20px;
+  border: 1px solid red;
+}
+
+.buttonContainer {
+  display: flex;
+  justify-content: space-between;
+}
+
+.button {
+  height: 50px;
+  width: 100px;
+  margin: 20px;
+  padding: 10px;
+}
