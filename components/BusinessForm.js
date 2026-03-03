@@ -1,8 +1,10 @@
 import styles from "../styles/BusinessForm.module.css";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { useRouter } from "next/router";
 import { addBusiness } from "../reducers/business";
+import { updateIdRestaurant } from "@/reducers/services";
 import { Button } from "./ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -28,6 +30,7 @@ import { Toaster } from "sonner";
 import { toast } from "sonner";
 
 export default function BusinessForm() {
+  const router = useRouter();
   const [siret, setSiret] = useState("");
   const [businessName, setBusinessName] = useState("");
   const [businessCommercialName, setBusinessCommercialName] = useState("");
@@ -40,8 +43,8 @@ export default function BusinessForm() {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [error, setError] = useState({});
   const [logo, setLogo] = useState(null);
-  const [canNavigate, setCanNavigate] = useState(false);
   const dispatch = useDispatch();
+  const business = useSelector((state) => state.business.value);
 
   useEffect(() => {
     if (siret.length === 14) {
@@ -184,7 +187,7 @@ export default function BusinessForm() {
           city: city,
         },
         phoneNumber: phoneNumber,
-        owner: "JOHN DOE",
+        // owner: "JOHN DOE", // attente du token pour récupérer l'owner
         category: category,
       }),
     });
@@ -192,14 +195,22 @@ export default function BusinessForm() {
 
     if (!data.result) {
       toast.warning(data.message);
-      // alert(data.message);
       console.error(data.message);
     } else {
-      dispatch(addBusiness({ businessCommercialName, owner }));
+      // Ajout au reducer business
+      dispatch(
+        addBusiness({ businessCommercialName, owner, id: data.restaurant._id }),
+      );
+
+      // Ajout de l'id du restaurant aux services par défaut du reducer services
+      dispatch(updateIdRestaurant({ id: 1, restaurant: data.restaurant._id }));
       emptyForm();
       toast.success(data.message);
-      setCanNavigate(true);
-      // console.log(data.message);
+
+      // Redirection vers page services après 2 secondes
+      setTimeout(() => {
+        router.push("/services");
+      }, 2000);
     }
   };
 
@@ -236,6 +247,7 @@ export default function BusinessForm() {
               zipCode,
               city,
               phoneNumber,
+              "JOHN DOE", // attente du token pour récupérer l'owner
               category,
             )
           }

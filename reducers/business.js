@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  value: [], // Attendu {businessCommercialName: String, ownerName: String}
+  value: [], // Attendu {businessCommercialName: String, ownerName: String, id: ObjectId MongoDB}
 };
 
 export const businessSlice = createSlice({
