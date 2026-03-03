@@ -4,8 +4,9 @@ import { configureStore } from "@reduxjs/toolkit";
 import { Provider } from "react-redux";
 import user from "../reducers/users";
 import business from "../reducers/business";
+import employee from "../reducers/employee";
 const store = configureStore({
-  reducer: { business,user },
+  reducer: { business,user, employee },
 });
 
 function App({ Component, pageProps }) {
