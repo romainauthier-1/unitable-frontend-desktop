@@ -27,12 +27,10 @@ export const serviceSlice = createSlice({
   initialState,
   reducers: {
     updateIdRestaurant: (state, action) => {
-      const serviceToUpdate = state.value.find(
-        (service) => service.id === action.payload.id,
-      );
-      if (serviceToUpdate) {
-        serviceToUpdate.restaurant = action.payload.restaurant;
-      }
+      const updatedServices = state.value.map((service) => {
+        return { ...service, restaurant: action.payload };
+      });
+      state.value = updatedServices;
     },
     updateService: (state, action) => {
       const { id, name, startTime, endTime, dayOfWeek, restaurant } =
@@ -47,9 +45,14 @@ export const serviceSlice = createSlice({
     addService: (state, action) => {
       state.value.push(action.payload);
     },
+    deleteService: (state, action) => {
+      state.value = state.value.filter(
+        (service) => service.id !== action.payload,
+      );
+    },
   },
 });
 
-export const { addService, updateIdRestaurant, updateService } =
+export const { addService, updateIdRestaurant, updateService, deleteService } =
   serviceSlice.actions;
 export default serviceSlice.reducer;

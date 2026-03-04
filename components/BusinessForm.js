@@ -198,18 +198,16 @@ export default function BusinessForm() {
       console.error(data.message);
     } else {
       // Ajout au reducer business
-      dispatch(
-        addBusiness({ businessCommercialName, owner, id: data.restaurant._id }),
-      );
+      dispatch(addBusiness({ businessCommercialName, owner, id: data.id }));
 
       // Ajout de l'id du restaurant aux services par défaut du reducer services
-      dispatch(updateIdRestaurant({ id: 1, restaurant: data.restaurant._id }));
+      // dispatch(updateIdRestaurant({ id: 1, restaurant: data._id }));
       emptyForm();
       toast.success(data.message);
 
       // Redirection vers page services après 2 secondes
       setTimeout(() => {
-        router.push("/services");
+        router.push("/createEmployee");
       }, 2000);
     }
   };
