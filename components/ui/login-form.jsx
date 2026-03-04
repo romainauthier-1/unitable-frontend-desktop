@@ -13,9 +13,11 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { login } from "@/reducers/users";
 import { Input } from "@/components/ui/input";
+import { useRouter } from "next/router";
 
 export function LoginForm({ className, ...props }) {
   const dispatch = useDispatch();
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -41,6 +43,7 @@ export function LoginForm({ className, ...props }) {
             setEmail("");
             setPassword("");
             console.log(data.result);
+            router.push("/dashboard"); // Vérifier le chemin si problème
           }
         });
     } else {
@@ -52,7 +55,10 @@ export function LoginForm({ className, ...props }) {
   };
   return (
     // centrer le formulaire dans la page et lui donner une largeur maximale de 400px
-    <div className={cn("flex flex-col gap-6 max-w-[400px] mx-auto", className)} {...props}>
+    <div
+      className={cn("flex flex-col gap-6 max-w-[400px] mx-auto", className)}
+      {...props}
+    >
       <form>
         <FieldGroup>
           <div className="flex flex-col items-center gap-2 text-center">

@@ -10,9 +10,11 @@ import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { login } from "@/reducers/users";
+import { useRouter } from "next/router";
 
 export default function SignUpForm(props) {
   const dispatch = useDispatch();
+  const router = useRouter();
 
   const [password, setSignUpPassword] = useState("");
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
@@ -78,6 +80,7 @@ export default function SignUpForm(props) {
           setEmail("");
           setSignUpPassword("");
           setPasswordConfirmation("");
+          router.push("/businessForm");
         } else {
           alert(data.error || "Inscription échouée.");
         }
