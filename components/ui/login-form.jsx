@@ -98,6 +98,12 @@ export function LoginForm({ className, ...props }) {
               onChange={(e) => setPassword(e.target.value)}
               required
             />
+            <a
+              href="/forgot-password"
+              className="ml-auto text-sm underline-offset-2 hover:underline"
+            >
+              Forgot your password?
+            </a>
           </Field>
           <Field>
             <Button type="submit" onClick={handleConnection}>
