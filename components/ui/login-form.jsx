@@ -52,7 +52,7 @@ export function LoginForm({ className, ...props }) {
   return (
     // centrer le formulaire dans la page et lui donner une largeur maximale de 400px
     <div
-      className={cn("flex flex-col gap-6 max-w-[400px] mx-auto", className)}
+      className={cn("flex flex-col gap-6 max-w-100 mx-auto", className)}
       {...props}
     >
       <form>
