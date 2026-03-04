@@ -30,3 +30,9 @@ yarn-error.log*
 
 # vercel
 .vercel
+
+components.json
+jsconfig.json
+postcss.config.js
+tailwind.config.js
+yarn.lock
