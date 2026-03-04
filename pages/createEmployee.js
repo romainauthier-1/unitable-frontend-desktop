@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addEmployeeToStore } from "../reducers/employee";
+import {
+	addEmployeeToStore,
+	removeEmployeeFromStore,
+	updateEmployeeInStore,
+} from "../reducers/employee";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -178,6 +182,32 @@ export default function CreateEmployee() {
 		setFormData(initialFormState);
 	};
 
+	// supprimer un employé
+	const handleDeleteEmployee = async (employeeId) => {
+		if (!confirm("Voulez-vous vraiment supprimer cet employé ?")) return;
+
+		try {
+			const res = await fetch(
+				`http://localhost:3000/employee/${employeeId}`,
+				{
+					method: "DELETE",
+				},
+			);
+
+			const data = await res.json();
+
+			if (data.result) {
+				dispatch(removeEmployeeFromStore(employeeId)); // <- utiliser l'action du slice
+				console.log("Employé supprimé :", data.employee);
+			} else {
+				alert("Erreur lors de la suppression : " + data.error);
+			}
+		} catch (err) {
+			console.error(err);
+			alert("Erreur serveur lors de la suppression");
+		}
+	};
+
 	return (
 		<div>
 			{/* <div className="mt-6">
@@ -270,6 +300,11 @@ export default function CreateEmployee() {
 											<Button
 												variant="destructive"
 												size="sm"
+												onClick={() =>
+													handleDeleteEmployee(
+														employee._id,
+													)
+												}
 											>
 												Supprimer
 											</Button>
