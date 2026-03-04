@@ -64,3 +64,8 @@ typings/
 .next
 
 .DS_Store
+components.json
+jsconfig.json
+postcss.config.js
+tailwind.config.js
+yarn.lock
