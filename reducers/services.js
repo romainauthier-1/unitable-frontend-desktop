@@ -10,6 +10,24 @@ const initialState = {
       endTime: 900,
       dayOfWeek: ["lundi"],
       restaurant: null,
+      equipes: [
+        {
+          cuisine: [
+            { name: "Chef", need: 1 },
+            { name: "Second", need: 1 },
+            { name: "Chef de partie", need: 2 },
+            { name: "Plongeur", need: 1 },
+          ],
+        },
+        {
+          salle: [
+            { name: "Responsable", need: 1 },
+            { name: "Serveur", need: 3 },
+            { name: "Runner", need: 1 },
+            { name: "Barman", need: 1 },
+          ],
+        },
+      ],
     },
     {
       id: 2,
@@ -18,6 +36,24 @@ const initialState = {
       endTime: 1290,
       dayOfWeek: ["lundi"],
       restaurant: null,
+      equipes: [
+        {
+          cuisine: [
+            { name: "Chef", need: 1 },
+            { name: "Second", need: 1 },
+            { name: "Chef de partie", need: 2 },
+            { name: "Plongeur", need: 1 },
+          ],
+        },
+        {
+          salle: [
+            { name: "Responsable", need: 1 },
+            { name: "Serveur", need: 3 },
+            { name: "Runner", need: 1 },
+            { name: "Barman", need: 1 },
+          ],
+        },
+      ],
     },
   ],
 };
