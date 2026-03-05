@@ -1,5 +1,5 @@
 
-import Connection from '@/components/old/Login';
+
 import { LoginForm } from '@/components/ui/login-form';
 function Index() {
 

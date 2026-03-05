@@ -9,6 +9,7 @@ import {
   FieldLabel,
   FieldSeparator,
 } from "@/components/ui/field";
+import Link from "next/link";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { login } from "@/reducers/users";
@@ -20,14 +21,11 @@ export function LoginForm({ className, ...props }) {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
   const handleConnection = (e) => {
     e.preventDefault();
-    console.log("click done");
-    console.log("Email:", email);
-    console.log("Password:", password);
+
     if (password.length > 1 && email.length > 0) {
-      fetch("http://localhost:3000/users/signin", {
+      fetch(`${process.env.URL_BACKEND}/users/signin`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -37,12 +35,10 @@ export function LoginForm({ className, ...props }) {
       })
         .then((response) => response.json())
         .then((data) => {
-          console.log(data);
           if (data.result) {
             dispatch(login({ email: email, token: data.token }));
             setEmail("");
             setPassword("");
-            console.log(data.result);
             router.push("/dashboard"); // Vérifier le chemin si problème
           }
         });
@@ -98,12 +94,12 @@ export function LoginForm({ className, ...props }) {
               onChange={(e) => setPassword(e.target.value)}
               required
             />
-            <a
-              href="/forgot-password"
+            <Link
+              href="/sendEmailPassword"
               className="ml-auto text-sm underline-offset-2 hover:underline"
             >
               Forgot your password?
-            </a>
+            </Link>
           </Field>
           <Field>
             <Button type="submit" onClick={handleConnection}>
