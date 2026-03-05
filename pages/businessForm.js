@@ -106,7 +106,7 @@ export default function BusinessForm() {
   const getRestaurantInfos = async (siret) => {
     try {
       const response = await fetch(
-        `http://localhost:3000/organizations/${siret}`,
+        `http://${process.env.NEXT_PUBLIC_URL_BACKEND}/organizations/${siret}`,
       );
       const data = await response.json();
 
@@ -171,25 +171,28 @@ export default function BusinessForm() {
     category,
   ) => {
     e.preventDefault();
-    const response = await fetch("http://localhost:3000/organizations", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        siret: siret,
-        businessName: businessName,
-        businessCommercialName: businessCommercialName,
-        businessAddress: {
-          number: streetNumber,
-          streetType: streetType,
-          streetName: streetName,
-          zipCode: zipCode,
-          city: city,
-        },
-        phoneNumber: phoneNumber,
-        owner: user.token,
-        category: category,
-      }),
-    });
+    const response = await fetch(
+      `http://${process.env.NEXT_PUBLIC_URL_BACKEND}/organizations`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          siret: siret,
+          businessName: businessName,
+          businessCommercialName: businessCommercialName,
+          businessAddress: {
+            number: streetNumber,
+            streetType: streetType,
+            streetName: streetName,
+            zipCode: zipCode,
+            city: city,
+          },
+          phoneNumber: phoneNumber,
+          owner: user.token,
+          category: category,
+        }),
+      },
+    );
     const data = await response.json();
 
     if (!data.result) {

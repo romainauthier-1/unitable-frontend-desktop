@@ -83,13 +83,16 @@ export default function Services() {
     // On extrait l'id du reducer avant d'envoyer en BDD
     for (const service of services) {
       const { id, ...servicesWithoutId } = service;
-      const response = await fetch("http://localhost:3000/services", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await fetch(
+        `http://${process.env.NEXT_PUBLIC_URL_BACKEND}/services`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(servicesWithoutId),
         },
-        body: JSON.stringify(servicesWithoutId),
-      });
+      );
 
       const data = await response.json();
       if (data.result) {
