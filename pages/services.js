@@ -41,10 +41,11 @@ export default function Services() {
       .padStart(2, "0")}`;
   };
 
-  const serviceCards = services.map((service) => {
+  const serviceCards = services.map((service, i) => {
+    console.log("Service :", service);
     return (
       <ServiceCard
-        key={service.id}
+        key={i}
         timeToMinutes={convertTimeToMinutes}
         minutesToTime={convertMinutesToTime}
         name={service.name}

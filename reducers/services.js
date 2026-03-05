@@ -151,6 +151,13 @@ export const serviceSlice = createSlice({
   },
 });
 
-export const { addService, updateIdRestaurant, updateService, deleteService } =
-  serviceSlice.actions;
+export const {
+  addService,
+  updateIdRestaurant,
+  updateService,
+  deleteService,
+  updateTeamName,
+  updateRoleName,
+  updateRoleNeed,
+} = serviceSlice.actions;
 export default serviceSlice.reducer;

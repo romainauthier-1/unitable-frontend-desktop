@@ -15,8 +15,22 @@ import {
   convertTimeToMinutes,
   convertMinutesToTime,
 } from "../modules/timeConversion";
+import { useState } from "react";
+import {
+  updateService,
+  updateIdRestaurant,
+  addService,
+  deleteService,
+  updateTeamName,
+  updateRoleName,
+  updateRoleNeed,
+} from "@/reducers/services";
+import { useDispatch, useSelector } from "react-redux";
 
 export default function ServiceWithRolesCard({ service }) {
+  const dispatch = useDispatch();
+  const services = useSelector((state) => state.services.value);
+
   const teamsToDisplay = service.equipes?.map((team) => {
     return (
       <CardContent key={team.teamName}>
@@ -31,6 +45,16 @@ export default function ServiceWithRolesCard({ service }) {
               className="flex shrink-0 w-10 p-1 text-center"
               type="number"
               value={role.need}
+              onChange={(e) => {
+                dispatch(
+                  updateRoleNeed({
+                    id: service.id,
+                    teamName: team.teamName,
+                    roleName: role.name,
+                    need: e.target.value,
+                  }),
+                );
+              }}
             />
           </div>
         ))}

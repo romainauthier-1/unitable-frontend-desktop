@@ -17,13 +17,13 @@ export default function templatePlanning() {
   const router = useRouter();
 
   const days = [
-    "Lundi",
-    "Mardi",
-    "Mercredi",
-    "Jeudi",
-    "Vendredi",
-    "Samedi",
-    "Dimanche",
+    "lundi",
+    "mardi",
+    "mercredi",
+    "jeudi",
+    "vendredi",
+    "samedi",
+    "dimanche",
   ];
 
   const servicesToDisplay = services.map((service) => {
@@ -44,7 +44,7 @@ export default function templatePlanning() {
         <div className="mx-auto max-w-10xl grid grid-cols-7 w-full h-full gap-4 ">
           {days.map((day) => (
             <div key={day} className="flex flex-col  p-4">
-              <h2 className="text-lg font-bold mb-4 text-center">{day}</h2>
+              <h2 className="text-lg font-bold mb-4 text-center">{`${day[0].toUpperCase()}${day.slice(1)}`}</h2>
               {/* Affichage des services pour chaque jour */}
               {servicesToDisplay}
               <Button variant="ghost" className="mb-2">
