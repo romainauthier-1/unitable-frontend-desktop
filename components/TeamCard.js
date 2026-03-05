@@ -25,7 +25,7 @@ export default function TeamCard({
 		<Card>
 			<CardHeader className="flex justify-between items-center">
 				<Input
-					placeholder="Nom de l'équipe (ex: cuisine)"
+					placeholder="Nom de l'équipe"
 					value={team.name}
 					onChange={(e) => updateTeamName(teamIndex, e.target.value)}
 				/>
@@ -34,7 +34,7 @@ export default function TeamCard({
 					size="sm"
 					onClick={() => removeTeam(teamIndex)}
 				>
-					Supprimer
+					Supprimer l'équipe
 				</Button>
 			</CardHeader>
 
@@ -52,10 +52,23 @@ export default function TeamCard({
 
 				{/* Liste des rôles */}
 				{team.roles.map((role, roleIndex) => (
-					<div key={roleIndex} className="flex gap-4 items-end">
+					<div key={roleIndex} className="flex gap-2 items-end">
 						<div className="flex-1 space-y-2">
 							<Label>Rôle / poste</Label>
-							<Select
+							<Input
+								placeholder="Nom du rôle"
+								value={role.name}
+								onChange={(e) =>
+									updateRole(
+										teamIndex,
+										roleIndex,
+										"name",
+										e.target.value,
+									)
+								}
+							/>
+
+							{/* <Select
 								value={role.name}
 								onValueChange={(value) =>
 									updateRole(
@@ -81,10 +94,10 @@ export default function TeamCard({
 										))}
 									</SelectGroup>
 								</SelectContent>
-							</Select>
+							</Select> */}
 						</div>
 
-						<div className="w-24 space-y-2">
+						<div className="w-16 space-y-2">
 							<Label>Nombre</Label>
 							<Input
 								type="number"
@@ -102,7 +115,7 @@ export default function TeamCard({
 						</div>
 
 						<Button
-							variant="ghost"
+							variant="destructive"
 							size="icon"
 							onClick={() => removeRole(teamIndex, roleIndex)}
 						>
