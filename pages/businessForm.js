@@ -222,7 +222,14 @@ export default function BusinessForm() {
       console.error(data.message);
     } else {
       // Ajout au reducer business
-      dispatch(addBusiness({ businessCommercialName, owner, id: data.id }));
+      dispatch(
+        addBusiness({
+          businessCommercialName,
+          owner: user.name,
+          id: data.id,
+          referenceTeams: [],
+        }),
+      );
 
       // Ajout de l'id du restaurant aux services par défaut du reducer services
       // dispatch(updateIdRestaurant({ id: 1, restaurant: data._id }));

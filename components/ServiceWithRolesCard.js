@@ -24,6 +24,7 @@ import {
   updateTeamName,
   updateRoleName,
   updateRoleNeed,
+  addTeamToService,
 } from "@/reducers/services";
 import {
   Tooltip,
@@ -47,10 +48,26 @@ import { useDispatch, useSelector } from "react-redux";
 export default function ServiceWithRolesCard({ service }) {
   const dispatch = useDispatch();
   const services = useSelector((state) => state.services.value);
-  const [confirm, setConfirm] = useState(false);
+  const teamAvailable = useSelector(
+    (state) => state.business.value[0]?.referenceTeams,
+  );
 
-  const teamDropdown = service.equipes?.map((equipe) => (
-    <DropdownMenuItem key={equipe.teamName}>{equipe.teamName}</DropdownMenuItem>
+  const teamDropdown = teamAvailable?.map((equipe) => (
+    <DropdownMenuItem
+      key={equipe.name}
+      onClick={() => {
+        console.log(equipe);
+        dispatch(
+          addTeamToService({
+            id: service.id,
+            teamName: equipe.name,
+            roles: equipe.roles,
+          }),
+        );
+      }}
+    >
+      {equipe.name}
+    </DropdownMenuItem>
   ));
 
   const addTeamButton = (
@@ -68,64 +85,66 @@ export default function ServiceWithRolesCard({ service }) {
     </DropdownMenu>
   );
 
-  const teamsToDisplay = service.equipes?.map((team) => {
-    const roleDropdown = team.roles?.map((role) => (
-      <DropdownMenuItem key={role.name}>{role.name}</DropdownMenuItem>
-    ));
-    return (
-      <div key={team.teamName} className="p-1">
-        <div className="flex flex-row justify-between">
-          <p className="text-sm font-bold">{team.teamName}</p>
-          <DropdownMenu>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <DropdownMenuTrigger asChild>
-                    <PlusCircle
-                      className="text-primary cursor-pointer "
-                      size={16}
-                    />
-                  </DropdownMenuTrigger>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Ajouter un rôle</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-            <DropdownMenuContent>
-              <DropdownMenuLabel>
-                Choix du rôle ({team.teamName})
-              </DropdownMenuLabel>
-              {roleDropdown}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-        {team.roles.map((role) => (
-          <div
-            key={role.name}
-            className="flex flex-row items-center justify-between"
-          >
-            <p className="text-sm">{role.name}</p>
-            <Input
-              className="flex shrink-0 w-10 p-1 text-center"
-              type="number"
-              value={role.need}
-              onChange={(e) => {
-                dispatch(
-                  updateRoleNeed({
-                    id: service.id,
-                    teamName: team.teamName,
-                    roleName: role.name,
-                    need: e.target.value,
-                  }),
-                );
-              }}
-            />
+  const teamsToDisplay =
+    // service.equipes.length > 1 &&
+    service.equipes?.map((team) => {
+      const roleDropdown = team.roles?.map((role) => (
+        <DropdownMenuItem key={role.name}>{role.name}</DropdownMenuItem>
+      ));
+      return (
+        <div key={team.teamName} className="p-1">
+          <div className="flex flex-row justify-between">
+            <p className="text-sm font-bold">{team.teamName}</p>
+            <DropdownMenu>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <DropdownMenuTrigger asChild>
+                      <PlusCircle
+                        className="text-primary cursor-pointer "
+                        size={16}
+                      />
+                    </DropdownMenuTrigger>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Ajouter un rôle</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+              <DropdownMenuContent>
+                <DropdownMenuLabel>
+                  Choix du rôle ({team.teamName})
+                </DropdownMenuLabel>
+                {roleDropdown}
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
-        ))}
-      </div>
-    );
-  });
+          {team.roles.map((role) => (
+            <div
+              key={role.name}
+              className="flex flex-row items-center justify-between"
+            >
+              <p className="text-sm">{role.name}</p>
+              <Input
+                className="flex shrink-0 w-10 p-1 text-center"
+                type="number"
+                value={role.need}
+                onChange={(e) => {
+                  dispatch(
+                    updateRoleNeed({
+                      id: service.id,
+                      teamName: team.teamName,
+                      roleName: role.name,
+                      need: e.target.value,
+                    }),
+                  );
+                }}
+              />
+            </div>
+          ))}
+        </div>
+      );
+    });
 
   const warnAndDeleteService = (serviceId) => {
     toast.warning("Êtes-vous sûr de vouloir supprimer ce service ?", {
@@ -137,6 +156,7 @@ export default function ServiceWithRolesCard({ service }) {
       },
     });
   };
+
   return (
     <>
       <Toaster richColors position="top-right" />

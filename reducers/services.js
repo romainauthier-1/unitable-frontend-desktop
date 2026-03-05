@@ -1,66 +1,27 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-// Services par défaut
 const initialState = {
-  value: [
-    {
-      id: 1,
-      name: "Dejeuner",
-      startTime: 720,
-      endTime: 900,
-      dayOfWeek: ["lundi"],
-      restaurant: null,
-      equipes: [
-        {
-          teamName: "Cuisine",
-          roles: [
-            { name: "Chef", need: 0 },
-            { name: "Second", need: 0 },
-            { name: "Chef de partie", need: 0 },
-            { name: "Plongeur", need: 0 },
-          ],
-        },
-        {
-          teamName: "Salle",
-          roles: [
-            { name: "Responsable", need: 0 },
-            { name: "Serveur", need: 0 },
-            { name: "Runner", need: 0 },
-            { name: "Barman", need: 0 },
-          ],
-        },
-      ],
-    },
-    {
-      id: 2,
-      name: "Diner",
-      startTime: 1080,
-      endTime: 1290,
-      dayOfWeek: ["lundi"],
-      restaurant: null,
-      equipes: [
-        {
-          teamName: "Cuisine",
-          roles: [
-            { name: "Chef", need: 0 },
-            { name: "Second", need: 0 },
-            { name: "Chef de partie", need: 0 },
-            { name: "Plongeur", need: 0 },
-          ],
-        },
-        {
-          teamName: "Salle",
-          roles: [
-            { name: "Responsable", need: 0 },
-            { name: "Serveur", need: 0 },
-            { name: "Runner", need: 0 },
-            { name: "Barman", need: 0 },
-          ],
-        },
-      ],
-    },
-  ],
+  value: [],
 };
+// FORMAT ATTENDU POUR UN SERVICE
+// {
+//   id: 1,
+//   name: "Déjeuner",
+//   startTime: 720,
+//   endTime: 980,
+//   dayOfWeek: ["lundi", "mardi"...],
+//   restaurant: id MongoDB,
+//   equipes: [
+//     {
+//       teamName: Cuisine,
+//       roles: [{ name: Chef de partie, need: 0 }],
+//     },
+//     {
+//       teamName: Salle,
+//       roles: [{ name: Serveur, need: 0 }],
+//     },
+//   ],
+// },
 
 export const serviceSlice = createSlice({
   name: "services",
@@ -81,6 +42,17 @@ export const serviceSlice = createSlice({
       endTime && (serviceToUpdate.endTime = endTime);
       dayOfWeek && (serviceToUpdate.dayOfWeek = dayOfWeek);
       restaurant && (serviceToUpdate.restaurant = restaurant);
+    },
+    addTeamToService: (state, action) => {
+      const { id, teamName, roles } = action.payload;
+      const serviceToUpdate = state.value.find((service) => service.id === id);
+
+      if (!serviceToUpdate) {
+        console.log("Service introuvable pour l'id:", id);
+        return;
+      }
+
+      serviceToUpdate.equipes.push({ teamName, roles });
     },
     updateTeamName: (state, action) => {
       const { id, teamName } = action.payload;
@@ -159,5 +131,6 @@ export const {
   updateTeamName,
   updateRoleName,
   updateRoleNeed,
+  addTeamToService,
 } = serviceSlice.actions;
 export default serviceSlice.reducer;

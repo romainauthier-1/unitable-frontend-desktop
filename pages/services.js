@@ -67,8 +67,9 @@ export default function Services() {
       name: "Nouveau service",
       startTime: 720,
       endTime: 900,
-      dayOfWeek: [""],
+      dayOfWeek: [],
       restaurant: business[0]?.id,
+      equipes: [],
     };
     dispatch(addService(newService));
   };
@@ -99,7 +100,7 @@ export default function Services() {
         toast.success(data.message);
         // On attend 2 secondes avant la redirection
         setTimeout(() => {
-          router.push("/createTeam");
+          router.push("/templatePlanning");
         }, 2000);
       } else {
         toast.error(data.message);

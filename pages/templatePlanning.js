@@ -10,6 +10,7 @@ import { Toaster } from "sonner";
 import { toast } from "sonner";
 import ServiceWithRolesCard from "@/components/ServiceWithRolesCard";
 import { addService } from "@/reducers/services";
+import { addReferenceTeams } from "@/reducers/business";
 import {
   Dialog,
   DialogContent,
@@ -46,6 +47,33 @@ export default function templatePlanning() {
     "dimanche",
   ];
 
+  const getDefaultTeamsAndRoles = async (businessId) => {
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_URL_BACKEND}/teams/${businessId}`,
+      );
+      const data = await response.json();
+      const equipes = data.equipes;
+      // console.log("Équipes et rôles par défaut récupérés :", equipes);
+      dispatch(addReferenceTeams({ businessId, equipes }));
+    } catch (err) {
+      toast.error(
+        err.message ||
+          "Erreur lors de la récupération des équipes et rôles par défaut",
+      );
+    }
+  };
+
+  useEffect(() => {
+    if (business[0]?.id) {
+      getDefaultTeamsAndRoles(business[0]?.id);
+    } else {
+      toast.warning(
+        "Aucun restaurant trouvé. Veuillez créer un restaurant pour continuer.",
+      );
+    }
+  }, []);
+
   const dayServices = (day) => {
     return services
       .filter((service) => service.dayOfWeek?.includes(day))
@@ -58,10 +86,12 @@ export default function templatePlanning() {
   const handleSubmit = (day) => {
     dispatch(
       addService({
+        id: Date.now(),
         name: newServiceName,
         startTime: convertTimeToMinutes(newServiceStartTime),
         endTime: convertTimeToMinutes(newServiceEndTime),
         dayOfWeek: [day],
+        equipes: [],
       }),
     );
     setNewServiceName("");
@@ -77,7 +107,7 @@ export default function templatePlanning() {
             "PAS DE RESTAURANT DANS LE STORE"}
         </div>
         <div className=" text-accent-foreground">
-          {user?.email || "AUCUN UTILISATEUR CONNECTÉ"}
+          {user?.name || "AUCUN UTILISATEUR CONNECTÉ"}
         </div>
       </div>
       <div className="flex flex-1">
