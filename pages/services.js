@@ -84,7 +84,7 @@ export default function Services() {
     for (const service of services) {
       const { id, ...servicesWithoutId } = service;
       const response = await fetch(
-        `http://${process.env.NEXT_PUBLIC_URL_BACKEND}/services`,
+        `${process.env.NEXT_PUBLIC_URL_BACKEND}/services`,
         {
           method: "POST",
           headers: {
@@ -115,7 +115,7 @@ export default function Services() {
           {business[0]?.businessCommercialName ||
             "PAS DE RESTAURANT DANS LE STORE"}
         </div>
-        <div className=" text-accent-foreground">{user?.email}</div>
+        <div className=" text-accent-foreground">{user?.name}</div>
       </div>
       <Toaster richColors position="top-right" />
       <div className="flex flex-row flex-wrap w-full justify-center flex-1 items-center">

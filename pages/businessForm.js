@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/router";
 import { addBusiness } from "../reducers/business";
 import { updateIdRestaurant } from "@/reducers/services";
+import { addName } from "@/reducers/users";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -44,6 +45,27 @@ export default function BusinessForm() {
   const dispatch = useDispatch();
   const business = useSelector((state) => state.business.value);
   const user = useSelector((state) => state.user.value);
+
+  const getUserName = async () => {
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_URL_BACKEND}/users/${user.email}`,
+      );
+      const data = await response.json();
+
+      if (!data.result) {
+        toast.error(data.message);
+      }
+
+      dispatch(addName(data.user.firstName));
+    } catch (err) {
+      toast.error(err.message);
+    }
+  };
+
+  useEffect(() => {
+    getUserName();
+  }, []);
 
   useEffect(() => {
     if (siret.length === 14) {
@@ -106,7 +128,7 @@ export default function BusinessForm() {
   const getRestaurantInfos = async (siret) => {
     try {
       const response = await fetch(
-        `http://${process.env.NEXT_PUBLIC_URL_BACKEND}/organizations/${siret}`,
+        `${process.env.NEXT_PUBLIC_URL_BACKEND}/organizations/${siret}`,
       );
       const data = await response.json();
 
@@ -172,7 +194,7 @@ export default function BusinessForm() {
   ) => {
     e.preventDefault();
     const response = await fetch(
-      `http://${process.env.NEXT_PUBLIC_URL_BACKEND}/organizations`,
+      `${process.env.NEXT_PUBLIC_URL_BACKEND}/organizations`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -236,7 +258,7 @@ export default function BusinessForm() {
             "PAS DE RESTAURANT DANS LE STORE"}
         </div>
         <div className=" text-accent-foreground">
-          {user?.email || "AUCUN UTILISATEUR CONNECTÉ"}
+          {user?.name || "AUCUN UTILISATEUR CONNECTÉ"}
         </div>
       </div>
       <div className="w-full m-10 max-w-2xl bg-background p-8 rounded-xl shadow-lg border border-primary">
@@ -313,7 +335,6 @@ export default function BusinessForm() {
                 </SelectTrigger>
                 <SelectContent className="bg-white">
                   <SelectGroup>
-                    <SelectItem value="Bar">Bar</SelectItem>
                     <SelectItem value="Restaurant traditionnel">
                       Restaurant traditionnel
                     </SelectItem>
@@ -324,9 +345,9 @@ export default function BusinessForm() {
                     <SelectItem value="Restaurant gastronomique">
                       Restaurant gastronomique
                     </SelectItem>
-                    <SelectItem value="Resaurant saisonnier">
-                      Resaurant saisonnier
-                    </SelectItem>
+                    <SelectItem value="Fast-food">Fast-food</SelectItem>
+                    <SelectItem value="Bar">Bar</SelectItem>
+                    <SelectItem value="Café">Café</SelectItem>
                   </SelectGroup>
                 </SelectContent>
               </Select>
