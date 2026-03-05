@@ -17,7 +17,7 @@ export const employeeSlice = createSlice({
 		// Supprimer
 		removeEmployeeFromStore: (state, action) => {
 			state.value.employees = state.value.employees.filter(
-				(employee) => employee.id !== action.payload,
+				(employee) => employee._id !== action.payload,
 			);
 		},
 		// Mettre à jour
