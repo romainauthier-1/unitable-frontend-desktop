@@ -30,7 +30,8 @@ export default function SignUpForm(props) {
     e.preventDefault();
 
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
-
+ 
+  
     if (!passwordRegex.test(password)) {
       alert(
         "Le mot de passe doit comporter au moins 8 caractères, dont au moins une majuscule, une minuscule et un chiffre.",
