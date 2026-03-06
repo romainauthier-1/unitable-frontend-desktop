@@ -9,7 +9,7 @@ import { PlusSquare } from "lucide-react";
 import { Toaster } from "sonner";
 import { toast } from "sonner";
 import ServiceWithRolesCard from "@/components/ServiceWithRolesCard";
-import { addService } from "@/reducers/services";
+import { addService, deleteTeamFromService } from "@/reducers/services";
 import { addReferenceTeams } from "@/reducers/business";
 import {
   Dialog,
@@ -26,6 +26,7 @@ import {
   convertTimeToMinutes,
 } from "@/modules/timeConversion";
 import HeaderAdminSignUp from "@/components/HeaderAdminSignUp";
+const uid2 = require("uid2");
 
 export default function templatePlanning() {
   const business = useSelector((state) => state.business.value);
@@ -48,32 +49,32 @@ export default function templatePlanning() {
     "dimanche",
   ];
 
-  const getDefaultTeamsAndRoles = async (businessId) => {
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_URL_BACKEND}/teams/${businessId}`,
-      );
-      const data = await response.json();
-      const equipes = data.equipes;
-      // console.log("Équipes et rôles par défaut récupérés :", equipes);
-      dispatch(addReferenceTeams({ businessId, equipes }));
-    } catch (err) {
-      toast.error(
-        err.message ||
-          "Erreur lors de la récupération des équipes et rôles par défaut",
-      );
-    }
-  };
+  // const getDefaultTeamsAndRoles = async (businessId) => {
+  //   try {
+  // const response = await fetch(
+  //   `${process.env.NEXT_PUBLIC_URL_BACKEND}/teams/${businessId}`,
+  // );
+  // const data = await response.json();
+  // const teams = data.teaùs;
+  // console.log("Équipes et rôles par défaut récupérés :", teams);
+  //     dispatch(addReferenceTeams({ businessId, teams }));
+  //   } catch (err) {
+  //     toast.error(
+  //       err.message ||
+  //         "Erreur lors de la récupération des équipes et rôles par défaut",
+  //     );
+  //   }
+  // };
 
-  useEffect(() => {
-    if (business[0]?.id) {
-      getDefaultTeamsAndRoles(business[0]?.id);
-    } else {
-      toast.warning(
-        "Aucun restaurant trouvé. Veuillez créer un restaurant pour continuer.",
-      );
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (business[0]?.id) {
+  //     getDefaultTeamsAndRoles(business[0]?.id);
+  //   } else {
+  //     toast.warning(
+  //       "Aucun restaurant trouvé. Veuillez créer un restaurant pour continuer.",
+  //     );
+  //   }
+  // }, []);
 
   const dayServices = (day) => {
     return services
@@ -84,15 +85,16 @@ export default function templatePlanning() {
       ));
   };
 
-  const handleSubmit = (day) => {
+  const handleSubmit = async (day) => {
     dispatch(
       addService({
-        id: Date.now(),
+        id: uid2(10),
         name: newServiceName,
         startTime: convertTimeToMinutes(newServiceStartTime),
         endTime: convertTimeToMinutes(newServiceEndTime),
         dayOfWeek: [day],
-        equipes: [],
+        restaurant: business[0]?.id,
+        teams: [],
       }),
     );
     setNewServiceName("");
@@ -100,6 +102,51 @@ export default function templatePlanning() {
     setNewServiceEndTime("");
     toast.success("Service ajouté avec succès !");
   };
+
+  // Envoi en BDD > Services contenant équipes & rôles
+  const handlePageValidation = async (servicesToDB) => {
+    // console.log(
+    //   "Début de la validation, voilà ce qui est envoyé en DB :",
+    //   servicesToDB,
+    // );
+    try {
+      const promises = servicesToDB.map(async (service) => {
+        console.log("DEBUG SERVICE", JSON.stringify(service));
+        // On extrait l'id utilisé dans le store de chaque service
+        const { id, ...serviceWithoutId } = service;
+        // console.log("Voici le service en traitement: ", service);
+        console.log("serviceWithoutId.teams", serviceWithoutId.teams);
+
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_URL_BACKEND}/services`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(serviceWithoutId),
+          },
+        );
+
+        const data = await response.json();
+
+        if (!data.result) {
+          throw new Error(data.message || "Un problème est survenu");
+        }
+
+        return data;
+      });
+
+      await Promise.all(promises);
+
+      toast.success("Semaine type enregistrée !");
+      setTimeout(() => {
+        router.push("/login");
+      }, 1000);
+    } catch (err) {
+      console.log(err);
+      toast.error(err.message);
+    }
+  };
+
   return (
     <div className="flex flex-col items-center justify-center min-h-screen">
       <HeaderAdminSignUp />
@@ -179,7 +226,7 @@ export default function templatePlanning() {
         </Button>
         <Button
           className="mr-15 cursor-pointer"
-          onClick={() => router.push("/confirmPage")}
+          onClick={() => handlePageValidation(services)}
         >
           SUIVANT
         </Button>

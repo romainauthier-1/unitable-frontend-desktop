@@ -1,13 +1,15 @@
 import { useState } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useRouter } from "next/router";
 import { Button } from "./ui/button";
 import TeamCard from "./TeamCard";
+import { addReferenceTeams } from "@/reducers/business";
 
 export default function CreateTeams() {
   const user = useSelector((state) => state.user.value);
   const business = useSelector((state) => state.business.value);
   const router = useRouter();
+  const dispatch = useDispatch();
   const organizationId = business ? business[0]?.id : null;
 
   // const [teams, setTeams] = useState([]);
@@ -87,19 +89,23 @@ export default function CreateTeams() {
     if (!organizationId) return console.log("Organisation non définie !");
 
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_URL_BACKEND}/teams`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ organizationId, equipes: teams }),
-      });
+      // const res = await fetch(`${process.env.NEXT_PUBLIC_URL_BACKEND}/teams`, {
+      //   method: "POST",
+      //   headers: { "Content-Type": "application/json" },
+      //   body: JSON.stringify({ organizationId, teams: teams }),
+      // });
 
-      const data = await res.json();
-      if (data.success) {
-        console.log("Équipes enregistrées :", data.team);
-        router.push("/services");
-      } else {
-        console.log("Erreur lors de l'enregistrement :", data.message);
-      }
+      // const data = await res.json();
+      // if (data.success) {
+      //   console.log("Équipes enregistrées :", data.team);
+      //   router.push("/services");
+      // } else {
+      //   console.log("Erreur lors de l'enregistrement :", data.message);
+      // }
+      // console.log("Info dispatch - id Business : ", organizationId);
+      // console.log("Info dispatch - format teams : ", teams);
+      dispatch(addReferenceTeams({ businessId: organizationId, teams }));
+      router.push("/services");
     } catch (err) {
       console.error(err);
     }

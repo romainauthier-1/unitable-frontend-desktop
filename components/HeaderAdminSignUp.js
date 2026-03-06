@@ -12,8 +12,7 @@ export default function HeaderAdminSignUp() {
       <Toaster richColors position="top-right" />
       <div className=" text-accent-foreground flex flex-col items-center">
         <Store className="p-1" size={40} />
-        {business[0]?.businessCommercialName ||
-          "PAS DE RESTAURANT DANS LE STORE"}
+        {business[0]?.businessCommercialName || "Restaurant non enregistré"}
       </div>
       <div className=" text-accent-foreground flex flex-col items-center">
         <h1 className="text-5xl text-brand-dark">UniTable</h1>

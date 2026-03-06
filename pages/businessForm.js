@@ -16,15 +16,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
-  useFormField,
-  Form,
-  FormItem,
-  FormLabel,
-  FormControl,
-  FormDescription,
-  FormMessage,
-  FormField,
-} from "@/components/ui/form";
+  Field,
+  FieldContent,
+  FieldDescription,
+  FieldLabel,
+  FieldTitle,
+  FieldError,
+} from "@/components/ui/field";
 import { Label } from "@/components/ui/label";
 import { Toaster } from "sonner";
 import { toast } from "sonner";
@@ -41,7 +39,7 @@ export default function BusinessForm() {
   const [streetName, setStreetName] = useState("");
   const [zipCode, setZipCode] = useState("");
   const [city, setCity] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("06123456789");
   const [error, setError] = useState({});
   const [logo, setLogo] = useState(null);
   const dispatch = useDispatch();
@@ -114,6 +112,29 @@ export default function BusinessForm() {
       }));
     } else {
       setError((prev) => ({ ...prev, phoneNumber: null }));
+    }
+  };
+
+  const validationBusinessName = (value) => {
+    if (value === "" || !value) {
+      setError((prev) => ({
+        ...prev,
+        businessName: "Merci de remplir le nom de votre société",
+      }));
+    } else {
+      setError((prev) => ({ ...prev, businessName: null }));
+    }
+  };
+
+  const validationBusinessCommercialName = (value) => {
+    if (value === "" || !value) {
+      setError((prev) => ({
+        ...prev,
+        businessCommercialName:
+          "Merci de remplir le nom de votre établissement",
+      }));
+    } else {
+      setError((prev) => ({ ...prev, businessCommercialName: null }));
     }
   };
 
@@ -288,7 +309,9 @@ export default function BusinessForm() {
         >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="flex flex-col gap-2">
-              <Label>SIRET</Label>
+              <Label>
+                SIRET<span className="text-destructive">*</span>
+              </Label>
               <Input
                 className="mt-1"
                 placeholder="Numéro SIRET"
@@ -300,13 +323,13 @@ export default function BusinessForm() {
                 required
               />
 
-              {error.siret && (
-                <p className="text-destructive text-xs mt-1">{error.siret}</p>
-              )}
+              {error.siret && <FieldError>{error.siret}</FieldError>}
             </div>
 
             <div className="flex flex-col gap-2">
-              <Label>Nom de la société</Label>
+              <Label>
+                Nom de la société<span className="text-destructive">*</span>
+              </Label>
               <Input
                 className="mt-1"
                 required
@@ -314,10 +337,16 @@ export default function BusinessForm() {
                 onChange={(e) => setBusinessName(e.target.value)}
                 value={businessName}
               />
+              {error.businessName && (
+                <FieldError>{error.businessName}</FieldError>
+              )}
             </div>
 
             <div className="flex flex-col gap-2">
-              <Label>Nom de l'établissement</Label>
+              <Label>
+                Nom de l'établissement
+                <span className="text-destructive">*</span>
+              </Label>
               <Input
                 className="mt-1"
                 required
@@ -325,6 +354,9 @@ export default function BusinessForm() {
                 onChange={(e) => setBusinessCommercialName(e.target.value)}
                 value={businessCommercialName}
               />
+              {error.businessCommercialName && (
+                <FieldError>{error.businessCommercialName}</FieldError>
+              )}
             </div>
             <div className="flex flex-col gap-2">
               <Label>Catégorie</Label>
@@ -391,9 +423,7 @@ export default function BusinessForm() {
                 onBlur={(e) => validationZipCode(e.target.value)}
                 value={zipCode}
               />
-              {error.zipCode && (
-                <p className="text-destructive text-xs mt-1">{error.zipCode}</p>
-              )}
+              {error.zipCode && <FieldError>{error.zipCode}</FieldError>}
             </div>
             <div className="col-span-1">
               <Label>Ville</Label>
@@ -404,7 +434,9 @@ export default function BusinessForm() {
               />
             </div>
             <div className="col-span-2">
-              <Label>Numéro de téléphone</Label>
+              <Label>
+                Numéro de téléphone<span className="text-destructive">*</span>
+              </Label>
               <Input
                 required
                 inputMode="numeric"
@@ -414,9 +446,7 @@ export default function BusinessForm() {
                 value={phoneNumber}
               />
               {error.phoneNumber && (
-                <p className="text-destructive text-xs mt-1">
-                  {error.phoneNumber}
-                </p>
+                <FieldError>{error.phoneNumber}</FieldError>
               )}
             </div>
           </div>
