@@ -25,7 +25,7 @@ export function LoginForm({ className, ...props }) {
     e.preventDefault();
 
     if (password.length > 1 && email.length > 0) {
-      fetch(`${process.env.URL_BACKEND}/users/signin`, {
+      fetch(`http://localhost:3000/users/signin`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

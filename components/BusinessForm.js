@@ -27,6 +27,8 @@ import {
 } from "@/components/ui/form";
 import { Label } from "@/components/ui/label";
 import { Toaster } from "sonner";
+
+const API_BASE = process.env.NEXT_PUBLIC_URL_BACKEND || "http://localhost:3000";
 import { toast } from "sonner";
 
 export default function BusinessForm() {
