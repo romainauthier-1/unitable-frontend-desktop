@@ -67,7 +67,9 @@ function App({ Component, pageProps }) {
       <Provider store={store}>
         <PersistGate persistor={persistor}>
           <Head>
-            <title>UniTable Admin</title>
+            <title>
+              UniTable Admin | {pageProps.title ? pageProps.title : "Bienvenue"}
+            </title>
           </Head>
           <AppLayout Component={Component} pageProps={pageProps} />
         </PersistGate>
