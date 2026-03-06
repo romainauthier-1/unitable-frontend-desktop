@@ -21,6 +21,8 @@ import { useRouter } from "next/router";
 import { toast } from "sonner";
 import { Toaster } from "sonner";
 
+const API_BASE = process.env.NEXT_PUBLIC_URL_BACKEND || "http://localhost:3000";
+
 export default function SignUpForm(props) {
   const dispatch = useDispatch();
   const router = useRouter();

@@ -1,7 +1,7 @@
-import Services from "../components/Services";
+import Dashboard from "../components/ui/dashboard";
 
-function ServicesPage() {
-  return <Services />;
+function DashboardPage() {
+  return <Dashboard />;
 }
 
-export default ServicesPage;
+export default DashboardPage;
