@@ -13,6 +13,8 @@ import { Button } from "@/components/ui/button";
 import { Toaster } from "sonner";
 import { toast } from "sonner";
 import { useRouter } from "next/router";
+import HeaderAdminSignUp from "@/components/HeaderAdminSignUp";
+const uid2 = require("uid2");
 
 export default function Services() {
   const business = useSelector((state) => state.business.value);
@@ -23,7 +25,30 @@ export default function Services() {
 
   // Ajout de l'id du restaurant aux services par défaut du reducer services
   useEffect(() => {
-    dispatch(updateIdRestaurant(business[0]?.id));
+    console.log(
+      "Equipes dans le store au chargement: ",
+      business[0]?.referenceTeams,
+    );
+    const serviceDejDefault = {
+      id: uid2(10),
+      name: "Déjeuner",
+      startTime: 720,
+      endTime: 840,
+      dayOfWeek: ["mercredi", "jeudi", "vendredi", "samedi", "dimanche"],
+      restaurant: business[0]?.id,
+      teams: [],
+    };
+    const serviceDinerDefault = {
+      id: uid2(10),
+      name: "Dîner",
+      startTime: 1140,
+      endTime: 1260,
+      dayOfWeek: ["mercredi", "jeudi", "vendredi", "samedi"],
+      restaurant: business[0]?.id,
+      teams: [],
+    };
+    dispatch(addService(serviceDejDefault));
+    dispatch(addService(serviceDinerDefault));
   }, []);
 
   // Transformer l'heure (format 12:30) en 'minutes depuis minuit' pour l'envoyer à la BDD
@@ -42,7 +67,7 @@ export default function Services() {
   };
 
   const serviceCards = services.map((service, i) => {
-    console.log("Service :", service);
+    // console.log("Service :", service);
     return (
       <ServiceCard
         key={i}
@@ -63,62 +88,58 @@ export default function Services() {
   // Ajout des services au reducer services
   const handleNewService = () => {
     const newService = {
-      id: services.length + 1,
+      id: uid2(10),
       name: "Nouveau service",
       startTime: 720,
       endTime: 900,
       dayOfWeek: [],
       restaurant: business[0]?.id,
-      equipes: [],
+      teams: [],
     };
     dispatch(addService(newService));
   };
 
-  // Suppression des services du reducer services
-  const handleDeleteService = (id) => {
-    dispatch(deleteService(id));
-  };
-
   // Envoi des services à la BDD
-  const handleValidation = async (services) => {
-    // On extrait l'id du reducer avant d'envoyer en BDD
-    for (const service of services) {
-      const { id, ...servicesWithoutId } = service;
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_URL_BACKEND}/services`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(servicesWithoutId),
-        },
-      );
+  // const handleValidation = async (services) => {
+  //   // On extrait l'id du reducer avant d'envoyer en BDD
+  //   for (const service of services) {
+  //     const { id, ...servicesWithoutId } = service;
+  //     const response = await fetch(
+  //       `${process.env.NEXT_PUBLIC_URL_BACKEND}/services`,
+  //       {
+  //         method: "POST",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //         body: JSON.stringify(servicesWithoutId),
+  //       },
+  //     );
 
-      const data = await response.json();
-      if (data.result) {
-        toast.success(data.message);
-        // On attend 2 secondes avant la redirection
-        setTimeout(() => {
-          router.push("/templatePlanning");
-        }, 2000);
-      } else {
-        toast.error(data.message);
-        return;
-      }
-    }
+  //     const data = await response.json();
+  //     if (data.result) {
+  //       toast.success(data.message);
+  //       // On attend 2 secondes avant la redirection
+  //       setTimeout(() => {
+  //         router.push("/templatePlanning");
+  //       }, 2000);
+  //     } else {
+  //       toast.error(data.message);
+  //       return;
+  //     }
+  //   }
+  // };
+
+  // Les données sont enregistrées au fur et à mesure dans le store, on passe à la page suivante
+  const handleValidation = () => {
+    toast.success("Services enregistrés");
+    setTimeout(() => {
+      router.push("templatePlanning");
+    }, 1000);
   };
 
   return (
-    <div className="min-h-screen bg-background flex rounded-lg flex-col items-center  p-4">
-      <div className=" rounded-lg bg-accent shadow-lg flex flex-row w-full justify-between h-28 items-center p-6">
-        <div className=" text-accent-foreground">
-          {business[0]?.businessCommercialName ||
-            "PAS DE RESTAURANT DANS LE STORE"}
-        </div>
-        <div className=" text-accent-foreground">{user?.name}</div>
-      </div>
-      <Toaster richColors position="top-right" />
+    <div className="min-h-screen bg-white flex rounded-lg flex-col items-center  p-4">
+      <HeaderAdminSignUp />
       <div className="flex flex-row flex-wrap w-full justify-center flex-1 items-center">
         {serviceCards}
       </div>

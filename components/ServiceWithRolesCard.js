@@ -7,7 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from "./ui/card";
-import { Clock, Trash2, PlusCircle, Plus } from "lucide-react";
+import { Clock, Trash2, PlusCircle, MinusCircle } from "lucide-react";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Button } from "./ui/button";
@@ -44,6 +44,7 @@ import {
 import { Toaster } from "sonner";
 import { toast } from "sonner";
 import { useDispatch, useSelector } from "react-redux";
+import { deleteTeamFromService } from "@/reducers/services";
 
 export default function ServiceWithRolesCard({ service }) {
   const dispatch = useDispatch();
@@ -86,8 +87,8 @@ export default function ServiceWithRolesCard({ service }) {
   );
 
   const teamsToDisplay =
-    // service.equipes.length > 1 &&
-    service.equipes?.map((team) => {
+    // service.teams.length > 1 &&
+    service.teams?.map((team) => {
       const roleDropdown = team.roles?.map((role) => (
         <DropdownMenuItem key={role.name}>{role.name}</DropdownMenuItem>
       ));
@@ -95,7 +96,13 @@ export default function ServiceWithRolesCard({ service }) {
         <div key={team.teamName} className="p-1">
           <div className="flex flex-row justify-between">
             <p className="text-sm font-bold">{team.teamName}</p>
-            <DropdownMenu>
+            <MinusCircle
+              className="text-primary cursor-pointer"
+              size={16}
+              onClick={() => warnAndDeleteTeam(service.id)}
+            />
+
+            {/* <DropdownMenu>
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -117,7 +124,7 @@ export default function ServiceWithRolesCard({ service }) {
                 </DropdownMenuLabel>
                 {roleDropdown}
               </DropdownMenuContent>
-            </DropdownMenu>
+            </DropdownMenu> */}
           </div>
           {team.roles.map((role) => (
             <div
@@ -153,6 +160,16 @@ export default function ServiceWithRolesCard({ service }) {
       action: {
         label: "Confirmer la suppression",
         onClick: () => dispatch(deleteService(serviceId)),
+      },
+    });
+  };
+
+  const warnAndDeleteTeam = (serviceId) => {
+    toast.warning("Êtes-vous sûr de vouloir supprimer cette équipe ?", {
+      description: "Cette action supprimera l'équipe sur tous les services.",
+      action: {
+        label: "Confirmer la suppression",
+        onClick: () => dispatch(deleteTeamFromService(serviceId)),
       },
     });
   };

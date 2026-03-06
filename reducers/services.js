@@ -11,7 +11,7 @@ const initialState = {
 //   endTime: 980,
 //   dayOfWeek: ["lundi", "mardi"...],
 //   restaurant: id MongoDB,
-//   equipes: [
+//   teams: [
 //     {
 //       teamName: Cuisine,
 //       roles: [{ name: Chef de partie, need: 0 }],
@@ -52,13 +52,13 @@ export const serviceSlice = createSlice({
         return;
       }
 
-      serviceToUpdate.equipes.push({ teamName, roles });
+      serviceToUpdate.teams.push({ teamName, roles });
     },
     updateTeamName: (state, action) => {
       const { id, teamName } = action.payload;
       const serviceToUpdate = state.value.find((service) => service.id === id);
       if (serviceToUpdate) {
-        serviceToUpdate.equipes = serviceToUpdate.equipes.map((team) => {
+        serviceToUpdate.teams = serviceToUpdate.teams.map((team) => {
           if (team.teamName === action.payload.oldTeamName) {
             return { ...team, teamName };
           }
@@ -71,7 +71,7 @@ export const serviceSlice = createSlice({
       const serviceToUpdate = state.value.find((service) => service.id === id);
       if (serviceToUpdate) {
         // On cherche l'équipe concernée
-        serviceToUpdate.equipes = serviceToUpdate.equipes.map((team) => {
+        serviceToUpdate.teams = serviceToUpdate.teams.map((team) => {
           if (team.teamName === teamName) {
             // On cherche le rôle concerné dans l'équipe
             team.roles = team.roles.map((role) => {
@@ -94,7 +94,7 @@ export const serviceSlice = createSlice({
       const serviceToUpdate = state.value.find((service) => service.id === id);
       if (serviceToUpdate) {
         // On cherche l'équipe concernée
-        serviceToUpdate.equipes = serviceToUpdate.equipes.map((team) => {
+        serviceToUpdate.teams = serviceToUpdate.teams.map((team) => {
           if (team.teamName === teamName) {
             // On cherche le rôle concerné dans l'équipe
             team.roles = team.roles.map((role) => {
@@ -111,6 +111,11 @@ export const serviceSlice = createSlice({
           return team;
         });
       }
+    },
+    deleteTeamFromService: (state, action) => {
+      state.value = state.value.filter(
+        (service) => service.id !== action.payload,
+      );
     },
     addService: (state, action) => {
       state.value.push(action.payload);
@@ -132,5 +137,6 @@ export const {
   updateRoleName,
   updateRoleNeed,
   addTeamToService,
+  deleteTeamFromService,
 } = serviceSlice.actions;
 export default serviceSlice.reducer;

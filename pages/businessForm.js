@@ -6,6 +6,7 @@ import { updateIdRestaurant } from "@/reducers/services";
 import { addName } from "@/reducers/users";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Store, User } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -15,18 +16,17 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
-  useFormField,
-  Form,
-  FormItem,
-  FormLabel,
-  FormControl,
-  FormDescription,
-  FormMessage,
-  FormField,
-} from "@/components/ui/form";
+  Field,
+  FieldContent,
+  FieldDescription,
+  FieldLabel,
+  FieldTitle,
+  FieldError,
+} from "@/components/ui/field";
 import { Label } from "@/components/ui/label";
 import { Toaster } from "sonner";
 import { toast } from "sonner";
+import HeaderAdminSignUp from "@/components/HeaderAdminSignUp";
 
 export default function BusinessForm() {
   const router = useRouter();
@@ -39,7 +39,7 @@ export default function BusinessForm() {
   const [streetName, setStreetName] = useState("");
   const [zipCode, setZipCode] = useState("");
   const [city, setCity] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("06123456789");
   const [error, setError] = useState({});
   const [logo, setLogo] = useState(null);
   const dispatch = useDispatch();
@@ -57,7 +57,9 @@ export default function BusinessForm() {
         toast.error(data.message);
       }
 
-      dispatch(addName(data.user.firstName));
+      if (data.user.firstName) {
+        dispatch(addName(data.user.firstName));
+      }
     } catch (err) {
       toast.error(err.message);
     }
@@ -113,6 +115,29 @@ export default function BusinessForm() {
     }
   };
 
+  const validationBusinessName = (value) => {
+    if (value === "" || !value) {
+      setError((prev) => ({
+        ...prev,
+        businessName: "Merci de remplir le nom de votre société",
+      }));
+    } else {
+      setError((prev) => ({ ...prev, businessName: null }));
+    }
+  };
+
+  const validationBusinessCommercialName = (value) => {
+    if (value === "" || !value) {
+      setError((prev) => ({
+        ...prev,
+        businessCommercialName:
+          "Merci de remplir le nom de votre établissement",
+      }));
+    } else {
+      setError((prev) => ({ ...prev, businessCommercialName: null }));
+    }
+  };
+
   const validationZipCode = (value) => {
     const pattern = /^[0-9]{5}$/;
     if (!pattern.test(value)) {
@@ -142,7 +167,7 @@ export default function BusinessForm() {
       setBusinessCommercialName(
         restaurant.businessCommercialName
           ? restaurant.businessCommercialName
-          : "",
+          : restaurant.businessName,
       );
       setStreetNumber(
         restaurant.businessAddress.number
@@ -258,18 +283,9 @@ export default function BusinessForm() {
 
   return (
     <div className="min-h-screen bg-background flex rounded-lg flex-col items-center  p-4">
-      <Toaster richColors position="top-right" />
-      <div className=" rounded-lg bg-accent shadow-lg flex flex-row w-full justify-between h-28 items-center p-6">
-        <div className=" text-accent-foreground">
-          {business[0]?.businessCommercialName ||
-            "PAS DE RESTAURANT DANS LE STORE"}
-        </div>
-        <div className=" text-accent-foreground">
-          {user?.name || "AUCUN UTILISATEUR CONNECTÉ"}
-        </div>
-      </div>
-      <div className="w-full m-10 max-w-2xl bg-background p-8 rounded-xl shadow-lg border border-primary">
-        <h1 className="text-2xl font-bold text-slate-800 mb-6 text-center">
+      <HeaderAdminSignUp />
+      <div className="w-full m-10 max-w-2xl bg-background p-8 rounded-xl shadow-xl border border-salte-200">
+        <h1 className="text-xl font-bold text-slate-800 mb-6 text-center">
           Renseignez les informations de votre établissement
         </h1>
         <form
@@ -293,7 +309,9 @@ export default function BusinessForm() {
         >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="flex flex-col gap-2">
-              <Label>SIRET</Label>
+              <Label>
+                SIRET<span className="text-destructive">*</span>
+              </Label>
               <Input
                 className="mt-1"
                 placeholder="Numéro SIRET"
@@ -305,13 +323,13 @@ export default function BusinessForm() {
                 required
               />
 
-              {error.siret && (
-                <p className="text-destructive text-xs mt-1">{error.siret}</p>
-              )}
+              {error.siret && <FieldError>{error.siret}</FieldError>}
             </div>
 
             <div className="flex flex-col gap-2">
-              <Label>Nom de la société</Label>
+              <Label>
+                Nom de la société<span className="text-destructive">*</span>
+              </Label>
               <Input
                 className="mt-1"
                 required
@@ -319,10 +337,16 @@ export default function BusinessForm() {
                 onChange={(e) => setBusinessName(e.target.value)}
                 value={businessName}
               />
+              {error.businessName && (
+                <FieldError>{error.businessName}</FieldError>
+              )}
             </div>
 
             <div className="flex flex-col gap-2">
-              <Label>Nom de l'établissement</Label>
+              <Label>
+                Nom de l'établissement
+                <span className="text-destructive">*</span>
+              </Label>
               <Input
                 className="mt-1"
                 required
@@ -330,6 +354,9 @@ export default function BusinessForm() {
                 onChange={(e) => setBusinessCommercialName(e.target.value)}
                 value={businessCommercialName}
               />
+              {error.businessCommercialName && (
+                <FieldError>{error.businessCommercialName}</FieldError>
+              )}
             </div>
             <div className="flex flex-col gap-2">
               <Label>Catégorie</Label>
@@ -396,9 +423,7 @@ export default function BusinessForm() {
                 onBlur={(e) => validationZipCode(e.target.value)}
                 value={zipCode}
               />
-              {error.zipCode && (
-                <p className="text-destructive text-xs mt-1">{error.zipCode}</p>
-              )}
+              {error.zipCode && <FieldError>{error.zipCode}</FieldError>}
             </div>
             <div className="col-span-1">
               <Label>Ville</Label>
@@ -409,7 +434,9 @@ export default function BusinessForm() {
               />
             </div>
             <div className="col-span-2">
-              <Label>Numéro de téléphone</Label>
+              <Label>
+                Numéro de téléphone<span className="text-destructive">*</span>
+              </Label>
               <Input
                 required
                 inputMode="numeric"
@@ -419,9 +446,7 @@ export default function BusinessForm() {
                 value={phoneNumber}
               />
               {error.phoneNumber && (
-                <p className="text-destructive text-xs mt-1">
-                  {error.phoneNumber}
-                </p>
+                <FieldError>{error.phoneNumber}</FieldError>
               )}
             </div>
           </div>
@@ -433,12 +458,20 @@ export default function BusinessForm() {
             accept="image/*"
             onChange={(e) => setLogo(e.target.files[0])}
             ></input> */}
-          <div className="flex w-full flex-row items-center justify-between gap-4 pt-4 border-t ">
-            <Button type="button" variant="ghost" onClick={emptyForm}>
-              Vider tous les champs
+          <div className="flex w-full flex-row items-center justify-between gap-4 pt-4 border-t border-t-slate-500 ">
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={emptyForm}
+              className="text-slate-400 transition-colors hover:text-destructive"
+            >
+              Réinitialiser
             </Button>
-            <Button type="submit" className="px-8">
-              Valider
+            <Button
+              type="submit"
+              className="px-8  bg-brand-dark shadow-md transition-all active:scale-95 hover:bg-accent hover:text-accent-foreground"
+            >
+              Enregistrer
             </Button>
           </div>
         </form>
