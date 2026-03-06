@@ -29,12 +29,12 @@ export function ServiceCard({
   const services = useSelector((state) => state.services.value);
   return (
     <>
-      <Card className="w-1/3 h-1/2 border border-primary m-6">
+      <Card className="w-1/3 h-1/2 border border-slate-300 m-6 ">
         <CardHeader>
           <CardTitle className="flex flex-row items-center justify-between">
             <Input
               type="text"
-              className="w-3/4"
+              className="w-3/4 border-none bg-slate-50"
               placeholder="Donner un nom au service"
               value={name}
               onChange={(e) => onUpdate({ name: e.target.value })}
@@ -47,11 +47,11 @@ export function ServiceCard({
           </CardTitle>
         </CardHeader>
         <div className="flex flex-row justify-evenly items-center">
-          <div className="flex flex-col justify-evenly items-center">
+          <div className="flex flex-col justify-evenly items-center bg-slate-50 rounded-lg">
             <CardContent className="flex flex-col justify-evenly items-center">
               <Label className="align-middle text-center p-3">Début</Label>
               <Input
-                className="cursor-pointer"
+                className="cursor-pointer border-none"
                 type="time"
                 value={minutesToTime(startTime || 0)}
                 onChange={(e) =>
@@ -63,7 +63,7 @@ export function ServiceCard({
             <CardContent className="flex flex-col justify-evenly items-center">
               <Label className="align-middle text-center p-3">Fin</Label>
               <Input
-                className="cursor-pointer"
+                className="cursor-pointer border-none"
                 type="time"
                 value={minutesToTime(endTime || 0)}
                 onChange={(e) =>
@@ -81,25 +81,25 @@ export function ServiceCard({
               onValueChange={(value) => onUpdate({ dayOfWeek: value })}
             >
               <ToggleGroupItem className="text-sm" value="lundi">
-                Lundi
+                Lun
               </ToggleGroupItem>
               <ToggleGroupItem className="text-sm" value="mardi">
-                Mardi
+                Mar
               </ToggleGroupItem>
               <ToggleGroupItem className="text-sm" value="mercredi">
-                Mercredi
+                Mer
               </ToggleGroupItem>
               <ToggleGroupItem className="text-sm" value="jeudi">
-                Jeudi
+                Jeu
               </ToggleGroupItem>
               <ToggleGroupItem className="text-sm" value="vendredi">
-                Vendredi
+                Ven
               </ToggleGroupItem>
               <ToggleGroupItem className="text-sm" value="samedi">
-                Samedi
+                Sam
               </ToggleGroupItem>
               <ToggleGroupItem className="text-sm" value="dimanche">
-                Dimanche
+                Dim
               </ToggleGroupItem>
             </ToggleGroup>
           </CardContent>

@@ -25,6 +25,7 @@ import {
   convertMinutesToTime,
   convertTimeToMinutes,
 } from "@/modules/timeConversion";
+import HeaderAdminSignUp from "@/components/HeaderAdminSignUp";
 
 export default function templatePlanning() {
   const business = useSelector((state) => state.business.value);
@@ -101,15 +102,7 @@ export default function templatePlanning() {
   };
   return (
     <div className="flex flex-col items-center justify-center min-h-screen">
-      <div className="m-5 rounded-lg bg-accent shadow-lg flex flex-row w-full justify-between h-28 items-center p-6">
-        <div className=" text-accent-foreground">
-          {business[0]?.businessCommercialName ||
-            "PAS DE RESTAURANT DANS LE STORE"}
-        </div>
-        <div className=" text-accent-foreground">
-          {user?.name || "AUCUN UTILISATEUR CONNECTÉ"}
-        </div>
-      </div>
+      <HeaderAdminSignUp />
       <div className="flex flex-1">
         <div className="mx-auto max-w-10xl grid grid-cols-7 w-full h-full gap-4 ">
           {days.map((day) => (
@@ -180,7 +173,7 @@ export default function templatePlanning() {
       <div className="justify-between w-full flex p-4">
         <Button
           className="ml-15 cursor-pointer"
-          onClick={() => router.push("/createTeam")}
+          onClick={() => router.push("/services")}
         >
           PRÉCÉDENT
         </Button>

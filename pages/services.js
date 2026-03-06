@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Toaster } from "sonner";
 import { toast } from "sonner";
 import { useRouter } from "next/router";
+import HeaderAdminSignUp from "@/components/HeaderAdminSignUp";
 
 export default function Services() {
   const business = useSelector((state) => state.business.value);
@@ -23,7 +24,25 @@ export default function Services() {
 
   // Ajout de l'id du restaurant aux services par défaut du reducer services
   useEffect(() => {
-    dispatch(updateIdRestaurant(business[0]?.id));
+    const serviceDejDefault = {
+      id: Date.now(),
+      name: "Déjeuner",
+      startTime: 720,
+      endTime: 840,
+      dayOfWeek: ["mercredi", "jeudi", "vendredi", "samedi", "dimanche"],
+      restaurant: business[0]?.id,
+      equipes: [],
+    };
+    const serviceDinerDefault = {
+      id: Date.now(),
+      name: "Dîner",
+      startTime: 1140,
+      endTime: 1260,
+      dayOfWeek: ["mercredi", "jeudi", "vendredi", "samedi"],
+      restaurant: business[0]?.id,
+      equipes: [],
+    };
+    dispatch(addService(serviceDejDefault, serviceDinerDefault));
   }, []);
 
   // Transformer l'heure (format 12:30) en 'minutes depuis minuit' pour l'envoyer à la BDD
@@ -110,15 +129,8 @@ export default function Services() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex rounded-lg flex-col items-center  p-4">
-      <div className=" rounded-lg bg-accent shadow-lg flex flex-row w-full justify-between h-28 items-center p-6">
-        <div className=" text-accent-foreground">
-          {business[0]?.businessCommercialName ||
-            "PAS DE RESTAURANT DANS LE STORE"}
-        </div>
-        <div className=" text-accent-foreground">{user?.name}</div>
-      </div>
-      <Toaster richColors position="top-right" />
+    <div className="min-h-screen bg-white flex rounded-lg flex-col items-center  p-4">
+      <HeaderAdminSignUp />
       <div className="flex flex-row flex-wrap w-full justify-center flex-1 items-center">
         {serviceCards}
       </div>

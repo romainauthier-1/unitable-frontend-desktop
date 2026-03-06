@@ -6,6 +6,7 @@ import { updateIdRestaurant } from "@/reducers/services";
 import { addName } from "@/reducers/users";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Store, User } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -27,6 +28,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { Toaster } from "sonner";
 import { toast } from "sonner";
+import HeaderAdminSignUp from "@/components/HeaderAdminSignUp";
 
 export default function BusinessForm() {
   const router = useRouter();
@@ -57,7 +59,9 @@ export default function BusinessForm() {
         toast.error(data.message);
       }
 
-      dispatch(addName(data.user.firstName));
+      if (data.user.firstName) {
+        dispatch(addName(data.user.firstName));
+      }
     } catch (err) {
       toast.error(err.message);
     }
@@ -142,7 +146,7 @@ export default function BusinessForm() {
       setBusinessCommercialName(
         restaurant.businessCommercialName
           ? restaurant.businessCommercialName
-          : "",
+          : restaurant.businessName,
       );
       setStreetNumber(
         restaurant.businessAddress.number
@@ -258,18 +262,9 @@ export default function BusinessForm() {
 
   return (
     <div className="min-h-screen bg-background flex rounded-lg flex-col items-center  p-4">
-      <Toaster richColors position="top-right" />
-      <div className=" rounded-lg bg-accent shadow-lg flex flex-row w-full justify-between h-28 items-center p-6">
-        <div className=" text-accent-foreground">
-          {business[0]?.businessCommercialName ||
-            "PAS DE RESTAURANT DANS LE STORE"}
-        </div>
-        <div className=" text-accent-foreground">
-          {user?.name || "AUCUN UTILISATEUR CONNECTÉ"}
-        </div>
-      </div>
-      <div className="w-full m-10 max-w-2xl bg-background p-8 rounded-xl shadow-lg border border-primary">
-        <h1 className="text-2xl font-bold text-slate-800 mb-6 text-center">
+      <HeaderAdminSignUp />
+      <div className="w-full m-10 max-w-2xl bg-background p-8 rounded-xl shadow-xl border border-salte-200">
+        <h1 className="text-xl font-bold text-slate-800 mb-6 text-center">
           Renseignez les informations de votre établissement
         </h1>
         <form
@@ -433,12 +428,20 @@ export default function BusinessForm() {
             accept="image/*"
             onChange={(e) => setLogo(e.target.files[0])}
             ></input> */}
-          <div className="flex w-full flex-row items-center justify-between gap-4 pt-4 border-t ">
-            <Button type="button" variant="ghost" onClick={emptyForm}>
-              Vider tous les champs
+          <div className="flex w-full flex-row items-center justify-between gap-4 pt-4 border-t border-t-slate-500 ">
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={emptyForm}
+              className="text-slate-400 transition-colors hover:text-destructive"
+            >
+              Réinitialiser
             </Button>
-            <Button type="submit" className="px-8">
-              Valider
+            <Button
+              type="submit"
+              className="px-8  bg-brand-dark shadow-md transition-all active:scale-95 hover:bg-accent hover:text-accent-foreground"
+            >
+              Enregistrer
             </Button>
           </div>
         </form>
