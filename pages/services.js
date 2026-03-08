@@ -153,13 +153,6 @@ export default function Services() {
         Ajouter un service
       </Button>
       <Button
-        onClick={() =>
-          dispatch(toggleInstructions(instructionStatus[router.pathname]))
-        }
-      >
-        Voir instructions
-      </Button>
-      <Button
         variant="outline"
         className="mt-6"
         onClick={() => handleValidation(services)}

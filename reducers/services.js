@@ -113,9 +113,13 @@ export const serviceSlice = createSlice({
       }
     },
     deleteTeamFromService: (state, action) => {
-      state.value = state.value.filter(
-        (service) => service.id !== action.payload,
-      );
+      const { id, teamName } = action.payload;
+      const serviceToUpdate = state.value.find((service) => service.id === id);
+      if (serviceToUpdate) {
+        serviceToUpdate.teams = serviceToUpdate.teams.filter(
+          (team) => team.teamName !== teamName,
+        );
+      }
     },
     addService: (state, action) => {
       state.value.push(action.payload);
