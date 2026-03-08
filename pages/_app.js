@@ -6,6 +6,7 @@ import business from "../reducers/business";
 import services from "../reducers/services";
 import employee from "../reducers/employee";
 import user from "../reducers/users";
+import teams from "../reducers/teams";
 import { AppSidebar } from "@/components/ui/app-sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 // Imports redux-persist
@@ -14,7 +15,7 @@ import { PersistGate } from "redux-persist/integration/react";
 import storage from "redux-persist/lib/storage";
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 
-const reducers = combineReducers({ business, services, user, employee });
+const reducers = combineReducers({ business, services, user, employee, teams });
 
 const persistConfig = { key: "UniTable MVP", storage };
 

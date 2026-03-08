@@ -118,7 +118,16 @@ export const serviceSlice = createSlice({
       );
     },
     addService: (state, action) => {
-      state.value.push(action.payload);
+      // Vérifier si le service n'existe pas déjà dans le store
+      const serviceExists = state.value.find(
+        (service) => service.id === action.payload.id,
+      );
+      if (!serviceExists) {
+        state.value.push(action.payload);
+      }
+    },
+    setServices: (state, action) => {
+      state.value = action.payload;
     },
     deleteService: (state, action) => {
       state.value = state.value.filter(
@@ -130,6 +139,7 @@ export const serviceSlice = createSlice({
 
 export const {
   addService,
+  setServices,
   updateIdRestaurant,
   updateService,
   deleteService,

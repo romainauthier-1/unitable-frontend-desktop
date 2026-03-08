@@ -48,9 +48,7 @@ export default function BusinessForm() {
 
   const getUserName = async () => {
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_URL_BACKEND}/users/${user.email}`,
-      );
+      const response = await fetch(`http://localhost:3000/users/${user.email}`);
       const data = await response.json();
 
       if (!data.result) {
@@ -254,6 +252,16 @@ export default function BusinessForm() {
           id: data.id,
           referenceTeams: [],
         }),
+        // Ajout dans la bdd l'id du restaurant sur la route put users/organization avec email et organizationId dans le body pour faire le lien entre les deux
+        fetch(`${process.env.NEXT_PUBLIC_URL_BACKEND}/users/organization`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: user.email,
+            organizationId: data.id,
+          }),
+        }), 
+        
       );
 
       // Ajout de l'id du restaurant aux services par défaut du reducer services

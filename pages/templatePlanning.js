@@ -10,7 +10,6 @@ import { Toaster } from "sonner";
 import { toast } from "sonner";
 import ServiceWithRolesCard from "@/components/ServiceWithRolesCard";
 import { addService, deleteTeamFromService } from "@/reducers/services";
-import { addReferenceTeams } from "@/reducers/business";
 import {
   Dialog,
   DialogContent,
@@ -139,7 +138,7 @@ export default function templatePlanning() {
 
       toast.success("Semaine type enregistrée !");
       setTimeout(() => {
-        router.push("/login");
+        router.push("/dashboard");
       }, 1000);
     } catch (err) {
       console.log(err);
