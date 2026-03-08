@@ -3,5 +3,14 @@ import React from "react";
 import SignUpForm from "@/components/ui/signup-form";
 
 export default function SignupPage() {
-	return <SignUpForm />;
+  return <SignUpForm />;
+}
+
+export async function getStaticProps() {
+  return {
+    props: {
+      title: "Inscription",
+      description: "Créez votre compte pour accéder à l'application",
+    },
+  };
 }

@@ -597,3 +597,12 @@ export default function CreateEmployee() {
     </div>
   );
 }
+
+export async function getStaticProps() {
+  return {
+    props: {
+      title: "Création employé.es",
+      description: "Enregistrez les membres de votre équipe.",
+    },
+  };
+}

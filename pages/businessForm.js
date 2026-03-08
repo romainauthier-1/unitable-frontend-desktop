@@ -479,3 +479,13 @@ export default function BusinessForm() {
     </div>
   );
 }
+
+export async function getStaticProps() {
+  return {
+    props: {
+      title: "Enregistrement du restaurant",
+      description:
+        "Renseignez les informations de base de votre établissement.",
+    },
+  };
+}

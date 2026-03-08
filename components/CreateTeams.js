@@ -4,6 +4,8 @@ import { useRouter } from "next/router";
 import { Button } from "./ui/button";
 import TeamCard from "./TeamCard";
 import { addReferenceTeams } from "@/reducers/business";
+import { Toaster } from "sonner";
+import { toast } from "sonner";
 
 export default function CreateTeams() {
   const user = useSelector((state) => state.user.value);
@@ -55,8 +57,13 @@ export default function CreateTeams() {
   // 	{ value: "direction", label: "Direction" },
   // ];
 
-  const addTeam = () =>
-    setTeams((teams) => [{ name: "", roles: [] }, ...teams]);
+  const addTeam = () => {
+    if (teams.length < 20) {
+      setTeams((teams) => [{ name: "", roles: [] }, ...teams]);
+    } else {
+      toast.warning("Limite de 20 équipes atteintes");
+    }
+  };
 
   const removeTeam = (index) => setTeams(teams.filter((_, i) => i !== index));
 
@@ -113,6 +120,7 @@ export default function CreateTeams() {
 
   return (
     <div className="min-h-screen min-w-screen bg-background p-6">
+      <Toaster richColors />
       <div className="max-w-3xl mx-auto space-y-6">
         <h2 className="text-2xl font-semibold">Créer une équipe</h2>
         <p className="text-muted-foreground">

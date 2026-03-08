@@ -11,3 +11,12 @@ function Index() {
 }
 
 export default Index;
+
+export async function getStaticProps() {
+  return {
+    props: {
+      title: "Connexion",
+      description: "Connectez-vous pour accéder à l'application",
+    },
+  };
+}

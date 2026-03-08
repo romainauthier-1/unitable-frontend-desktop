@@ -1,7 +1,9 @@
 import { useSelector } from "react-redux";
-import { User, Store } from "lucide-react";
+import { User, Store, Info } from "lucide-react";
 import { Toaster } from "sonner";
 import { toast } from "sonner";
+import ActionButton from "@/components/ActionButton";
+import { toggleInstructions } from "@/reducers/instructions";
 
 export default function HeaderAdminSignUp() {
   const business = useSelector((state) => state.business.value);
@@ -21,6 +23,12 @@ export default function HeaderAdminSignUp() {
         <User className="p-1" size={40} />
         {user?.name || "AUCUN UTILISATEUR CONNECTÉ"}
       </div>
+      <ActionButton
+        action={toggleInstructions}
+        label="Infos"
+        icon={Info}
+        variant="outline"
+      />
     </div>
   );
 }

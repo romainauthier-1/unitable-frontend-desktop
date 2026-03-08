@@ -14,21 +14,20 @@ import { Toaster } from "sonner";
 import { toast } from "sonner";
 import { useRouter } from "next/router";
 import HeaderAdminSignUp from "@/components/HeaderAdminSignUp";
+import { toggleInstructions } from "@/reducers/instructions";
 const uid2 = require("uid2");
 
 export default function Services() {
   const business = useSelector((state) => state.business.value);
   const services = useSelector((state) => state.services.value);
-  const user = useSelector((state) => state.user.value);
   const dispatch = useDispatch();
   const router = useRouter();
 
-  // Ajout de l'id du restaurant aux services par défaut du reducer services
   useEffect(() => {
-    console.log(
-      "Equipes dans le store au chargement: ",
-      business[0]?.referenceTeams,
-    );
+    // console.log(
+    //   "Equipes dans le store au chargement: ",
+    //   business[0]?.referenceTeams,
+    // );
     const serviceDejDefault = {
       id: uid2(10),
       name: "Déjeuner",
@@ -47,8 +46,10 @@ export default function Services() {
       restaurant: business[0]?.id,
       teams: [],
     };
-    dispatch(addService(serviceDejDefault));
-    dispatch(addService(serviceDinerDefault));
+    if (services.length === 0) {
+      dispatch(addService(serviceDejDefault));
+      dispatch(addService(serviceDinerDefault));
+    }
   }, []);
 
   // Transformer l'heure (format 12:30) en 'minutes depuis minuit' pour l'envoyer à la BDD
@@ -96,7 +97,11 @@ export default function Services() {
       restaurant: business[0]?.id,
       teams: [],
     };
-    dispatch(addService(newService));
+    if (services.length < 8) {
+      dispatch(addService(newService));
+    } else {
+      toast.warning("Limite de 8 services atteinte.");
+    }
   };
 
   // Envoi des services à la BDD
@@ -148,6 +153,13 @@ export default function Services() {
         Ajouter un service
       </Button>
       <Button
+        onClick={() =>
+          dispatch(toggleInstructions(instructionStatus[router.pathname]))
+        }
+      >
+        Voir instructions
+      </Button>
+      <Button
         variant="outline"
         className="mt-6"
         onClick={() => handleValidation(services)}
@@ -156,4 +168,14 @@ export default function Services() {
       </Button>
     </div>
   );
+}
+
+export async function getStaticProps() {
+  return {
+    props: {
+      title: "Services",
+      description:
+        "Déterminez vos différents services. Si vous avez un service spécifique (en horaire, besoin de personnel), créez un service à part entière.",
+    },
+  };
 }
