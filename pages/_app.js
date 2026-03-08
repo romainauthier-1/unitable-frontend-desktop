@@ -34,6 +34,11 @@ function AppLayout({ Component, pageProps }) {
     "/",
     "/login",
     "/signup",
+    "/businessForm",
+    "/createEmployee",
+    "/createTeams",
+    "/services",
+    "/templatePlanning",
     "/forgetPassword",
     "/sendEmailPassword",
   ];

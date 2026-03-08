@@ -57,6 +57,7 @@ export default function CreateEmployee() {
   const router = useRouter();
   const dispatch = useDispatch();
   const employees = useSelector((state) => state.employee.value.employees);
+  const business = useSelector((state) => state.business.value);
 
   const initialFormState = {
     firstName: "",
@@ -76,6 +77,7 @@ export default function CreateEmployee() {
     typeContract: "",
     hourVolumn: "",
     contact: "",
+    organization: business[0]?.id,
   };
 
   const [formData, setFormData] = useState(initialFormState);
@@ -205,7 +207,7 @@ export default function CreateEmployee() {
   };
 
   return (
-    <div>
+    <div className="min-h-screen min-w-screen bg-background flex rounded-lg justify-evenly flex-col items-center  p-4">
       {/* <div className="mt-6">
 				<h2 className="text-lg font-semibold mb-4">
 					Liste des employés
@@ -242,7 +244,9 @@ export default function CreateEmployee() {
 				)}
 			</div> */}
       <div className="mt-6">
-        <h2 className="text-lg font-semibold mb-4">Liste des employés</h2>
+        <h2 className="text-lg font-semibold mb-4 text-center">
+          Liste des employés
+        </h2>
 
         {employees.length === 0 ? (
           <p>Aucun employé créé.</p>

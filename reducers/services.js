@@ -101,7 +101,7 @@ export const serviceSlice = createSlice({
               // On met à jour le besoin du rôle ciblé
               if (role.name === roleName) {
                 // On return le rôle mis à jour
-                return { ...role, need };
+                return { ...role, need: Number(need) || 0 };
               }
               // On return le rôle s'il n'est pas modifié
               return role;

@@ -282,7 +282,7 @@ export default function BusinessForm() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex rounded-lg flex-col items-center  p-4">
+    <div className="min-h-screen min-w-screen bg-background flex rounded-lg flex-col items-center  p-4">
       <HeaderAdminSignUp />
       <div className="w-full m-10 max-w-2xl bg-background p-8 rounded-xl shadow-xl border border-salte-200">
         <h1 className="text-xl font-bold text-slate-800 mb-6 text-center">

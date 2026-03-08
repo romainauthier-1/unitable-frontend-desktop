@@ -111,10 +111,10 @@ export default function templatePlanning() {
     // );
     try {
       const promises = servicesToDB.map(async (service) => {
-        console.log("DEBUG SERVICE", JSON.stringify(service));
+        // console.log("DEBUG SERVICE", JSON.stringify(service));
         // On extrait l'id utilisé dans le store de chaque service
         const { id, ...serviceWithoutId } = service;
-        // console.log("Voici le service en traitement: ", service);
+        // console.log("Voici le service en traitement: ", serviceWithoutId);
         console.log("serviceWithoutId.teams", serviceWithoutId.teams);
 
         const response = await fetch(
@@ -148,7 +148,7 @@ export default function templatePlanning() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen">
+    <div className="flex flex-col items-center justify-center min-h-screen min-w-screen">
       <HeaderAdminSignUp />
       <div className="flex flex-1">
         <div className="mx-auto max-w-10xl grid grid-cols-7 w-full h-full gap-4 ">
