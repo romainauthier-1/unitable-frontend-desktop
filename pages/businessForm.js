@@ -39,7 +39,7 @@ export default function BusinessForm() {
   const [streetName, setStreetName] = useState("");
   const [zipCode, setZipCode] = useState("");
   const [city, setCity] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("06123456789");
+  const [phoneNumber, setPhoneNumber] = useState("0612345678");
   const [error, setError] = useState({});
   const [logo, setLogo] = useState(null);
   const dispatch = useDispatch();
@@ -214,7 +214,7 @@ export default function BusinessForm() {
     zipCode,
     city,
     phoneNumber,
-    owner, // attente du token
+    owner,
     category,
   ) => {
     e.preventDefault();
@@ -235,7 +235,7 @@ export default function BusinessForm() {
             city: city,
           },
           phoneNumber: phoneNumber,
-          owner: user.token,
+          token: owner,
           category: category,
         }),
       },
@@ -253,6 +253,15 @@ export default function BusinessForm() {
           owner: user.name,
           id: data.id,
           referenceTeams: [],
+        }),
+        // Ajout dans la bdd l'id du restaurant sur la route put users/organization avec email et organizationId dans le body pour faire le lien entre les deux
+        fetch(`${process.env.NEXT_PUBLIC_URL_BACKEND}/users/organization`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: user.email,
+            organizationId: data.id,
+          }),
         }),
       );
 
@@ -301,7 +310,7 @@ export default function BusinessForm() {
               zipCode,
               city,
               phoneNumber,
-              user.email,
+              user.token,
               category,
             )
           }

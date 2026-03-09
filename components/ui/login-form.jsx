@@ -28,7 +28,11 @@ export function LoginForm({ className, ...props }) {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+<<<<<<< HEAD
 
+=======
+  const [businessId, setBusinessId] = useState("");
+>>>>>>> 447a527 (Structure base planning Admin)
   const handleConnection = (e) => {
     e.preventDefault();
 
@@ -43,8 +47,56 @@ export function LoginForm({ className, ...props }) {
       })
         .then((response) => response.json())
         .then((data) => {
+<<<<<<< HEAD
           if (data.result) {
             dispatch(login({ email, token: data.token }));
+=======
+          console.log("Response from backend:", data);
+          if (data.result) {
+            // recuperer organisation de l'utilisateur et l'ajouter au store
+            // fetch user search by email to get organization id, then fetch organization by id to get organization details and add to store
+            fetch(`http://localhost:3000/users/search/by/${email}`)
+              .then((response) => response.json())
+              .then((userData) => {
+                console.log("data user search by email", userData);
+                if (userData.result && userData.user?.organization) {
+                  const organizationId = userData.user.organization;
+                  const name =
+                    userData.user.firstName + " " + userData.user.lastName;
+                  dispatch(login({ email, token: data.token, name: name }));
+                  fetch(
+                    `http://localhost:3000/organizations/search/by/${organizationId}`,
+                  )
+                    .then((response) => response.json())
+                    .then((organizationData) => {
+                      console.log("data business ajoute", organizationData);
+                      if (
+                        organizationData.result &&
+                        organizationData.organization
+                      ) {
+                        const { businessCommercialName, owner, _id } =
+                          organizationData.organization;
+                        dispatch(
+                          addBusiness({
+                            businessCommercialName,
+                            owner,
+                            id: _id,
+                          }),
+                        );
+                      }
+                    });
+                }
+                if (!userData.result) {
+                  console.error(
+                    "Reponse invalide pour la recherche de l'utilisateur par email:",
+                    userData,
+                  );
+                  return;
+                }
+              });
+            console.log("businessId dans handleConnection", businessId);
+
+>>>>>>> 447a527 (Structure base planning Admin)
             setEmail("");
             setPassword("");
             router.push("/dashboard");

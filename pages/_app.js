@@ -7,6 +7,10 @@ import services from "../reducers/services";
 import employee from "../reducers/employee";
 import user from "../reducers/users";
 import instructions from "../reducers/instructions";
+<<<<<<< HEAD
+=======
+import teams from "../reducers/teams";
+>>>>>>> 447a527 (Structure base planning Admin)
 import { AppSidebar } from "@/components/ui/app-sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 // Imports redux-persist
@@ -34,6 +38,7 @@ const reducers = combineReducers({
   user,
   employee,
   instructions,
+  teams,
 });
 
 const persistConfig = { key: "UniTable MVP", storage };
