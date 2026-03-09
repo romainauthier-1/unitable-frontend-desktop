@@ -28,7 +28,6 @@ import {
 import { Label } from "@/components/ui/label";
 import { Toaster } from "sonner";
 
-const API_BASE = process.env.NEXT_PUBLIC_URL_BACKEND || "http://localhost:3000";
 import { toast } from "sonner";
 
 export default function BusinessForm() {
@@ -47,6 +46,7 @@ export default function BusinessForm() {
   const [logo, setLogo] = useState(null);
   const dispatch = useDispatch();
   const business = useSelector((state) => state.business.value);
+  const user = useSelector((state) => state.user.value);
 
   useEffect(() => {
     if (siret.length === 14) {
@@ -189,7 +189,7 @@ export default function BusinessForm() {
           city: city,
         },
         phoneNumber: phoneNumber,
-        // owner: "JOHN DOE", // attente du token pour récupérer l'owner
+        owner: owner,
         category: category,
       }),
     });
@@ -247,7 +247,7 @@ export default function BusinessForm() {
               zipCode,
               city,
               phoneNumber,
-              "JOHN DOE", // attente du token pour récupérer l'owner
+              user?.token,
               category,
             )
           }

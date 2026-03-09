@@ -51,8 +51,10 @@ export const serviceSlice = createSlice({
         console.log("Service introuvable pour l'id:", id);
         return;
       }
+      //teamName prend Team Name et le Nom du service pour éviter les doublons de nom d'équipe entre les services
+      const uniqueTeamName = `${teamName} - ${serviceToUpdate.name}`;
 
-      serviceToUpdate.teams.push({ teamName, roles });
+      serviceToUpdate.teams.push({ teamName: uniqueTeamName, roles });
     },
     updateTeamName: (state, action) => {
       const { id, teamName } = action.payload;
@@ -118,7 +120,16 @@ export const serviceSlice = createSlice({
       );
     },
     addService: (state, action) => {
-      state.value.push(action.payload);
+      // Vérifier si le service n'existe pas déjà dans le store
+      const serviceExists = state.value.find(
+        (service) => service.id === action.payload.id,
+      );
+      if (!serviceExists) {
+        state.value.push(action.payload);
+      }
+    },
+    setServices: (state, action) => {
+      state.value = action.payload;
     },
     deleteService: (state, action) => {
       state.value = state.value.filter(
@@ -130,6 +141,7 @@ export const serviceSlice = createSlice({
 
 export const {
   addService,
+  setServices,
   updateIdRestaurant,
   updateService,
   deleteService,

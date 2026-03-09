@@ -25,6 +25,8 @@ export default function Services() {
 
   // Ajout de l'id du restaurant aux services par défaut du reducer services
   useEffect(() => {
+    if (services.length > 0 || business.length === 0) return;
+
     console.log(
       "Equipes dans le store au chargement: ",
       business[0]?.referenceTeams,
@@ -49,7 +51,7 @@ export default function Services() {
     };
     dispatch(addService(serviceDejDefault));
     dispatch(addService(serviceDinerDefault));
-  }, []);
+  }, [services.length, business.length, dispatch]);
 
   // Transformer l'heure (format 12:30) en 'minutes depuis minuit' pour l'envoyer à la BDD
   const convertTimeToMinutes = (timeString) => {
