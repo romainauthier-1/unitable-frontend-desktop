@@ -19,7 +19,7 @@ export default function HeaderAdminSignUp() {
       </div>
       <div className=" text-accent-foreground flex flex-col items-center">
         <User className="p-1" size={40} />
-        {user?.name || "AUCUN UTILISATEUR CONNECTÉ"}
+        {user?.name || "Aucun utilisateur connecté"}
       </div>
     </div>
   );
