@@ -7,7 +7,7 @@ export default function HeaderAdminSignUp() {
   const business = useSelector((state) => state.business.value);
   const user = useSelector((state) => state.user.value);
   console.log(user);
-  console.log("User dans le store: ", user );
+  
   return (
     <div className=" rounded-lg bg-white border border-accent shadow-lg flex flex-row w-full justify-evenly h-28 items-center p-6">
       <Toaster richColors position="top-right" />

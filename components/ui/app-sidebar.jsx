@@ -52,7 +52,7 @@ const data = {
     },
     {
       title: "Planning",
-      url: "/templatePlanning",
+      url: "/viewPlanning",
       icon: IconListDetails,
     },
     {
@@ -68,7 +68,7 @@ const data = {
     },
     {
       title: "Mes équipes",
-      url: "/viewTeams",
+      url: "/viewTeamsReducer",
       icon: IconUsers,
     },
     {
@@ -113,7 +113,7 @@ export function AppSidebar({ user, ...props }) {
   const router = useRouter();
   // recuperer user Name et afficher à la place de Nom du restaurant dans le header
   const userName = sidebarUser.name || "Nom de l'utilisateur";
-  console.log("User dans le store: ", sidebarUser);
+
   const handleLogOut = () => {
     dispatch(logout());
     router.push("/login");

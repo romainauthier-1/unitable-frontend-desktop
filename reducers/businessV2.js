@@ -1,12 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { id } from "date-fns/locale";
 
 const initialState = {
   value: [],
 };
 
 export const businessSlice = createSlice({
-  name: "business",
+  name: "businessV2",
   initialState,
   reducers: {
     setBusinesses: (state, action) => {

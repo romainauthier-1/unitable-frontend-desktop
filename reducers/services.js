@@ -51,8 +51,10 @@ export const serviceSlice = createSlice({
         console.log("Service introuvable pour l'id:", id);
         return;
       }
+      //teamName prend Team Name et le Nom du service pour éviter les doublons de nom d'équipe entre les services
+      const uniqueTeamName = `${teamName} - ${serviceToUpdate.name}`;
 
-      serviceToUpdate.teams.push({ teamName, roles });
+      serviceToUpdate.teams.push({ teamName: uniqueTeamName, roles });
     },
     updateTeamName: (state, action) => {
       const { id, teamName } = action.payload;

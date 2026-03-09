@@ -85,17 +85,17 @@ export default function ViewTeams() {
     }
 
     try {
-      const response = await fetch("http://localhost:3000/teams", {
+      const response = await fetch("http://localhost:3000/teams/addteams", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ teams, organizationId }),
+        body: JSON.stringify({ equipes: teams, organizationId }),
       });
 
       const data = await response.json();
       console.log("Response from backend:", data);
 
       if (data.success) {
-        const savedTeams = data.team?.teams || teams;
+        const savedTeams = data.team?.equipes || teams;
         dispatch(setTeamsAction(savedTeams));
         toast.success("Équipes sauvegardées avec succès !");
         router.push("/dashboard");

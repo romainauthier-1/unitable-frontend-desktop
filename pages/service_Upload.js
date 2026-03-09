@@ -29,7 +29,7 @@ export default function Services() {
   // Ajout de l'id du restaurant aux services par défaut du reducer services
   useEffect(() => {
     // Empêche de recharger/réinitialiser si déjà présent dans le store.
-    if (services.length > 0 || business.length === 0) return;
+    if (services.length > 0 || !business[0]?.id) return;
 
     fetch("http://localhost:3000/services/" + business[0].id)
       .then((response) => response.json())
@@ -69,7 +69,7 @@ export default function Services() {
       .catch((error) => {
         console.error("Erreur lors de la récupération des services :", error);
       });
-  }, [business.length, services.length, dispatch]);
+  }, [business[0]?.id, dispatch]);
 
   // Transformer l'heure (format 12:30) en 'minutes depuis minuit' pour l'envoyer à la BDD
   const convertTimeToMinutes = (timeString) => {
@@ -153,7 +153,7 @@ export default function Services() {
   const handleValidation = () => {
     toast.success("Services enregistrés");
     setTimeout(() => {
-      router.push("templatePlanning");
+      router.push("/viewPlanning");
     }, 1000);
   };
 

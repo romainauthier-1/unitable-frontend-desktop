@@ -49,10 +49,10 @@ import { deleteTeamFromService } from "@/reducers/services";
 export default function ServiceWithRolesCard({ service }) {
   const dispatch = useDispatch();
   const services = useSelector((state) => state.services.value);
-  /* const teamAvailable = useSelector(
+   const teamAvailable = useSelector(
     (state) => state.business.value[0]?.referenceTeams,
-  );*/
-  const teamAvailable = useSelector((state) => state.teams.value);
+  );
+  //const teamAvailable = useSelector((state) => state.teams.value);
   const teamDropdown = teamAvailable?.map((equipe) => (
     <DropdownMenuItem
       key={equipe.name}
