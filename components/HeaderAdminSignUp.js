@@ -4,10 +4,13 @@ import { Toaster } from "sonner";
 import { toast } from "sonner";
 import ActionButton from "@/components/ActionButton";
 import { toggleInstructions } from "@/reducers/instructions";
+import { onboardingInfos } from "./ModalOnboarding";
+import { useRouter } from "next/router";
 
 export default function HeaderAdminSignUp() {
   const business = useSelector((state) => state.business.value);
   const user = useSelector((state) => state.user.value);
+  const router = useRouter();
 
   return (
     <div className=" rounded-lg bg-white border border-accent shadow-lg flex flex-row w-full justify-evenly h-28 items-center p-6">
@@ -23,12 +26,14 @@ export default function HeaderAdminSignUp() {
         <User className="p-1" size={40} />
         {user?.name || "AUCUN UTILISATEUR CONNECTÉ"}
       </div>
-      <ActionButton
-        action={toggleInstructions}
-        label="Infos"
-        icon={Info}
-        variant="outline"
-      />
+      {onboardingInfos[router.pathname] && (
+        <ActionButton
+          action={toggleInstructions}
+          label="Infos"
+          icon={Info}
+          variant="outline"
+        />
+      )}
     </div>
   );
 }

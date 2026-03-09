@@ -6,6 +6,7 @@ import TeamCard from "./TeamCard";
 import { addReferenceTeams } from "@/reducers/business";
 import { Toaster } from "sonner";
 import { toast } from "sonner";
+import HeaderAdminSignUp from "./HeaderAdminSignUp";
 
 export default function CreateTeams() {
   const user = useSelector((state) => state.user.value);
@@ -120,6 +121,7 @@ export default function CreateTeams() {
 
   return (
     <div className="min-h-screen min-w-screen bg-background p-6">
+      <HeaderAdminSignUp />
       <Toaster richColors />
       <div className="max-w-3xl mx-auto space-y-6">
         <h2 className="text-2xl font-semibold">Créer une équipe</h2>

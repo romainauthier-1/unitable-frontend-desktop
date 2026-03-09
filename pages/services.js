@@ -23,29 +23,29 @@ export default function Services() {
   const dispatch = useDispatch();
   const router = useRouter();
 
+  const serviceDejDefault = {
+    id: uid2(10),
+    name: "Déjeuner",
+    startTime: 720,
+    endTime: 840,
+    dayOfWeek: ["mercredi", "jeudi", "vendredi", "samedi", "dimanche"],
+    restaurant: business[0]?.id,
+    teams: [],
+  };
+  const serviceDinerDefault = {
+    id: uid2(10),
+    name: "Dîner",
+    startTime: 1140,
+    endTime: 1260,
+    dayOfWeek: ["mercredi", "jeudi", "vendredi", "samedi"],
+    restaurant: business[0]?.id,
+    teams: [],
+  };
   useEffect(() => {
     // console.log(
     //   "Equipes dans le store au chargement: ",
     //   business[0]?.referenceTeams,
     // );
-    const serviceDejDefault = {
-      id: uid2(10),
-      name: "Déjeuner",
-      startTime: 720,
-      endTime: 840,
-      dayOfWeek: ["mercredi", "jeudi", "vendredi", "samedi", "dimanche"],
-      restaurant: business[0]?.id,
-      teams: [],
-    };
-    const serviceDinerDefault = {
-      id: uid2(10),
-      name: "Dîner",
-      startTime: 1140,
-      endTime: 1260,
-      dayOfWeek: ["mercredi", "jeudi", "vendredi", "samedi"],
-      restaurant: business[0]?.id,
-      teams: [],
-    };
     if (services.length === 0) {
       dispatch(addService(serviceDejDefault));
       dispatch(addService(serviceDinerDefault));
