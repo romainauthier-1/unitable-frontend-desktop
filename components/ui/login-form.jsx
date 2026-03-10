@@ -104,7 +104,7 @@ export function LoginForm({ className, ...props }) {
   return (
     <div
       className={cn(
-        "flex min-h-svh min-w-screen flex-col items-center justify-center gap-6 bg-muted p-6 md:p-10",
+        "flex min-h-svh w-screen flex-col items-center justify-center gap-6 bg-muted p-6 md:p-10",
         className,
       )}
       {...props}

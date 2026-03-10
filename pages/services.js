@@ -24,6 +24,12 @@ export default function Services() {
   const router = useRouter();
 
   useEffect(() => {
+    if (services.length > 0 || business.length === 0) return;
+
+    console.log(
+      "Equipes dans le store au chargement: ",
+      business[0]?.referenceTeams,
+    );
     const serviceDejDefault = {
       id: uid2(10),
       name: "Déjeuner",
@@ -42,14 +48,8 @@ export default function Services() {
       restaurant: business[0]?.id,
       teams: [],
     };
-    // console.log(
-    //   "Equipes dans le store au chargement: ",
-    //   business[0]?.referenceTeams,
-    // );
-    if (services.length === 0) {
-      dispatch(addService(serviceDejDefault));
-      dispatch(addService(serviceDinerDefault));
-    }
+    dispatch(addService(serviceDejDefault));
+    dispatch(addService(serviceDinerDefault));
   }, []);
 
   // Transformer l'heure (format 12:30) en 'minutes depuis minuit' pour l'envoyer à la BDD

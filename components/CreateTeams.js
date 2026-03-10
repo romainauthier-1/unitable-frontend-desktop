@@ -13,6 +13,7 @@ export default function CreateTeams() {
   const business = useSelector((state) => state.business.value);
   const router = useRouter();
   const dispatch = useDispatch();
+  console.log(business);
   const organizationId = business ? business[0]?.id : null;
 
   // const [teams, setTeams] = useState([]);
@@ -112,7 +113,9 @@ export default function CreateTeams() {
       // }
       // console.log("Info dispatch - id Business : ", organizationId);
       // console.log("Info dispatch - format teams : ", teams);
+      teams.length === 0 && toast.error("Pas d'équipe enregistrée");
       dispatch(addReferenceTeams({ businessId: organizationId, teams }));
+      toast.success("Équipes sauvegardées avec succès !");
       router.push("/services");
     } catch (err) {
       console.error(err);

@@ -58,10 +58,6 @@ export default function CreateEmployee() {
   const dispatch = useDispatch();
   const employees = useSelector((state) => state.employee.value.employees);
   const business = useSelector((state) => state.business.value);
-<<<<<<< HEAD
-=======
-  const organizationId = business?.[0]?.id || "";
->>>>>>> 447a527 (Structure base planning Admin)
 
   const initialFormState = {
     firstName: "",
@@ -151,12 +147,23 @@ export default function CreateEmployee() {
 
     setErrors({});
 
+    if (!organizationId) {
+      setErrors((prev) => ({
+        ...prev,
+        organization: "Aucune organisation trouvée",
+      }));
+      return;
+    }
+
     fetch("http://localhost:3000/employee", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(formData),
+      body: JSON.stringify({
+        ...formData,
+        organization: organizationId,
+      }),
     })
       .then((response) => {
         if (!response.ok) {

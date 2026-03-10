@@ -12,6 +12,8 @@ export default function HeaderAdminSignUp() {
   const user = useSelector((state) => state.user.value);
   const router = useRouter();
 
+  // console.log(user);
+
   return (
     <div className=" rounded-lg bg-white border border-accent shadow-lg flex flex-row w-full justify-evenly h-28 items-center p-6">
       <Toaster richColors position="top-right" />

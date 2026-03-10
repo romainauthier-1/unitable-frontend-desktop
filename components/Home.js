@@ -12,6 +12,8 @@ function Home() {
 
   if (!token) {
     router.push("/login");
+  } else {
+    router.push("/dashboard");
   }
 
   return <h1>Bienvenue sur UniTable</h1>;

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/router";
-import { addBusiness } from "../reducers/business";
+import { addBusiness, resetBusiness } from "../reducers/business";
 import { updateIdRestaurant } from "@/reducers/services";
 import { addName } from "@/reducers/users";
 import { Button } from "@/components/ui/button";
@@ -48,9 +48,7 @@ export default function BusinessForm() {
 
   const getUserName = async () => {
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_URL_BACKEND}/users/${user.email}`,
-      );
+      const response = await fetch(`http://localhost:3000/users/${user.email}`);
       const data = await response.json();
 
       if (!data.result) {
@@ -67,6 +65,7 @@ export default function BusinessForm() {
 
   useEffect(() => {
     getUserName();
+    dispatch(resetBusiness());
   }, []);
 
   useEffect(() => {

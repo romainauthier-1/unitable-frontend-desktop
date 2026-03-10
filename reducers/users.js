@@ -11,10 +11,12 @@ export const userSlice = createSlice({
     login: (state, action) => {
       state.value.token = action.payload.token;
       state.value.email = action.payload.email;
+      state.value.name = action.payload.name;
     },
     logout: (state) => {
       state.value.token = null;
       state.value.email = null;
+      state.value.name = null;
     },
     addName: (state, action) => {
       state.value.name = action.payload;

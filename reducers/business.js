@@ -1,5 +1,4 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { id } from "date-fns/locale";
 
 const initialState = {
   value: [],
@@ -10,7 +9,7 @@ export const businessSlice = createSlice({
   initialState,
   reducers: {
     addBusiness: (state, action) => {
-      // console.log("PAYLOAD RECU DANS LE REDUCER BUSINESS: ", action.payload);
+      console.log("PAYLOAD RECU DANS LE REDUCER BUSINESS: ", action.payload);
       // Vérifier que le business n'existe pas déjà avant de l'ajouter
       const businessExists = state.value.find(
         (business) => business.id === action.payload.id,
@@ -33,8 +32,12 @@ export const businessSlice = createSlice({
         );
       }
     },
+    resetBusiness: (state) => {
+      state.value = [];
+    },
   },
 });
 
-export const { addBusiness, addReferenceTeams } = businessSlice.actions;
+export const { addBusiness, addReferenceTeams, resetBusiness } =
+  businessSlice.actions;
 export default businessSlice.reducer;

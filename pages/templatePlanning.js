@@ -140,6 +140,7 @@ export default function templatePlanning() {
       toast.success("Semaine type enregistrée !");
       setTimeout(() => {
         router.push("/dashboard");
+        router.push("/dashboard");
       }, 1000);
     } catch (err) {
       console.log(err);

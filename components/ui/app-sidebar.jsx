@@ -14,6 +14,8 @@ import {
   IconInnerShadowTop,
   IconListDetails,
   IconLogout,
+  IconMenu,
+  IconMenu2,
   IconReport,
   IconSearch,
   IconSettings,
@@ -40,7 +42,7 @@ const data = {
   user: {
     name: "nom de l'admin",
     email: "email de connexion de l'admin admin@gmail.com",
-    avatar: "/avatars/shadcn.jpg",
+    icon: IconMenu2,
   },
   navMain: [
     {
@@ -55,22 +57,28 @@ const data = {
     },
     {
       title: "Semaine Type",
-      url: "/templatePlanning",
+      url: "/viewPlanning",
       icon: IconDatabase,
     },
     {
       title: "Services",
-      url: "/services",
+      url: "/service_Upload",
       icon: IconChartBar,
     },
     {
       title: "RH",
       url: "#rh",
       icon: IconFolder,
+      disabled: true,
     },
     {
       title: "Mes équipes",
-      url: "/createTeams",
+      url: "/viewTeamsReducer",
+      icon: IconUsers,
+    },
+    {
+      title: "Mes employés",
+      url: "/viewEmployee",
       icon: IconUsers,
     },
   ],
@@ -108,6 +116,8 @@ export function AppSidebar({ user, ...props }) {
   };
   const dispatch = useDispatch();
   const router = useRouter();
+  // recuperer user Name et afficher à la place de Nom du restaurant dans le header
+  const userName = sidebarUser.name || "Nom de l'utilisateur";
 
   const handleLogOut = () => {
     dispatch(logout());
@@ -124,9 +134,7 @@ export function AppSidebar({ user, ...props }) {
             >
               <a href="#">
                 <IconInnerShadowTop className="size-5!" />
-                <span className="text-base font-semibold">
-                  Nom du Restaurant
-                </span>
+                <span className="text-base font-semibold">{userName}</span>
               </a>
             </SidebarMenuButton>
           </SidebarMenuItem>
@@ -134,15 +142,11 @@ export function AppSidebar({ user, ...props }) {
       </SidebarHeader>
       <SidebarContent className="flex flex-col">
         <NavMain items={data.navMain} />
-        <NavDocuments items={data.documents} />
-        <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={sidebarUser} onLogout={handleLogOut} />
-
         <SidebarMenuButton onClick={handleLogOut}>
           <IconLogout />
-          Log out
+          Se Deconnecter
         </SidebarMenuButton>
       </SidebarFooter>
     </Sidebar>
