@@ -111,10 +111,10 @@ export default function templatePlanning() {
     // );
     try {
       const promises = servicesToDB.map(async (service) => {
-        console.log("DEBUG SERVICE", JSON.stringify(service));
+        // console.log("DEBUG SERVICE", JSON.stringify(service));
         // On extrait l'id utilisé dans le store de chaque service
         const { id, ...serviceWithoutId } = service;
-        // console.log("Voici le service en traitement: ", service);
+        // console.log("Voici le service en traitement: ", serviceWithoutId);
         console.log("serviceWithoutId.teams", serviceWithoutId.teams);
 
         const response = await fetch(
@@ -140,6 +140,7 @@ export default function templatePlanning() {
       toast.success("Semaine type enregistrée !");
       setTimeout(() => {
         router.push("/dashboard");
+        router.push("/dashboard");
       }, 1000);
     } catch (err) {
       console.log(err);
@@ -148,9 +149,9 @@ export default function templatePlanning() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen">
+    <div className="flex flex-col items-center justify-center h-screen w-full overflow-hidden">
       <HeaderAdminSignUp />
-      <div className="flex flex-1">
+      <div className="flex-1 overflow-auto p-4">
         <div className="mx-auto max-w-10xl grid grid-cols-7 w-full h-full gap-4 ">
           {days.map((day) => (
             <div key={day} className="flex flex-col  p-4">
@@ -234,4 +235,14 @@ export default function templatePlanning() {
       <Toaster richColors position="top-right" />
     </div>
   );
+}
+
+export async function getStaticProps() {
+  return {
+    props: {
+      title: "Semaine type",
+      description:
+        "Pour chaque jour, indiquez les services, les équipes présentes, le besoin pour chaque rôle. Vous pouvez ajouter un service sur un jour en particulier. Pensez à ajouter toutes les équipes dont vous avez besoin sur chaque service. Si un service a été paramétré sur plusieurs jours, les besoins en équipes et rôles seront appliqués à tous les jours de ce service.",
+    },
+  };
 }

@@ -6,8 +6,12 @@ const convertTimeToMinutes = (timeString) => {
 
 // Transformer les 'minutes depuis minuit' de la BDD en heure lisible
 const convertMinutesToTime = (minutes) => {
-  const hours = Math.floor(minutes / 60);
-  const mins = minutes % 60;
+  if (minutes === undefined || minutes === null) return "00:00";
+
+  const minutesNumber = Number(minutes);
+
+  const hours = Math.floor(minutesNumber / 60);
+  const mins = minutesNumber % 60;
   return `${hours.toString().padStart(2, "0")}:${mins
     .toString()
     .padStart(2, "0")}`;

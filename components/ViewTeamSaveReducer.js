@@ -3,7 +3,6 @@ import { useSelector, useDispatch } from "react-redux";
 import { useRouter } from "next/router";
 import { Button } from "./ui/button";
 import TeamCard from "./TeamCard";
-import { setTeams as setTeamsAction } from "@/reducers/teams";
 import { addBusiness, addReferenceTeams } from "@/reducers/business";
 import { Toaster } from "sonner";
 import { toast } from "sonner";
@@ -12,7 +11,9 @@ import { set } from "date-fns";
 export default function ViewTeamSaveReducer() {
   const user = useSelector((state) => state.user.value);
   const business = useSelector((state) => state.business.value) || [];
-  const storeTeams = useSelector((state) => state.teams.value);
+  const storeTeams = useSelector(
+    (state) => state.business.value.referenceTeams,
+  );
   const router = useRouter();
   const dispatch = useDispatch();
   const organizationId = business?.[0]?.id || null;
@@ -154,7 +155,9 @@ export default function ViewTeamSaveReducer() {
               .flatMap((service) =>
                 Array.isArray(service.teams) ? service.teams : [],
               )
-              .filter((team) => Array.isArray(team.roles) && team.roles.length > 0)
+              .filter(
+                (team) => Array.isArray(team.roles) && team.roles.length > 0,
+              )
               .map((team) => ({
                 name: team.teamName || team.name || "",
                 roles: Array.isArray(team.roles)
@@ -228,25 +231,28 @@ export default function ViewTeamSaveReducer() {
             <Button
               variant="outline"
               onClick={handleSave}
-              disabled={!Array.isArray(teams) || teams.length === 0 || !organizationId}
+              disabled={
+                !Array.isArray(teams) || teams.length === 0 || !organizationId
+              }
             >
               Sauvegarder
             </Button>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {Array.isArray(teams) && teams.map((team, teamIndex) => (
-              <TeamCard
-                key={teamIndex}
-                team={team}
-                teamIndex={teamIndex}
-                // roles={roles}
-                updateTeamName={updateTeamName}
-                addRole={addRole}
-                removeRole={removeRole}
-                updateRole={updateRole}
-                removeTeam={removeTeam}
-              />
-            ))}
+            {Array.isArray(teams) &&
+              teams.map((team, teamIndex) => (
+                <TeamCard
+                  key={teamIndex}
+                  team={team}
+                  teamIndex={teamIndex}
+                  // roles={roles}
+                  updateTeamName={updateTeamName}
+                  addRole={addRole}
+                  removeRole={removeRole}
+                  updateRole={updateRole}
+                  removeTeam={removeTeam}
+                />
+              ))}
           </div>
         </div>
       </div>

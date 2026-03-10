@@ -10,3 +10,12 @@ function forgetPasswordForm() {
 }
 
 export default forgetPasswordForm;
+
+export async function getStaticProps() {
+  return {
+    props: {
+      title: "Mot de passe oublié",
+      description: "Réinitialisez votre mot de passe.",
+    },
+  };
+}

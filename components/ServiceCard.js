@@ -29,7 +29,7 @@ export function ServiceCard({
   const services = useSelector((state) => state.services.value);
   return (
     <>
-      <Card className="w-1/3 h-1/2 border border-slate-300 m-6 ">
+      <Card className="w-full max-w-100 border border-slate-300 m-6 ">
         <CardHeader>
           <CardTitle className="flex flex-row items-center justify-between">
             <Input
