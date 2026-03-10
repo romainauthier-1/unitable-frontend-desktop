@@ -43,7 +43,7 @@ export default function planningAdmin() {
   const staff = useSelector((state) => state.employee.value.employees);
   const dispatch = useDispatch();
   const restaurantId = business[0]?.id;
-  const [allCTs, setAllCTs] = useState([null]);
+  const [allCTs, setAllCTs] = useState([]);
   //   const [allStaff, setAllStaff] = useState([null]);
   const [currentDate, setCurrentDate] = useState(dayjs());
   const [workingDate, setWorkingDate] = useState(dayjs());
@@ -142,18 +142,19 @@ export default function planningAdmin() {
     setIsLoading(true);
 
     const defaultCT = {
-      date: dayjs(workingDate),
+      date: dayjs(workingDate).toISOString(),
       startTime: 660,
       endTime: 960,
-      role: null,
+      role: [],
       pause: 0,
       worker: employee._id,
       restaurant: restaurantId,
-      createdBy: user?._id,
+      createdBy: user?.id,
     };
 
+    console.log("CT à envoyer :", defaultCT);
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_URL_BACKEND}/create`,
+      `${process.env.NEXT_PUBLIC_URL_BACKEND}/planning/create`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
