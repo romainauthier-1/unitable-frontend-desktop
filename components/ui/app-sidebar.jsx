@@ -50,8 +50,13 @@ const data = {
     },
     {
       title: "Planning",
-      url: "/planning",
-      icon: IconListDetails,
+      url: "/planningAdmin",
+      icon: IconReport,
+    },
+    {
+      title: "Semaine Type",
+      url: "/templatePlanning",
+      icon: IconDatabase,
     },
     {
       title: "Services",

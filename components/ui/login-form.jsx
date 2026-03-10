@@ -22,17 +22,14 @@ import { useDispatch } from "react-redux";
 import { login } from "@/reducers/users";
 import { Input } from "@/components/ui/input";
 import { useRouter } from "next/router";
+import { addBusiness } from "@/reducers/business";
 
 export function LoginForm({ className, ...props }) {
   const dispatch = useDispatch();
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-<<<<<<< HEAD
-
-=======
   const [businessId, setBusinessId] = useState("");
->>>>>>> 447a527 (Structure base planning Admin)
   const handleConnection = (e) => {
     e.preventDefault();
 
@@ -47,10 +44,6 @@ export function LoginForm({ className, ...props }) {
       })
         .then((response) => response.json())
         .then((data) => {
-<<<<<<< HEAD
-          if (data.result) {
-            dispatch(login({ email, token: data.token }));
-=======
           console.log("Response from backend:", data);
           if (data.result) {
             // recuperer organisation de l'utilisateur et l'ajouter au store
@@ -96,7 +89,6 @@ export function LoginForm({ className, ...props }) {
               });
             console.log("businessId dans handleConnection", businessId);
 
->>>>>>> 447a527 (Structure base planning Admin)
             setEmail("");
             setPassword("");
             router.push("/dashboard");
