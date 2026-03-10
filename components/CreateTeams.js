@@ -3,13 +3,13 @@ import { useSelector, useDispatch } from "react-redux";
 import { useRouter } from "next/router";
 import { Button } from "./ui/button";
 import TeamCard from "./TeamCard";
-import { addReferenceTeams } from "@/reducers/business";
 
 export default function CreateTeams() {
   const user = useSelector((state) => state.user.value);
   const business = useSelector((state) => state.business.value);
   const router = useRouter();
   const dispatch = useDispatch();
+  console.log(business)
   const organizationId = business ? business[0]?.id : null;
 
   // const [teams, setTeams] = useState([]);
@@ -104,7 +104,6 @@ export default function CreateTeams() {
       // }
       // console.log("Info dispatch - id Business : ", organizationId);
       // console.log("Info dispatch - format teams : ", teams);
-      dispatch(addReferenceTeams({ businessId: organizationId, teams }));
       router.push("/services");
     } catch (err) {
       console.error(err);

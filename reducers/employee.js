@@ -10,6 +10,9 @@ export const employeeSlice = createSlice({
 	name: "employee",
 	initialState,
 	reducers: {
+		setEmployeesInStore: (state, action) => {
+			state.value.employees = Array.isArray(action.payload) ? action.payload : [];
+		},
 		addEmployeeToStore: (state, action) => {
 			// Nouvel employé
 			state.value.employees.push(action.payload);
@@ -33,6 +36,7 @@ export const employeeSlice = createSlice({
 });
 
 export const {
+	setEmployeesInStore,
 	addEmployeeToStore,
 	removeEmployeeFromStore,
 	updateEmployeeInStore,

@@ -3,9 +3,11 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { Provider, useSelector } from "react-redux";
 import business from "../reducers/business";
+import businessV2 from "../reducers/businessV2";
 import services from "../reducers/services";
 import employee from "../reducers/employee";
 import user from "../reducers/users";
+import teams from "../reducers/teams";
 import { AppSidebar } from "@/components/ui/app-sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 // Imports redux-persist
@@ -14,7 +16,7 @@ import { PersistGate } from "redux-persist/integration/react";
 import storage from "redux-persist/lib/storage";
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 
-const reducers = combineReducers({ business, services, user, employee });
+const reducers = combineReducers({ business, services, user, employee, teams, businessV2});
 
 const persistConfig = { key: "UniTable MVP", storage };
 

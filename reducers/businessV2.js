@@ -1,0 +1,64 @@
+import { createSlice } from "@reduxjs/toolkit";
+
+const initialState = {
+  value: [],
+};
+
+export const businessSlice = createSlice({
+  name: "businessV2",
+  initialState,
+  reducers: {
+    setBusinesses: (state, action) => {
+      state.value = Array.isArray(action.payload) ? action.payload : [];
+    },
+    addBusiness: (state, action) => {
+      console.log("PAYLOAD RECU DANS LE REDUCER BUSINESS: ", action.payload);
+      state.value.push(action.payload);
+    },
+    addReferenceTeams: (state, action) => {
+      console.log("PAYLOAD RECU DANS LE REDUCER BUSINESS: ", action.payload);
+      const { businessId, teams } = action.payload;
+      const foundBusiness = state.value.find(
+        (business) => business.id === businessId,
+      );
+      if (foundBusiness) {
+        foundBusiness.referenceTeams = teams;
+      } else {
+        console.error(
+          "Impossible d'ajouter les équipes de référence dans le store",
+        );
+      }
+    },
+  },
+});
+/*
+export const businessSlice = createSlice({
+  name: "business",
+  initialState,
+  reducers: {
+    setBusinesses: (state, action) => {
+      state.value = Array.isArray(action.payload) ? action.payload : [];
+    },
+    addBusiness: (state, action) => {
+      console.log("PAYLOAD RECU DANS LE REDUCER BUSINESS: ", action.payload);
+      state.value.push(action.payload);
+    },
+    addReferenceTeams: (state, action) => {
+      console.log("PAYLOAD RECU DANS LE REDUCER BUSINESS: ", action.payload);
+      const { businessId, teams } = action.payload;
+      const foundBusiness = state.value.find(
+        (business) => business.id === businessId,
+      );
+      if (foundBusiness) {
+        foundBusiness.referenceTeams = teams;
+      } else {
+        console.error(
+          "Impossible d'ajouter les équipes de référence dans le store",
+        );
+      }
+    },
+  },
+});
+*/
+export const { addBusiness, addReferenceTeams } = businessSlice.actions;
+export default businessSlice.reducer;

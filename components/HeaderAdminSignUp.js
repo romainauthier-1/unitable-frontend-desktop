@@ -6,7 +6,8 @@ import { toast } from "sonner";
 export default function HeaderAdminSignUp() {
   const business = useSelector((state) => state.business.value);
   const user = useSelector((state) => state.user.value);
-
+  console.log(user);
+  
   return (
     <div className=" rounded-lg bg-white border border-accent shadow-lg flex flex-row w-full justify-evenly h-28 items-center p-6">
       <Toaster richColors position="top-right" />
@@ -19,7 +20,7 @@ export default function HeaderAdminSignUp() {
       </div>
       <div className=" text-accent-foreground flex flex-col items-center">
         <User className="p-1" size={40} />
-        {user?.name || "AUCUN UTILISATEUR CONNECTÉ"}
+        {user?.name || "Aucun utilisateur connecté"}
       </div>
     </div>
   );

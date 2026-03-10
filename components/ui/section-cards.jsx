@@ -77,26 +77,7 @@ export function SectionCards() {
           <div className="text-muted-foreground">Engagement exceed targets</div>
         </CardFooter>
       </Card>
-    // Création card qui affiche les données météos
-          <Card className="@container/card">
-        <CardHeader>
-          <CardDescription>Nombre d'employé.es:</CardDescription>
-          <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            20
-          </CardTitle>
-          <CardAction>
-            <Badge variant="outline">
-              <IconTrendingUp />
-              +12.5%
-            </Badge>
-          </CardAction>
-        </CardHeader>
-        <CardFooter className="flex-col items-start gap-1.5 text-sm">
-          <div className="line-clamp-1 flex gap-2 font-medium">
-          Il Fait Beau ou Non, Icon change en fonction de temperature et pluie<IconTrendingUp className="size-4" />
-          </div>
-          <div className="text-muted-foreground">Terrasse ouverte Y/N</div>
-        </CardFooter>
+      <Card className="@container/card">
       </Card>
     </div>
   )

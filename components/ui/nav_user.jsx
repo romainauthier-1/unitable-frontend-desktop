@@ -95,7 +95,7 @@ export function NavUser({
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={onLogout}>
               <IconLogout />
-              Log out
+              Se Deconnecter
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
