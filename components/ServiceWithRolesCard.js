@@ -99,7 +99,7 @@ export default function ServiceWithRolesCard({ service }) {
             <MinusCircle
               className="text-primary cursor-pointer"
               size={16}
-              onClick={() => warnAndDeleteTeam(service.id)}
+              onClick={() => warnAndDeleteTeam(service.id, team.teamName)}
             />
 
             {/* <DropdownMenu>
@@ -164,12 +164,13 @@ export default function ServiceWithRolesCard({ service }) {
     });
   };
 
-  const warnAndDeleteTeam = (serviceId) => {
+  const warnAndDeleteTeam = (serviceId, teamName) => {
     toast.warning("Êtes-vous sûr de vouloir supprimer cette équipe ?", {
       description: "Cette action supprimera l'équipe sur tous les services.",
       action: {
         label: "Confirmer la suppression",
-        onClick: () => dispatch(deleteTeamFromService(serviceId)),
+        onClick: () =>
+          dispatch(deleteTeamFromService({ id: serviceId, teamName })),
       },
     });
   };

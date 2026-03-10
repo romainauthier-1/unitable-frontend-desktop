@@ -14,16 +14,15 @@ import { Toaster } from "sonner";
 import { toast } from "sonner";
 import { useRouter } from "next/router";
 import HeaderAdminSignUp from "@/components/HeaderAdminSignUp";
+import { toggleInstructions } from "@/reducers/instructions";
 const uid2 = require("uid2");
 
 export default function Services() {
   const business = useSelector((state) => state.business.value);
   const services = useSelector((state) => state.services.value);
-  const user = useSelector((state) => state.user.value);
   const dispatch = useDispatch();
   const router = useRouter();
 
-  // Ajout de l'id du restaurant aux services par défaut du reducer services
   useEffect(() => {
     if (services.length > 0 || business.length === 0) return;
 
@@ -51,7 +50,7 @@ export default function Services() {
     };
     dispatch(addService(serviceDejDefault));
     dispatch(addService(serviceDinerDefault));
-  }, [services.length, business.length, dispatch]);
+  }, []);
 
   // Transformer l'heure (format 12:30) en 'minutes depuis minuit' pour l'envoyer à la BDD
   const convertTimeToMinutes = (timeString) => {
@@ -98,7 +97,11 @@ export default function Services() {
       restaurant: business[0]?.id,
       teams: [],
     };
-    dispatch(addService(newService));
+    if (services.length < 8) {
+      dispatch(addService(newService));
+    } else {
+      toast.warning("Limite de 8 services atteinte.");
+    }
   };
 
   // Envoi des services à la BDD
@@ -140,9 +143,10 @@ export default function Services() {
   };
 
   return (
-    <div className="min-h-screen bg-white flex rounded-lg flex-col items-center  p-4">
+    <div className="min-h-screen min-w-screen bg-white flex rounded-lg flex-col items-center p-4">
       <HeaderAdminSignUp />
-      <div className="flex flex-row flex-wrap w-full justify-center flex-1 items-center">
+      <div className="flex flex-row flex-wrap w-full justify-center mb-6">
+        {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full max-w-7xl justify-items-center mt-10"> */}
         {serviceCards}
       </div>
       <Button variant="outline" className="mt-6" onClick={handleNewService}>
@@ -157,4 +161,14 @@ export default function Services() {
       </Button>
     </div>
   );
+}
+
+export async function getStaticProps() {
+  return {
+    props: {
+      title: "Services",
+      description:
+        "Déterminez vos différents services. Si vous avez un service spécifique (en horaire, besoin de personnel), créez un service à part entière.",
+    },
+  };
 }

@@ -11,3 +11,13 @@ function SendEmailPasswordForm() {
 }
 
 export default SendEmailPasswordForm;
+
+export async function getStaticProps() {
+  return {
+    props: {
+      title: "Réinitialiser le mot de passe",
+      description:
+        "Renseignez les champs pour reéinitialiser votre mot de passe.",
+    },
+  };
+}

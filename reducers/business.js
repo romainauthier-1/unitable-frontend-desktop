@@ -19,7 +19,7 @@ export const businessSlice = createSlice({
       }
     },
     addReferenceTeams: (state, action) => {
-      console.log("PAYLOAD RECU DANS LE REDUCER BUSINESS: ", action.payload);
+      // console.log("PAYLOAD RECU DANS LE REDUCER BUSINESS: ", action.payload);
       const { businessId, teams } = action.payload;
       const foundBusiness = state.value.find(
         (business) => business.id === businessId,
@@ -32,8 +32,12 @@ export const businessSlice = createSlice({
         );
       }
     },
+    resetBusiness: (state) => {
+      state.value = [];
+    },
   },
 });
 
-export const { addBusiness, addReferenceTeams } = businessSlice.actions;
+export const { addBusiness, addReferenceTeams, resetBusiness } =
+  businessSlice.actions;
 export default businessSlice.reducer;

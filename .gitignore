@@ -69,3 +69,4 @@ jsconfig.json
 postcss.config.js
 tailwind.config.js
 yarn.lock
+.yarn/

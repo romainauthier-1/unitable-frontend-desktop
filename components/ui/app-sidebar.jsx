@@ -52,8 +52,13 @@ const data = {
     },
     {
       title: "Planning",
+      url: "/planningAdmin",
+      icon: IconReport,
+    },
+    {
+      title: "Semaine Type",
       url: "/viewPlanning",
-      icon: IconListDetails,
+      icon: IconDatabase,
     },
     {
       title: "Services",

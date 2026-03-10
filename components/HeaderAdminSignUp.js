@@ -1,13 +1,19 @@
 import { useSelector } from "react-redux";
-import { User, Store } from "lucide-react";
+import { User, Store, Info } from "lucide-react";
 import { Toaster } from "sonner";
 import { toast } from "sonner";
+import ActionButton from "@/components/ActionButton";
+import { toggleInstructions } from "@/reducers/instructions";
+import { onboardingInfos } from "./ModalOnboarding";
+import { useRouter } from "next/router";
 
 export default function HeaderAdminSignUp() {
   const business = useSelector((state) => state.business.value);
   const user = useSelector((state) => state.user.value);
-  console.log(user);
-  
+  const router = useRouter();
+
+  // console.log(user);
+
   return (
     <div className=" rounded-lg bg-white border border-accent shadow-lg flex flex-row w-full justify-evenly h-28 items-center p-6">
       <Toaster richColors position="top-right" />
@@ -22,6 +28,14 @@ export default function HeaderAdminSignUp() {
         <User className="p-1" size={40} />
         {user?.name || "Aucun utilisateur connecté"}
       </div>
+      {onboardingInfos[router.pathname] && (
+        <ActionButton
+          action={toggleInstructions}
+          label="Infos"
+          icon={Info}
+          variant="outline"
+        />
+      )}
     </div>
   );
 }

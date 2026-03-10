@@ -3,13 +3,17 @@ import { useSelector, useDispatch } from "react-redux";
 import { useRouter } from "next/router";
 import { Button } from "./ui/button";
 import TeamCard from "./TeamCard";
+import { addReferenceTeams } from "@/reducers/business";
+import { Toaster } from "sonner";
+import { toast } from "sonner";
+import HeaderAdminSignUp from "./HeaderAdminSignUp";
 
 export default function CreateTeams() {
   const user = useSelector((state) => state.user.value);
   const business = useSelector((state) => state.business.value);
   const router = useRouter();
   const dispatch = useDispatch();
-  console.log(business)
+  console.log(business);
   const organizationId = business ? business[0]?.id : null;
 
   // const [teams, setTeams] = useState([]);
@@ -55,8 +59,13 @@ export default function CreateTeams() {
   // 	{ value: "direction", label: "Direction" },
   // ];
 
-  const addTeam = () =>
-    setTeams((teams) => [{ name: "", roles: [] }, ...teams]);
+  const addTeam = () => {
+    if (teams.length < 20) {
+      setTeams((teams) => [{ name: "", roles: [] }, ...teams]);
+    } else {
+      toast.warning("Limite de 20 équipes atteintes");
+    }
+  };
 
   const removeTeam = (index) => setTeams(teams.filter((_, i) => i !== index));
 
@@ -104,6 +113,9 @@ export default function CreateTeams() {
       // }
       // console.log("Info dispatch - id Business : ", organizationId);
       // console.log("Info dispatch - format teams : ", teams);
+      teams.length === 0 && toast.error("Pas d'équipe enregistrée");
+      dispatch(addReferenceTeams({ businessId: organizationId, teams }));
+      toast.success("Équipes sauvegardées avec succès !");
       router.push("/services");
     } catch (err) {
       console.error(err);
@@ -111,7 +123,9 @@ export default function CreateTeams() {
   };
 
   return (
-    <div className="min-h-screen bg-background p-6">
+    <div className="min-h-screen min-w-screen bg-background p-6">
+      <HeaderAdminSignUp />
+      <Toaster richColors />
       <div className="max-w-3xl mx-auto space-y-6">
         <h2 className="text-2xl font-semibold">Créer une équipe</h2>
         <p className="text-muted-foreground">

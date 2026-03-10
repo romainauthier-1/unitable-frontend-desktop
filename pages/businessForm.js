@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/router";
-import { addBusiness } from "../reducers/business";
+import { addBusiness, resetBusiness } from "../reducers/business";
 import { updateIdRestaurant } from "@/reducers/services";
 import { addName } from "@/reducers/users";
 import { Button } from "@/components/ui/button";
@@ -39,7 +39,7 @@ export default function BusinessForm() {
   const [streetName, setStreetName] = useState("");
   const [zipCode, setZipCode] = useState("");
   const [city, setCity] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("06123456789");
+  const [phoneNumber, setPhoneNumber] = useState("0612345678");
   const [error, setError] = useState({});
   const [logo, setLogo] = useState(null);
   const dispatch = useDispatch();
@@ -65,6 +65,7 @@ export default function BusinessForm() {
 
   useEffect(() => {
     getUserName();
+    dispatch(resetBusiness());
   }, []);
 
   useEffect(() => {
@@ -212,7 +213,7 @@ export default function BusinessForm() {
     zipCode,
     city,
     phoneNumber,
-    owner, // attente du token
+    owner,
     category,
   ) => {
     e.preventDefault();
@@ -233,7 +234,7 @@ export default function BusinessForm() {
             city: city,
           },
           phoneNumber: phoneNumber,
-          owner: user.token,
+          token: owner,
           category: category,
         }),
       },
@@ -260,8 +261,7 @@ export default function BusinessForm() {
             email: user.email,
             organizationId: data.id,
           }),
-        }), 
-        
+        }),
       );
 
       // Ajout de l'id du restaurant aux services par défaut du reducer services
@@ -290,7 +290,7 @@ export default function BusinessForm() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex rounded-lg flex-col items-center  p-4">
+    <div className="min-h-screen min-w-screen bg-background flex rounded-lg flex-col items-center  p-4">
       <HeaderAdminSignUp />
       <div className="w-full m-10 max-w-2xl bg-background p-8 rounded-xl shadow-xl border border-salte-200">
         <h1 className="text-xl font-bold text-slate-800 mb-6 text-center">
@@ -309,7 +309,7 @@ export default function BusinessForm() {
               zipCode,
               city,
               phoneNumber,
-              user.email,
+              user.token,
               category,
             )
           }
@@ -486,4 +486,14 @@ export default function BusinessForm() {
       </div>
     </div>
   );
+}
+
+export async function getStaticProps() {
+  return {
+    props: {
+      title: "Enregistrement du restaurant",
+      description:
+        "Renseignez les informations de base de votre établissement.",
+    },
+  };
 }

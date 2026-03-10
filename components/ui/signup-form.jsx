@@ -84,8 +84,8 @@ export default function SignUpForm(props) {
       .then((response) => response.json())
       .then((data) => {
         if (data.result) {
-          alert("Inscription réussie !");
           dispatch(login({ email, token: data.token }));
+          toast.success("Inscription réussie !");
           setFirstName("");
           setLastName("");
           setEmail("");
@@ -104,7 +104,8 @@ export default function SignUpForm(props) {
 
   return (
     // remplace tous les textes en français
-    <div className="flex min-h-svh flex-col items-center justify-center gap-6 bg-muted p-6 md:p-10">
+    <div className="flex min-h-svh min-w-screen flex-col items-center justify-center gap-6 bg-muted p-6 md:p-10">
+      <Toaster richColors position="top-right" />
       <div className="w-full max-w-125">
         <Card {...props}>
           <CardHeader>
