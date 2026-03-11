@@ -74,13 +74,18 @@ export function LoginForm({ className, ...props }) {
                         organizationData.result &&
                         organizationData.organization
                       ) {
-                        const { businessCommercialName, owner, _id } =
-                          organizationData.organization;
+                        const {
+                          businessCommercialName,
+                          owner,
+                          _id,
+                          referenceTeams,
+                        } = organizationData.organization;
                         dispatch(
                           addBusiness({
                             businessCommercialName,
                             owner,
                             id: _id,
+                            referenceTeams: referenceTeams,
                           }),
                         );
                       }
