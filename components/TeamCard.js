@@ -20,7 +20,14 @@ export default function TeamCard({
   removeRole,
   updateRole,
   removeTeam,
+  serviceId,
+  onDeleteTeamFromDB,
 }) {
+  const deleteTeam = () => {
+    onDeleteTeamFromDB(serviceId, team.name);
+    removeTeam(teamIndex);
+    console.log("on supprime");
+  };
   return (
     <Card>
       <CardHeader className="flex justify-between items-center">
@@ -32,7 +39,7 @@ export default function TeamCard({
         <Button
           variant="destructive"
           size="sm"
-          onClick={() => removeTeam(teamIndex)}
+          onClick={deleteTeam}
         >
           Supprimer l'équipe
         </Button>

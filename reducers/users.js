@@ -18,6 +18,7 @@ export const userSlice = createSlice({
       state.value.token = null;
       state.value.email = null;
       state.value.name = null;
+      state.value.id = null
     },
     addName: (state, action) => {
       state.value.name = action.payload;

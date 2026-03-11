@@ -20,9 +20,11 @@ import Link from "next/link";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { login } from "@/reducers/users";
+import { setServices, addService } from "@/reducers/services";
 import { Input } from "@/components/ui/input";
 import { useRouter } from "next/router";
-import { addBusiness } from "@/reducers/business";
+import { addBusiness, addReferenceTeams } from "@/reducers/business";
+import { addEmployeeToStore, setEmployeesInStore } from "@/reducers/employee";
 
 export function LoginForm({ className, ...props }) {
   const dispatch = useDispatch();
@@ -79,16 +81,40 @@ export function LoginForm({ className, ...props }) {
                           owner,
                           _id,
                           referenceTeams,
+                          businessAddress,
                         } = organizationData.organization;
+                        const zipCode = businessAddress?.zipCode;
                         dispatch(
                           addBusiness({
                             businessCommercialName,
                             owner,
                             id: _id,
                             referenceTeams: referenceTeams,
+                            zipCode: zipCode,
                           }),
                         );
                       }
+                    });
+                  fetch(`http://localhost:3000/services/${organizationId}`, {
+                    method: "GET",
+                    headers: { "Content-Type": "application/json" },
+                  })
+                    .then((response) => response.json())
+                    .then((servicesData) => {
+                      console.log("data services ajoute", servicesData);
+                      dispatch(setServices(servicesData.services || []));
+                    });
+
+                  fetch(`http://localhost:3000/employee/${organizationId}`, {
+                    method: "GET",
+                    headers: { "Content-Type": "application/json" },
+                  })
+                    .then((response) => response.json())
+                    .then((employeesData) => {
+                      console.log("data employees ajoute", employeesData);
+                      dispatch(
+                        setEmployeesInStore(employeesData.employees || []),
+                      );
                     });
                 }
                 if (!userData.result) {
