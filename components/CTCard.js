@@ -26,7 +26,7 @@ export default function CTCard({
   onDelete,
   onUpdate,
 }) {
-  const isSmallCard = endTime - startTime < 60 ? true : false;
+  // const isSmallCard = endTime - startTime < 60 ? true : false;
 
   return (
     <Card
