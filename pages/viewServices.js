@@ -26,27 +26,7 @@ export default function Services() {
   const router = useRouter();
 
   console.log("Business dans le store: ", business);
-  // Ajout de l'id du restaurant aux services par défaut du reducer services
-  useEffect(() => {
-    // Empêche de recharger/réinitialiser si déjà présent dans le store.
-    if (services.length > 0 || !business[0]?.id) return;
-
-    fetch("http://localhost:3000/services/" + business[0].id)
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(business[0]);
-        console.log("Services récupérés de la BDD :", data);
-        if (!data.result) {
-          console.error("Reponse invalide pour les services :", data);
-          return;
-        }
-
-        if (Array.isArray(data.services) && data.services.length > 0) {
-          dispatch(setServices(data.services));
-          return;
-        }
-
-        const serviceDejDefault = {
+          const serviceDejDefault = {
           id: uid2(10),
           name: "Déjeuner",
           startTime: 720,
@@ -64,6 +44,28 @@ export default function Services() {
           restaurant: business[0]?.id || null,
           teams: [],
         };
+  // Ajout de l'id du restaurant aux services par défaut du reducer services
+  useEffect(() => {
+    // Empêche de recharger/réinitialiser si déjà présent dans le store.
+    if (services!= undefined || !business[0]?.id) return;
+
+    fetch("http://localhost:3000/services/" + business[0].id)
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(business[0]);
+        console.log("Services récupérés de la BDD :", data);
+        if (!data.result) {
+          dispatch(setServices([serviceDejDefault, serviceDinerDefault]));
+          console.error("Reponse invalide pour les services :", data);
+          return;
+        }
+
+        if (Array.isArray(data.services) && data.services.length > 0) {
+          dispatch(setServices(data.services));
+          return;
+        }
+
+
         dispatch(setServices([serviceDejDefault, serviceDinerDefault]));
       })
       .catch((error) => {
@@ -77,6 +79,25 @@ export default function Services() {
     return hours * 60 + minutes;
   };
 
+  const deleteServiceFromDB = (serviceId) => {
+    try {
+      fetch(`http://localhost:3000/services/${serviceId}`, {
+        method: "DELETE",
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.result) {
+            toast.success(data.message);
+            dispatch(deleteService(serviceId));
+          } else {
+            toast.error(data.message || "Suppression impossible");
+          }
+        });
+    } catch (err) {
+      console.error("Erreur lors de la suppression du service :", err);
+      toast.error("Erreur lors de la suppression du service");
+    }
+  };
   // Transformer les 'minutes depuis minuit' de la BDD en heure lisible
   const convertMinutesToTime = (minutes) => {
     const hours = Math.floor(minutes / 60);
@@ -86,7 +107,7 @@ export default function Services() {
       .padStart(2, "0")}`;
   };
   console.log("Services dans le store :", services);
-  const serviceCards = services.map((service, i) => {
+  const serviceCards = services != undefined ? services.map((service, i) => {
     // console.log("Service :", service);
     return (
       <ServiceCard
@@ -100,10 +121,10 @@ export default function Services() {
         onUpdate={(newData) =>
           dispatch(updateService({ id: service.id, ...newData }))
         }
-        onDelete={() => dispatch(deleteService(service.id))}
+        onDelete={() => deleteServiceFromDB(service.id || service._id)}
       />
     );
-  });
+  }): services;
 
   // Ajout des services au reducer services
   const handleNewService = () => {

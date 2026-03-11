@@ -31,11 +31,6 @@ export default function Dashboard() {
   const user = useSelector((state) => state.user.value);
   const email = user?.email;
   const token = user?.token;
-  useEffect(() => {
-    if (!token) {
-      router.replace("/login");
-    }
-  }, [token, router]);
 
   useEffect(() => {
     if (!email || !token) return;
@@ -84,8 +79,7 @@ export default function Dashboard() {
         <div className="@container/main flex flex-1 flex-col gap-2">
           <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
             <SectionCards />
-
-            <DataTable columns={columns} data={data} />
+            <ChartAreaInteractive />
           </div>
         </div>
       </div>

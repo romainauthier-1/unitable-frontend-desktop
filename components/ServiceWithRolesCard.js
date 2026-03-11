@@ -185,7 +185,7 @@ export default function ServiceWithRolesCard({ service }) {
             <Trash2
               className="text-destructive cursor-pointer "
               size={16}
-              onClick={() => warnAndDeleteService(service.id)}
+              onClick={() => warnAndDeleteService(service.id || service._id)}
             />
           </CardTitle>
         </CardHeader>

@@ -62,7 +62,7 @@ const data = {
     },
     {
       title: "Services",
-      url: "/service_Upload",
+      url: "/viewServices",
       icon: IconChartBar,
     },
     {

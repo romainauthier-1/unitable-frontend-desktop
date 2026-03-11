@@ -80,7 +80,7 @@ export default function Services() {
         onUpdate={(newData) =>
           dispatch(updateService({ id: service.id, ...newData }))
         }
-        onDelete={() => dispatch(deleteService(service.id))}
+        onDelete={() => dispatch(deleteService(service.id || service._id))}
       />
     );
   });

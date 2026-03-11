@@ -25,7 +25,7 @@ import {
 } from "@/components/ui/dialog";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toggleInstructions } from "@/reducers/instructions";
 
 const reducers = combineReducers({
@@ -57,6 +57,22 @@ function AppLayout({ Component, pageProps }) {
   const router = useRouter();
   const currentUser = useSelector((state) => state.user.value);
   const isAuthenticated = Boolean(currentUser?.token && currentUser?.email);
+  const publicRoutes = [
+    "/",
+    "/login",
+    "/signup",
+    "/forgetPassword",
+    "/sendEmailPassword",
+  ];
+
+  useEffect(() => {
+    if (!router.isReady) return;
+    if (publicRoutes.includes(router.pathname)) return;
+    if (!isAuthenticated) {
+      router.replace("/login");
+    }
+  }, [isAuthenticated, router]);
+
   const routesWithoutSidebar = [
     "/",
     "/login",

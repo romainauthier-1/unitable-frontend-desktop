@@ -52,7 +52,7 @@ export const serviceSlice = createSlice({
         return;
       }
       //teamName prend Team Name et le Nom du service pour éviter les doublons de nom d'équipe entre les services
-      const uniqueTeamName = `${teamName} - ${serviceToUpdate.name}`;
+      const uniqueTeamName = `${teamName} - ${serviceToUpdate.name} - {${serviceToUpdate.dayOfWeek}}`;
 
       serviceToUpdate.teams.push({ teamName: uniqueTeamName, roles });
     },
@@ -121,6 +121,9 @@ export const serviceSlice = createSlice({
         serviceToUpdate.teams = serviceToUpdate.teams.filter(
           (team) => team.teamName !== teamName,
         );
+        console.log("service",id)
+        console.log("teamName",teamName)
+       
       }
     },
     addService: (state, action) => {
@@ -134,10 +137,12 @@ export const serviceSlice = createSlice({
     },
     setServices: (state, action) => {
       state.value = action.payload;
+      console.log("Services dans le store après setServices:", state.value);
     },
     deleteService: (state, action) => {
       state.value = state.value.filter(
-        (service) => service.id !== action.payload,
+        //  (service) => service.id !== action.payloadctio,
+        (service) => (service.id || service._id) !== action.payload,
       );
     },
   },

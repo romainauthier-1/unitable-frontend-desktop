@@ -7,7 +7,7 @@ import { addBusiness, addReferenceTeams } from "@/reducers/business";
 import { Toaster } from "sonner";
 import { toast } from "sonner";
 import HeaderAdminSignUp from "@/components/HeaderAdminSignUp";
-import { set } from "date-fns";
+
 export default function ViewTeamSaveReducer() {
   const user = useSelector((state) => state.user.value);
   const business = useSelector((state) => state.business.value) || [];
@@ -17,9 +17,11 @@ export default function ViewTeamSaveReducer() {
   const router = useRouter();
   const dispatch = useDispatch();
   const organizationId = business?.[0]?.id || null;
-
+  console.log("Business dans le store :", business);
+  console.log("ID de l'organisation :", organizationId);
   // State local pour l'édition du formulaire
   const [teams, setTeams] = useState([]);
+  const [services, setServices] = useState([]);
   const [hasLoadedFromBusiness, setHasLoadedFromBusiness] = useState(false);
 
   const defaultTeams = [
@@ -52,6 +54,24 @@ export default function ViewTeamSaveReducer() {
     setTeams((teams) => [{ name: "", roles: [] }, ...teams]);
 
   const removeTeam = (index) => setTeams(teams.filter((_, i) => i !== index));
+
+  const deleteTeamFromDB = async (serviceId, teamName) => {
+    try {
+      const response = await fetch(
+        `http://localhost:3000/services/${serviceId}/teams/${encodeURIComponent(teamName)}`,
+        { method: "DELETE" }
+      );
+      const data = await response.json();
+      if (!data.result) {
+        toast.error(data.message || "Suppression impossible");
+      } else {
+        toast.success("Équipe supprimée avec succès");
+      }
+    } catch (error) {
+      console.error("Erreur lors de la suppression de l'équipe :", error);
+      toast.error("Erreur lors de la suppression de l'équipe");
+    }
+  };
 
   const updateTeamName = (index, value) => {
     const updated = [...teams];
@@ -107,7 +127,6 @@ export default function ViewTeamSaveReducer() {
         );
       }
 
-      dispatch(setTeamsAction(teams));
       dispatch(addReferenceTeams({ businessId: organizationId, teams }));
       toast.success("Équipes sauvegardées avec succès dans Redux !");
       router.push("/dashboard");
@@ -128,7 +147,6 @@ export default function ViewTeamSaveReducer() {
     }*/
 
     if (!organizationId) {
-      dispatch(setTeamsAction(defaultTeams));
       setTeams(defaultTeams);
       return;
     }
@@ -137,58 +155,57 @@ export default function ViewTeamSaveReducer() {
     if (hasLoadedFromBusiness) {
       return;
     }
-
+    console.log(organizationId)
     fetch("http://localhost:3000/services/" + organizationId)
       .then((response) => response.json())
       .then((data) => {
         console.log("Équipes récupérées de la BDD :", data);
         if (!data.result) {
           console.error("Reponse invalide pour les équipes :", data);
-          dispatch(setTeamsAction(defaultTeams));
           setTeams(defaultTeams);
           return;
         }
 
         // Extraire toutes les équipes non vides depuis chaque service
-        const teamsFromServices = Array.isArray(data.services)
-          ? data.services
-              .flatMap((service) =>
-                Array.isArray(service.teams) ? service.teams : [],
-              )
-              .filter(
-                (team) => Array.isArray(team.roles) && team.roles.length > 0,
-              )
-              .map((team) => ({
-                name: team.teamName || team.name || "",
-                roles: Array.isArray(team.roles)
-                  ? team.roles.map((role) => ({
-                      name: role.name,
-                      need: role.need,
+        if (Array.isArray(data.services) && data.services.length > 0) {
+          setServices(data.services);
+          const teamsFromServices = data.services
+            .flatMap((service) =>
+              Array.isArray(service.teams)
+                ? service.teams
+                    .filter(
+                      (team) => Array.isArray(team.roles) && team.roles.length > 0,
+                    )
+                    .map((team) => ({
+                      name: team.teamName || team.name || "",
+                      serviceId: service.id || service._id,
+                      roles: Array.isArray(team.roles)
+                        ? team.roles.map((role) => ({
+                            name: role.name,
+                            need: role.need,
+                          }))
+                        : [],
                     }))
-                  : [],
-              }))
-          : [];
+                : [],
+            );
 
-        if (teamsFromServices.length > 0) {
-          dispatch(setTeamsAction(teamsFromServices));
-          setTeams(teamsFromServices);
-          return;
+          if (teamsFromServices.length > 0) {
+            setTeams(teamsFromServices);
+            return;
+          }
         }
 
         const referenceTeams = business[0]?.referenceTeams;
         if (referenceTeams?.length > 0) {
-          dispatch(setTeamsAction(referenceTeams));
           setTeams(referenceTeams);
           return;
         }
 
         // BDD vide : utiliser les équipes par défaut
-        dispatch(setTeamsAction(defaultTeams));
         setTeams(defaultTeams);
       })
       .catch((error) => {
         console.error("Erreur lors de la récupération des équipes :", error);
-        dispatch(setTeamsAction(defaultTeams));
         setTeams(defaultTeams);
       });
   }, [organizationId, dispatch, hasLoadedFromBusiness]);
@@ -239,6 +256,7 @@ export default function ViewTeamSaveReducer() {
             </Button>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+           
             {Array.isArray(teams) &&
               teams.map((team, teamIndex) => (
                 <TeamCard
@@ -251,6 +269,8 @@ export default function ViewTeamSaveReducer() {
                   removeRole={removeRole}
                   updateRole={updateRole}
                   removeTeam={removeTeam}
+                  serviceId={team.serviceId}
+                  onDeleteTeamFromDB={deleteTeamFromDB}
                 />
               ))}
           </div>
