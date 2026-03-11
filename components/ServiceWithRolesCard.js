@@ -49,7 +49,7 @@ import { deleteTeamFromService } from "@/reducers/services";
 export default function ServiceWithRolesCard({ service }) {
   const dispatch = useDispatch();
   const services = useSelector((state) => state.services.value);
-   const teamAvailable = useSelector(
+  const teamAvailable = useSelector(
     (state) => state.business.value[0]?.referenceTeams,
   );
   //const teamAvailable = useSelector((state) => state.teams.value);
@@ -95,43 +95,28 @@ export default function ServiceWithRolesCard({ service }) {
       return (
         <div key={team.teamName} className="p-1">
           <div className="flex flex-row justify-between">
-            <p className="text-sm font-bold">{team.teamName}</p>
+            <p className="text-sm font-bold">{team.teamName.split(" {")[0]}</p>
             <MinusCircle
               className="text-primary cursor-pointer"
               size={16}
               onClick={() => warnAndDeleteTeam(service.id, team.teamName)}
             />
-
-            {/* <DropdownMenu>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <DropdownMenuTrigger asChild>
-                      <PlusCircle
-                        className="text-primary cursor-pointer "
-                        size={16}
-                      />
-                    </DropdownMenuTrigger>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Ajouter un rôle</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-              <DropdownMenuContent>
-                <DropdownMenuLabel>
-                  Choix du rôle ({team.teamName})
-                </DropdownMenuLabel>
-                {roleDropdown}
-              </DropdownMenuContent>
-            </DropdownMenu> */}
           </div>
           {team.roles.map((role) => (
             <div
               key={role.name}
               className="flex flex-row items-center justify-between"
             >
-              <p className="text-sm">{role.name}</p>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <p className="text-sm truncate">{role.name}</p>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>{role.name}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
               <Input
                 className="flex shrink-0 w-10 p-1 text-center"
                 type="number"
@@ -178,16 +163,27 @@ export default function ServiceWithRolesCard({ service }) {
   return (
     <>
       <Toaster richColors position="top-right" />
-      <Card className="border border-primary mb-2 w-full">
+      <Card className="border border-primary mb-2 w-full overflow-hidden">
         <CardHeader>
-          <CardTitle className="flex flex-row items-center justify-evenly">
-            <p className="text-md">{service.name}</p>
-            <Trash2
-              className="text-destructive cursor-pointer "
-              size={16}
-              onClick={() => warnAndDeleteService(service.id || service._id)}
-            />
+          <CardTitle className="flex flex-row items-center justify-between">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <p className="text-md text-ellipsis text-center">
+                    {service.name}
+                  </p>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>{service.name}</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </CardTitle>
+          <Trash2
+            className="text-destructive cursor-pointer hover:scale-110"
+            size={16}
+            onClick={() => warnAndDeleteService(service.id || service._id)}
+          />
         </CardHeader>
         <div className="flex flex-row justify-evenly">
           <p className="text-sm">
