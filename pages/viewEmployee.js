@@ -229,6 +229,8 @@ export default function ViewEmployee() {
 	// Reset le formulaire
 	const handleReset = () => {
 		setFormData({ ...initialFormState });
+		setIsEditing(false);
+		setSelectedEmployee(null);
 	};
 
 	// supprimer un employé
@@ -404,7 +406,16 @@ export default function ViewEmployee() {
 				onOpenChange={setIsDrawerOpen}
 			>
 				<DrawerTrigger asChild>
-					<Button variant="default">Ajouter un employé</Button>
+					<Button
+						variant="default"
+						onClick={() => {
+							setIsEditing(false);
+							setSelectedEmployee(null);
+							setFormData(initialFormState);
+						}}
+					>
+						Ajouter un employé
+					</Button>
 				</DrawerTrigger>
 
 				<DrawerContent>
