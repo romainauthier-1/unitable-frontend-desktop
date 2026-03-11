@@ -56,7 +56,14 @@ export function LoginForm({ className, ...props }) {
                   const organizationId = userData.user.organization;
                   const name =
                     userData.user.firstName + " " + userData.user.lastName;
-                  dispatch(login({ email, token: data.token, name: name }));
+                  dispatch(
+                    login({
+                      email,
+                      token: data.token,
+                      name: name,
+                      id: userData.user._id,
+                    }),
+                  );
                   fetch(
                     `http://localhost:3000/organizations/search/by/${organizationId}`,
                   )

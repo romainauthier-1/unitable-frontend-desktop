@@ -58,6 +58,7 @@ export default function CreateEmployee() {
   const dispatch = useDispatch();
   const employees = useSelector((state) => state.employee.value.employees);
   const business = useSelector((state) => state.business.value);
+  const organizationId = business?.[0]?.id || "";
 
   const initialFormState = {
     firstName: "",
