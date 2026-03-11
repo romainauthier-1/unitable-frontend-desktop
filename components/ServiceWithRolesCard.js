@@ -99,7 +99,9 @@ export default function ServiceWithRolesCard({ service }) {
             <MinusCircle
               className="text-primary cursor-pointer"
               size={16}
-              onClick={() => warnAndDeleteTeam(service.id, team.teamName)}
+              onClick={() =>
+                warnAndDeleteTeam(service._id || service.id, team.teamName)
+              }
             />
           </div>
           {team.roles.map((role) => (
@@ -182,7 +184,7 @@ export default function ServiceWithRolesCard({ service }) {
           <Trash2
             className="text-destructive cursor-pointer hover:scale-110"
             size={16}
-            onClick={() => warnAndDeleteService(service.id || service._id)}
+            onClick={() => warnAndDeleteService(service._id || service.id)}
           />
         </CardHeader>
         <div className="flex flex-row justify-evenly">

@@ -9,7 +9,11 @@ import { PlusSquare } from "lucide-react";
 import { Toaster } from "sonner";
 import { toast } from "sonner";
 import ServiceWithRolesCard from "@/components/ServiceWithRolesCard";
-import { addService, deleteTeamFromService } from "@/reducers/services";
+import {
+  addService,
+  deleteTeamFromService,
+  setServices,
+} from "@/reducers/services";
 import {
   Dialog,
   DialogContent,
@@ -29,7 +33,7 @@ const uid2 = require("uid2");
 
 export default function ViewPlanning() {
   const business = useSelector((state) => state.business.value);
-  const [services, setServices] = useState([]);
+  const services = useSelector((state) => state.services.value);
   const user = useSelector((state) => state.user.value);
   const dispatch = useDispatch();
   const router = useRouter();
@@ -40,12 +44,18 @@ export default function ViewPlanning() {
   const restaurantId = business[0]?.id;
 
   const getAllServices = async (restaurantId) => {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_URL_BACKEND}/services/${restaurantId}`,
-    );
-    const data = await response.json();
-    const foundServices = await data.services;
-    setServices(foundServices);
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_URL_BACKEND}/services/${restaurantId}`,
+      );
+      const data = await response.json();
+      if (data.result) {
+        const foundServices = await data.services;
+        dispatch(setServices(foundServices));
+      }
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const days = [
@@ -66,7 +76,10 @@ export default function ViewPlanning() {
       .filter((service) => service.dayOfWeek?.includes(day))
       .sort((a, b) => a.startTime - b.startTime)
       .map((service) => (
-        <ServiceWithRolesCard key={service.id} service={service} />
+        <ServiceWithRolesCard
+          key={service._id || service.id}
+          service={service}
+        />
       ));
   };
 
@@ -103,7 +116,7 @@ export default function ViewPlanning() {
         const url = existingService
           ? `${process.env.NEXT_PUBLIC_URL_BACKEND}/services/${service?._id}`
           : `${process.env.NEXT_PUBLIC_URL_BACKEND}/services`;
-        const { id, ...serviceWithoutId } = service;
+        const { id, _id, ...serviceWithoutId } = service;
         // console.log("Voici le service en traitement: ", service);
         // console.log("serviceWithoutId.teams", serviceWithoutId.teams);
 
@@ -124,10 +137,8 @@ export default function ViewPlanning() {
 
       await Promise.all(promises);
 
-      toast.success("Semaine type enregistrée !");
-      setTimeout(() => {
-        router.push("/dashboard");
-      }, 1000);
+      toast.success("Mise à jour réussie !");
+      getAllServices(restaurantId);
     } catch (err) {
       console.log(err);
       toast.error(err.message);

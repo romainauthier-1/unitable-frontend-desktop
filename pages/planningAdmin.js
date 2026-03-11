@@ -101,7 +101,10 @@ export default function planningAdmin() {
     (day, i) => {
       const correctHour = i + startHour;
       return (
-        <div className="text-left col-span-4 border-l border-slate-200" key={i}>
+        <div
+          className="text-left col-span-4 h-16 border-l border-slate-200 flex-none"
+          key={i}
+        >
           <span className="text-slate-400 font-light text-[15px]">{`${correctHour.toString().padStart(2, "0")}h`}</span>
         </div>
       );
@@ -231,6 +234,30 @@ export default function planningAdmin() {
     return hoursCount;
   };
 
+  const getWeeklyHours = (workerId) => {
+    const startOfWeek = dayjs(workingDate).startOf("week");
+    const endOfWeek = dayjs(workingDate).endOf("week");
+
+    const weeklyMinutes = allCTs
+      .filter((CT) => {
+        const CTDate = dayjs(CT.date);
+        return (
+          CT.worker._id === workerId &&
+          (CTDate.isSame(startOfWeek, "day") || CTDate.isAfter(startOfWeek)) &&
+          (CTDate.isSame(endOfWeek, "day") || CTDate.isBefore(endOfWeek))
+        );
+      })
+      .reduce((acc, CT) => {
+        const duration =
+          CT.endTime - CT.startTime - (Number(CT.breakTime) || 0);
+        return acc + duration;
+      }, 0);
+
+    const hours = Math.floor(weeklyMinutes / 60);
+    const minutes = weeklyMinutes % 60;
+    return `${hours}h${minutes.toString().padStart(2, "0")}`;
+  };
+
   const roleNeedForService = (serviceId) => {
     const targetService = services.find((service) => service._id === serviceId);
     if (!targetService) {
@@ -259,28 +286,65 @@ export default function planningAdmin() {
   const totalColumns = (endHour - startHour) * 4;
 
   const staffToDisplay = staff.map((employee, i) => {
-    // console.log("Employee sur lequel on map:", employee);
+    const weeklyStr = getWeeklyHours(employee._id); // Format "35h15"
+    const [wHours, wMins] = weeklyStr.split("h").map(Number);
+    const totalWeeklyMinutes = wHours * 60 + wMins;
+
+    const contractHours = Number(employee.hourVolumn) || 0;
+    const totalContractMinutes = contractHours * 60;
+
+    const hasContract = contractHours > 0;
+    const isOver = hasContract && totalWeeklyMinutes > totalContractMinutes;
+    const isUnder = hasContract && totalWeeklyMinutes < totalContractMinutes;
+
+    const statusClasses = isOver
+      ? "bg-red-50 text-red-700 border-red-200"
+      : isUnder
+        ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+        : "bg-slate-50 text-slate-600 border-slate-200";
+
     return (
       <div
-        className={` w-full h-16 ${i % 2 === 0 ? "bg-white" : "bg-slate-100"}`}
+        className={`w-full flex flex-row border-b border-slate-200 items-stretch min-h-16 ${i % 2 === 0 ? "bg-white" : "bg-slate-50"}`}
         key={employee?._id}
-        style={{
-          display: "grid",
-          gridTemplateColumns: `repeat(${totalColumns}, 1fr)`,
-        }}
       >
-        <div className="sticky left-0 z-10 w-32 shrink-0 bg-inherit border-r flex flex-col justify-center px-2 shadow-sm">
-          <span className="text-xs font-bold truncate">
+        <div className="sticky left-0 z-20 w-32 shrink-0 bg-inherit border-r flex flex-col justify-center px-3 py-2 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]">
+          <span className="text-xs font-bold text-slate-800 truncate">
             {employee.firstName}
           </span>
-          <span className="text-[10px] font-mono text-accent-foreground">
-            {convertMinutesToTime(dailyHours(employee?._id)).replace(":", "h")}
-          </span>
+          <div className="flex flex-col gap-1">
+            <div
+              className={`flex items-center justify-between px-1.5 py-0.5 rounded border font-mono text-[10px] font-bold ${statusClasses}`}
+            >
+              <span>{weeklyStr}</span>
+              {hasContract && (
+                <span className="text-[8px] opacity-60">
+                  / {contractHours}h
+                </span>
+              )}
+            </div>
+
+            {hasContract && (
+              <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                <div
+                  className={`h-full transition-all rounded-full duration-500 ${isOver ? "bg-red-500" : "bg-emerald-500"}`}
+                  style={{
+                    width: `${Math.min((totalWeeklyMinutes / totalContractMinutes) * 100, 100)}%`,
+                  }}
+                />
+              </div>
+            )}
+
+            {!hasContract && (
+              <span className="text-[8px] text-slate-400 italic">
+                Contrat non défini
+              </span>
+            )}
+          </div>
         </div>
         <div
-          className={`grid relative h-16 flex-1`}
+          className="relative flex-1"
           style={{
-            gridColumn: `span ${totalColumns} / span ${totalColumns}`,
             display: "grid",
             gridTemplateColumns: `repeat(${totalColumns}, 1fr)`,
           }}
@@ -388,11 +452,11 @@ export default function planningAdmin() {
 
   return (
     <div
-      className={`h-screen w-full bg-white flex rounded-lg flex-col overflow-x-auto`}
+      className={`h-screen w-full bg-white flex rounded-lg flex-col overflow-x-auto overflow-y-visible`}
     >
       <Toaster richColors position="top-right" />
       <HeaderAdminSignUp />
-      <div className="flex flex-row justify-evenly items-center bg-slate-50/50 border-b border-b-slate-300">
+      <div className="flex flex-none flex-row justify-evenly items-center bg-slate-50/50 border-b border-b-slate-300">
         <div className="flex flex-row w-1/5">
           <Label>Début journée</Label>
           <Input
@@ -546,7 +610,11 @@ export default function planningAdmin() {
                       )}
                     </Button>
                   </PopoverTrigger>
-                  <PopoverContent className="w-80 p-3" align="start">
+                  <PopoverContent
+                    className="w-80 p-3"
+                    align="start"
+                    onWheel={(e) => e.stopPropagation()}
+                  >
                     <div className="space-y-4 max-h-75 overflow-y-auto">
                       {referenceTeams.map((team) => (
                         <div key={team.name} className="space-y-2">
@@ -631,52 +699,66 @@ export default function planningAdmin() {
           <ChevronsRight size={30} />
         </Button>
       </div>
-      <div
-        className="w-full"
-        style={{
-          display: "grid",
-          gridTemplateColumns: `repeat(${totalColumns}, 1fr)`,
-        }}
-      >
-        {hoursInADay}
+      <div className="flex-1 overflow-y-auto min-h-0">
+        <div className="flex flex-row w-full border-b border-slate-300 bg-white">
+          <div className="w-32 shrink-0 border-r border-slate-200" />
+
+          <div
+            className="w-full"
+            style={{
+              display: "grid",
+              gridTemplateColumns: `repeat(${totalColumns}, 1fr)`,
+            }}
+          >
+            {hoursInADay}
+          </div>
+        </div>
+        {staffToDisplay}
       </div>
-      {staffToDisplay}
-      <div className="mt-4 p-4 bg-slate-50 border-t sticky bottom-0 z-30">
-        <h3 className="text-sm font-bold mb-2 uppercase tracking-wider">
-          État des Services
-        </h3>
-        <div className="flex gap-6 overflow-x-auto">
+      <footer className=" flex-none sticky bottom-0 z-50 w-full h-12 bg-white/80 backdrop-blur-md border-t border-slate-200 flex items-center px-4 overflow-visible">
+        <div className="flex gap-2 items-center">
           {services?.map((service) => (
             <div
               key={service._id}
-              className="min-w-fit bg-white p-2 rounded border shadow-sm"
+              className="group relative min-w-fit cursor-pointer"
             >
-              <p className="text-xs font-bold text-accent-foreground border-b mb-1">
+              <p className="text-[10px] uppercase tracking-wider font-bold px-2 py-1 rounded-md bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors">
                 {service.name}
               </p>
-              <div className="space-y-1">
-                {roleNeedForService(service._id).map((role) => (
-                  <div
-                    key={role.name}
-                    className="flex justify-between gap-4 text-[11px]"
-                  >
-                    <span>{role.name}</span>
-                    <span
-                      className={
-                        role.planned < role.need
-                          ? "text-red-500 font-bold"
-                          : "text-green-600"
-                      }
-                    >
-                      {role.planned} / {role.need}
-                    </span>
+              <div
+                className="absolute bottom-full left-0 mb-2 z-[9999] 
+                  opacity-0 scale-95 pointer-events-none 
+                  transition-all duration-150 
+                  group-hover:opacity-100 group-hover:scale-100 
+                  group-hover:pointer-events-auto group-hover:-translate-y-1"
+              >
+                <div className="bg-white border z-50 rounded-lg shadow-2xl p-3 min-w-37.5">
+                  <p className="text-xs font-semibold mb-2">{service.name}</p>
+                  <div className="space-y-1">
+                    {roleNeedForService(service._id).map((role) => (
+                      <div
+                        key={role.name}
+                        className="flex justify-between text-[11px]"
+                      >
+                        <span>{role.name}</span>
+                        <span
+                          className={
+                            role.planned < role.need
+                              ? "text-red-500 font-semibold"
+                              : "text-green-600"
+                          }
+                        >
+                          {role.planned} / {role.need}
+                        </span>
+                      </div>
+                    ))}
                   </div>
-                ))}
+                </div>
               </div>
             </div>
           ))}
         </div>
-      </div>
+      </footer>
     </div>
   );
 }
