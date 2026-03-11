@@ -84,7 +84,7 @@ export default function SignUpForm(props) {
       .then((response) => response.json())
       .then((data) => {
         if (data.result) {
-          dispatch(login({ email, token: data.token }));
+          dispatch(login({ email, token: data.token, id: data.id }));
           toast.success("Inscription réussie !");
           setFirstName("");
           setLastName("");

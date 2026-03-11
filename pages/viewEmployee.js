@@ -302,42 +302,6 @@ export default function ViewEmployee() {
 
 	return (
 		<div>
-			{/* <div className="mt-6">
-				<h2 className="text-lg font-semibold mb-4">
-					Liste des employés
-				</h2>
-				{employees.length === 0 ? (
-					<p>Aucun employé créé.</p>
-				) : (
-					<div>
-						{employees.map((employee) => (
-							<Card key={employee._id}>
-								<CardHeader>
-									<CardTitle>
-										{employee.firstName} {employee.lastName}
-									</CardTitle>
-									<CardDescription>
-										{employee.position}
-									</CardDescription>
-								</CardHeader>
-								<CardContent className="space-y-2 text-sm">
-									<p>Email: {employee.email}</p>
-									<p>Rôle: {employee.profil}</p>
-								</CardContent>
-								<CardFooter className="gap-4">
-									<Button variant="outline" size="sm">
-										Supprimer
-									</Button>
-									<Button variant="outline" size="sm">
-										Modifier
-									</Button>
-								</CardFooter>
-							</Card>
-						))}
-					</div>
-				)}
-			</div> */}
-
 			<HeaderAdminSignUp />
 			<div className="mt-6">
 				<h2 className="text-lg font-semibold mb-4">
@@ -363,7 +327,7 @@ export default function ViewEmployee() {
 							</TableHeader>
 
 							<TableBody>
-								{employees.map((employee) => (
+								{employees?.map((employee) => (
 									<TableRow key={employee._id}>
 										<TableCell className="font-medium">
 											{employee.firstName}{" "}

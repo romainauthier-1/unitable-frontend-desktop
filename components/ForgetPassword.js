@@ -65,7 +65,7 @@ export function ForgetPassword({ className, ...props }) {
 						} else {
 							// employé = message
 							setSuccessMessage(
-								"Votre mot de passe a bien été changé, vou pouvez maintenant quitter cette page.",
+								"Votre mot de passe a bien été changé, vous pouvez maintenant quitter cette page.",
 							);
 						}
 					}

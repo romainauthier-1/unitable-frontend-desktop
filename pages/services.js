@@ -10,7 +10,6 @@ import {
   deleteService,
 } from "@/reducers/services";
 import { Button } from "@/components/ui/button";
-import { Toaster } from "sonner";
 import { toast } from "sonner";
 import { useRouter } from "next/router";
 import HeaderAdminSignUp from "@/components/HeaderAdminSignUp";
