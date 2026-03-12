@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import HeaderAdminSignUp from "@/components/HeaderAdminSignUp";
 export default function ViewTeams() {
   const user = useSelector((state) => state.user.value);
-  const business = useSelector((state) => state.business.value);
+  const business = useSelector((state) => state.business.value) || [];
   const storeTeams = useSelector((state) => state.teams.value);
   const router = useRouter();
   const dispatch = useDispatch();
@@ -85,7 +85,7 @@ export default function ViewTeams() {
     }
 
     try {
-      const response = await fetch("http://localhost:3000/teams/addteams", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_URL_BACKEND}/teams/addteams`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ equipes: teams, organizationId }),
@@ -121,7 +121,7 @@ export default function ViewTeams() {
       return;
     }*/
 
-    fetch("http://localhost:3000/teams/" + business[0].id)
+    fetch(`${process.env.NEXT_PUBLIC_URL_BACKEND}/teams/` + business[0].id)
       .then((response) => response.json())
       .then((data) => {
 

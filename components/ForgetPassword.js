@@ -40,7 +40,7 @@ export function ForgetPassword({ className, ...props }) {
     if (password.length > 7) {
       // je veux faire un put pour changer le mot de passe avec le token de réinitialisation  SUR LA ROUTE PUT /PASSWORD qui prend en body token et password
 
-      fetch(`http://localhost:3000/users/password`, {
+      fetch(`${process.env.NEXT_PUBLIC_URL_BACKEND}/users/password`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

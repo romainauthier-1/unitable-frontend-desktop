@@ -23,7 +23,7 @@ export function EmailChangePassword({ className, ...props }) {
     email.length > 0 &&
       //  `${process.env.NEXT_PUBLIC_URL_BACKEND}/users/search/by/${encodeURIComponent(email)}`
       fetch(
-        "http://localhost:3000/users/search/by/" + encodeURIComponent(email),
+        `${process.env.NEXT_PUBLIC_URL_BACKEND}/users/search/by/` + encodeURIComponent(email),
         {
           method: "GET",
           headers: { "Content-Type": "application/json" },
@@ -34,7 +34,7 @@ export function EmailChangePassword({ className, ...props }) {
           if (data.user != undefined && data.user.token != undefined) {
             {
               // fetch envoie un mail de réinitialisation du mot de passe avec cette route: /emails/resetpassword
-              fetch("http://localhost:3000/emails/resetpassword", {
+              fetch(`${process.env.NEXT_PUBLIC_URL_BACKEND}/emails/resetpassword`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({

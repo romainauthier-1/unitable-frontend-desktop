@@ -10,8 +10,9 @@ import HeaderAdminSignUp from "./HeaderAdminSignUp";
 
 export default function CreateTeams() {
   const user = useSelector((state) => state.user.value);
-  const business = useSelector((state) => state.business.value);
+  const business = useSelector((state) => state.business.value) || [];
   const router = useRouter();
+  const onCreateTeam = true
   const dispatch = useDispatch();
   console.log(business);
   const organizationId = business ? business[0]?.id : null;

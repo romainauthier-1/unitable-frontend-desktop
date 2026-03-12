@@ -29,8 +29,8 @@ import HeaderAdminSignUp from "@/components/HeaderAdminSignUp";
 const uid2 = require("uid2");
 
 export default function templatePlanning() {
-  const business = useSelector((state) => state.business.value);
-  const services = useSelector((state) => state.services.value);
+  const business = useSelector((state) => state.business.value) || [];
+  const services = useSelector((state) => state.services.value) || [];
   const user = useSelector((state) => state.user.value);
   const dispatch = useDispatch();
   const router = useRouter();

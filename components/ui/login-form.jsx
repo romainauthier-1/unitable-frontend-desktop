@@ -36,7 +36,7 @@ export function LoginForm({ className, ...props }) {
     e.preventDefault();
 
     if (password.length > 1 && email.length > 0) {
-      fetch(`http://localhost:3000/users/signin`, {
+      fetch(`${process.env.NEXT_PUBLIC_URL_BACKEND}/users/signin`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -50,7 +50,7 @@ export function LoginForm({ className, ...props }) {
           if (data.result) {
             // recuperer organisation de l'utilisateur et l'ajouter au store
             // fetch user search by email to get organization id, then fetch organization by id to get organization details and add to store
-            fetch(`http://localhost:3000/users/search/by/${email}`)
+            fetch(`${process.env.NEXT_PUBLIC_URL_BACKEND}/users/search/by/${email}`)
               .then((response) => response.json())
               .then((userData) => {
               
@@ -67,7 +67,7 @@ export function LoginForm({ className, ...props }) {
                     }),
                   );
                   fetch(
-                    `http://localhost:3000/organizations/search/by/${organizationId}`,
+                    `${process.env.NEXT_PUBLIC_URL_BACKEND}/organizations/search/by/${organizationId}`,
                   )
                     .then((response) => response.json())
                     .then((organizationData) => {
@@ -95,7 +95,7 @@ export function LoginForm({ className, ...props }) {
                         );
                       }
                     });
-                  fetch(`http://localhost:3000/services/${organizationId}`, {
+                  fetch(`${process.env.NEXT_PUBLIC_URL_BACKEND}/services/${organizationId}`, {
                     method: "GET",
                     headers: { "Content-Type": "application/json" },
                   })
@@ -105,7 +105,7 @@ export function LoginForm({ className, ...props }) {
                       dispatch(setServices(servicesData.services || []));
                     });
 
-                  fetch(`http://localhost:3000/employee/${organizationId}`, {
+                  fetch(`${process.env.NEXT_PUBLIC_URL_BACKEND}/employee/${organizationId}`, {
                     method: "GET",
                     headers: { "Content-Type": "application/json" },
                   })

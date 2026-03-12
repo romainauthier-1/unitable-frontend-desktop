@@ -21,7 +21,7 @@ import { useRouter } from "next/router";
 import { toast } from "sonner";
 import { Toaster } from "sonner";
 
-const API_BASE = process.env.NEXT_PUBLIC_URL_BACKEND || "http://localhost:3000";
+const API_BASE = process.env.NEXT_PUBLIC_URL_BACKEND;
 
 export default function SignUpForm(props) {
   const dispatch = useDispatch();
@@ -43,33 +43,33 @@ export default function SignUpForm(props) {
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
 
     if (!passwordRegex.test(password)) {
-      alert(
+      toast.error(
         "Le mot de passe doit comporter au moins 8 caractères, dont au moins une majuscule, une minuscule et un chiffre.",
       );
       return;
     }
 
     if (password !== passwordConfirmation) {
-      alert("Les mots de passe ne correspondent pas !");
+      toast.error("Les mots de passe ne correspondent pas !");
       return;
     }
 
     if (!firstName.trim()) {
-      alert("Veuillez entrer votre prénom !");
+      toast.error("Veuillez entrer votre prénom !");
       return;
     }
 
     if (!lastName.trim()) {
-      alert("Veuillez entrer votre nom !");
+      toast.error("Veuillez entrer votre nom !");
       return;
     }
 
     if (!email.trim()) {
-      alert("Veuillez entrer votre adresse email !");
+      toast.error("Veuillez entrer votre adresse email !");
       return;
     }
 
-    fetch("http://localhost:3000/users/signup", {
+    fetch(`${API_BASE}/users/signup`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -94,12 +94,12 @@ export default function SignUpForm(props) {
           setPasswordConfirmation("");
           router.push("/businessForm");
         } else {
-          alert(data.error || "Inscription échouée.");
+          toast.error(data.error || "Inscription échouée.");
         }
       })
       .catch((error) => {
         console.error("Erreur fetch :", error);
-        alert("Erreur serveur.");
+        toast.error("Erreur serveur.");
       });
   };
 
@@ -211,7 +211,7 @@ export default function SignUpForm(props) {
 									type="button"
 									disabled
 									onClick={() =>
-										alert(
+                    toast.info(
 											"Soyez Patient, bientôt disponible !",
 										)
 									}

@@ -65,8 +65,8 @@ dayjs.extend(localizedFormat);
 
 export default function planningAdmin() {
   const user = useSelector((state) => state.user.value);
-  const business = useSelector((state) => state.business.value);
-  const staff = useSelector((state) => state.employee.value.employees);
+  const business = useSelector((state) => state.business.value) || [];
+  const staff = useSelector((state) => state.employee.value?.employees) || [];
   const dispatch = useDispatch();
   const restaurantId = business[0]?.id;
   const [allCTs, setAllCTs] = useState([]);

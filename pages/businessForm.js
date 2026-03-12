@@ -43,12 +43,12 @@ export default function BusinessForm() {
   const [error, setError] = useState({});
   const [logo, setLogo] = useState(null);
   const dispatch = useDispatch();
-  const business = useSelector((state) => state.business.value);
+  const business = useSelector((state) => state.business.value) || [];
   const user = useSelector((state) => state.user.value);
 
   const getUserName = async () => {
     try {
-      const response = await fetch(`http://localhost:3000/users/${user.email}`);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_URL_BACKEND}/users/${user.email}`);
       const data = await response.json();
 
       if (!data.result) {

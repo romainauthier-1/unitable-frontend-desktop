@@ -27,7 +27,7 @@ const columns = [
 export default function Dashboard() {
   const router = useRouter();
   const dispatch = useDispatch();
-  const business = useSelector((state) => state.business.value);
+  const business = useSelector((state) => state.business.value) || [];
   const user = useSelector((state) => state.user.value);
   const email = user?.email;
   const token = user?.token;
@@ -40,9 +40,9 @@ export default function Dashboard() {
 
     const fetchUserData = async () => {
       try {
-        const backendUrl = process.env.URL_BACKEND || "http://localhost:3000";
+        const backendUrl = process.env.NEXT_PUBLIC_URL_BACKEND;
         const response = await fetch(
-          `http://localhost:3000/users/search/by/${email}`,
+          `${backendUrl}/users/search/by/${email}`,
           {
             method: "GET",
           },

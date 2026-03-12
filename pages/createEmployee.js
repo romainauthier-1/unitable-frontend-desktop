@@ -56,8 +56,8 @@ import { useRouter } from "next/router";
 export default function CreateEmployee() {
   const router = useRouter();
   const dispatch = useDispatch();
-  const employees = useSelector((state) => state.employee.value.employees);
-  const business = useSelector((state) => state.business.value);
+  const employees = useSelector((state) => state.employee.value?.employees) || [];
+  const business = useSelector((state) => state.business.value) || [];
   const organizationId = business?.[0]?.id || "";
 
   const initialFormState = {
@@ -112,7 +112,7 @@ export default function CreateEmployee() {
 
   // Envoie des données du formulaire
   const handleSubmit = (event) => {
-    // Fetch le backend http://localhost:3000/users/signup pour créer un nouvel utilisateur/employé
+    // Fetch le backend ${process.env.NEXT_PUBLIC_URL_BACKEND}/users/signup pour créer un nouvel utilisateur/employé
     event.preventDefault();
 
     let newErrors = {};
@@ -156,7 +156,7 @@ export default function CreateEmployee() {
       return;
     }
 
-    fetch("http://localhost:3000/employee", {
+    fetch(`${process.env.NEXT_PUBLIC_URL_BACKEND}/employee", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -200,7 +200,7 @@ export default function CreateEmployee() {
     if (!confirm("Voulez-vous vraiment supprimer cet employé ?")) return;
 
     try {
-      const res = await fetch(`http://localhost:3000/employee/${employeeId}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_URL_BACKEND}/employee/${employeeId}`, {
         method: "DELETE",
       });
 

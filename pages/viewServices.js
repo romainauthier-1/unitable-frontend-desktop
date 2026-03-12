@@ -19,8 +19,8 @@ import e from "cors";
 const uid2 = require("uid2");
 
 export default function Services() {
-  const business = useSelector((state) => state.business.value);
-  const services = useSelector((state) => state.services.value);
+  const business = useSelector((state) => state.business.value) || [];
+  const services = useSelector((state) => state.services.value) || [];
   const user = useSelector((state) => state.user.value);
   const dispatch = useDispatch();
   const router = useRouter();
@@ -47,9 +47,10 @@ export default function Services() {
   // Ajout de l'id du restaurant aux services par défaut du reducer services
   useEffect(() => {
     // Empêche de recharger/réinitialiser si déjà présent dans le store.
-    if (services != undefined || !business[0]?.id) return;
+    if ((Array.isArray(services) && services.length > 0) || !business[0]?.id)
+      return;
 
-    fetch("http://localhost:3000/services/" + business[0].id)
+    fetch(`${process.env.NEXT_PUBLIC_URL_BACKEND}/services/${business[0].id}`)
       .then((response) => response.json())
       .then((data) => {
    
@@ -69,7 +70,7 @@ export default function Services() {
       .catch((error) => {
         console.error("Erreur lors de la récupération des services :", error);
       });
-  }, [business[0]?.id, dispatch]);
+  }, [business[0]?.id, dispatch, services]);
 
   // Transformer l'heure (format 12:30) en 'minutes depuis minuit' pour l'envoyer à la BDD
   const convertTimeToMinutes = (timeString) => {
@@ -79,7 +80,7 @@ export default function Services() {
 
   const deleteServiceFromDB = (serviceId) => {
     try {
-      fetch(`http://localhost:3000/services/${serviceId}`, {
+      fetch(`${process.env.NEXT_PUBLIC_URL_BACKEND}/services/${serviceId}`, {
         method: "DELETE",
       })
         .then((response) => response.json())
@@ -119,7 +120,7 @@ export default function Services() {
               startTime={service.startTime}
               endTime={service.endTime}
               onUpdate={(newData) =>
-                dispatch(updateService({ id: service.id, ...newData }))
+                dispatch(updateService({ id: service.id || service._id, ...newData }))
               }
               onDelete={() => deleteServiceFromDB(service.id || service._id)}
             />

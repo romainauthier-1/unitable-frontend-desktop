@@ -57,7 +57,7 @@ export default function ViewTeamSaveReducer() {
   const deleteTeamFromDB = async (serviceId, teamName) => {
     try {
       const response = await fetch(
-        `http://localhost:3000/services/${serviceId}/teams/${encodeURIComponent(teamName)}`,
+        `${process.env.NEXT_PUBLIC_URL_BACKEND}/services/${serviceId}/teams/${encodeURIComponent(teamName)}`,
         { method: "DELETE" }
       );
       const data = await response.json();
@@ -155,7 +155,7 @@ export default function ViewTeamSaveReducer() {
       return;
     }
 
-    fetch("http://localhost:3000/services/" + organizationId)
+    fetch(`${process.env.NEXT_PUBLIC_URL_BACKEND}/services/${organizationId}`)
       .then((response) => response.json())
       .then((data) => {
     
@@ -270,6 +270,7 @@ export default function ViewTeamSaveReducer() {
                   updateRole={updateRole}
                   removeTeam={removeTeam}
                   serviceId={team.serviceId}
+                  viewTeam={true}
                   onDeleteTeamFromDB={deleteTeamFromDB}
                 />
               ))}
