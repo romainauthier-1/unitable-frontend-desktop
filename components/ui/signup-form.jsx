@@ -78,7 +78,8 @@ export default function SignUpForm(props) {
         email,
         password,
         isAdmin: true,
-        firstConnection: true,
+        profil: "admin",
+        firstConnection: false,
       }),
     })
       .then((response) => response.json())

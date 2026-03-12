@@ -60,7 +60,7 @@ export default function Dashboard() {
         }
 
         const data = await response.json();
-        console.log(data);
+   
       } catch (error) {
         console.error("Error fetching user data:", error);
       }
@@ -69,7 +69,6 @@ export default function Dashboard() {
     fetchUserData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [email, token, dispatch]);
-  console.log("email from dashboard:", email);
 
   return (
     <>

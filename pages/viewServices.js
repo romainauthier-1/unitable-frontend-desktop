@@ -25,7 +25,7 @@ export default function Services() {
   const dispatch = useDispatch();
   const router = useRouter();
 
-  console.log("Business dans le store: ", business);
+
           const serviceDejDefault = {
           id: uid2(10),
           name: "Déjeuner",
@@ -52,8 +52,7 @@ export default function Services() {
     fetch("http://localhost:3000/services/" + business[0].id)
       .then((response) => response.json())
       .then((data) => {
-        console.log(business[0]);
-        console.log("Services récupérés de la BDD :", data);
+   
         if (!data.result) {
           dispatch(setServices([serviceDejDefault, serviceDinerDefault]));
           console.error("Reponse invalide pour les services :", data);

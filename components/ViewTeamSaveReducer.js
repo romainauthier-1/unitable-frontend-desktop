@@ -17,8 +17,7 @@ export default function ViewTeamSaveReducer() {
   const router = useRouter();
   const dispatch = useDispatch();
   const organizationId = business?.[0]?.id || null;
-  console.log("Business dans le store :", business);
-  console.log("ID de l'organisation :", organizationId);
+
   // State local pour l'édition du formulaire
   const [teams, setTeams] = useState([]);
   const [services, setServices] = useState([]);
@@ -155,11 +154,11 @@ export default function ViewTeamSaveReducer() {
     if (hasLoadedFromBusiness) {
       return;
     }
-    console.log(organizationId)
+
     fetch("http://localhost:3000/services/" + organizationId)
       .then((response) => response.json())
       .then((data) => {
-        console.log("Équipes récupérées de la BDD :", data);
+    
         if (!data.result) {
           console.error("Reponse invalide pour les équipes :", data);
           setTeams(defaultTeams);
@@ -177,7 +176,8 @@ export default function ViewTeamSaveReducer() {
                       (team) => Array.isArray(team.roles) && team.roles.length > 0,
                     )
                     .map((team) => ({
-                      name: team.teamName || team.name || "",
+                      // concatener name et 3 derniers caractères de l'id du service pour différencier les équipes de même nom sur différents services
+                      name: `${team.teamName || team.name || ""}-${(service.id || service._id)?.slice(-3)}`,
                       serviceId: service.id || service._id,
                       roles: Array.isArray(team.roles)
                         ? team.roles.map((role) => ({
@@ -231,7 +231,7 @@ export default function ViewTeamSaveReducer() {
   }, [business, hasLoadedFromBusiness]);
 
   return (
-    console.log("Teams dans le state local :", teams) || "",
+
     (
       //ajout du component header HeaderAdminSignUp
 
