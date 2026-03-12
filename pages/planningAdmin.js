@@ -15,9 +15,11 @@ import {
   PlusSquare,
   LoaderPinwheel,
   ChevronDownIcon,
+  Clock,
 } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { fr } from "date-fns/locale";
+
 import {
   Popover,
   PopoverContent,
@@ -63,6 +65,8 @@ require("dayjs/locale/fr");
 const localizedFormat = require("dayjs/plugin/localizedFormat");
 dayjs.locale("fr");
 dayjs.extend(localizedFormat);
+const isoWeek = require("dayjs/plugin/isoWeek");
+dayjs.extend(isoWeek);
 
 export default function planningAdmin() {
   const user = useSelector((state) => state.user.value);
@@ -472,19 +476,111 @@ export default function planningAdmin() {
       <Toaster richColors position="top-right" />
       <HeaderAdminSignUp />
       <div className="flex flex-none flex-row justify-evenly items-center bg-slate-50/50 border-b border-b-slate-300">
-        <div className="flex flex-row w-1/5">
-          <Label>Début journée</Label>
-          <Input
-            value={startHour}
-            onChange={(e) => setStartHour(Number(e.target.value))}
-            type="number"
-          />
-          <Label>Fin journée</Label>
-          <Input
-            value={endHour}
-            onChange={(e) => setEndHour(Number(e.target.value))}
-            type="number"
-          />
+        <div className="flex items-center gap-4 bg-white p-3 rounded-2xl shadow-sm border border-slate-100">
+          <div className="flex items-center gap-3 px-4 py-2 bg-slate-50 rounded-xl border border-slate-200 focus-within:ring-2 focus-within:ring-teal-500/20 transition-all">
+            <Clock size={16} className="text-teal-600" />
+            <div className="flex flex-col">
+              <Label
+                htmlFor="startHour"
+                className="text-[10px] uppercase tracking-wider font-bold text-slate-400 leading-none mb-1"
+              >
+                Début
+              </Label>
+              <input
+                id="startHour"
+                value={startHour}
+                onChange={(e) => setStartHour(Number(e.target.value))}
+                type="number"
+                className="bg-transparent text-center font-mono text-sm font-bold text-slate-700 w-12 focus:outline-none"
+              />
+            </div>
+            <span className="text-slate-400 font-mono text-sm">h</span>
+          </div>
+
+          <div className="text-slate-300 font-light">
+            <ChevronRight size={20} />
+          </div>
+
+          <div className="flex items-center gap-3 px-4 py-2 bg-slate-50 rounded-xl border border-slate-200 focus-within:ring-2 focus-within:ring-orange-500/20 transition-all">
+            <div className="flex flex-col text-right">
+              <Label
+                htmlFor="endHour"
+                className="text-[10px] uppercase tracking-wider font-bold text-slate-400 leading-none mb-1"
+              >
+                Fin
+              </Label>
+              <input
+                id="endHour"
+                value={endHour}
+                onChange={(e) => setEndHour(Number(e.target.value))}
+                type="number"
+                className="bg-transparent text-center font-mono text-sm font-bold text-slate-700 w-12 focus:outline-none"
+              />
+            </div>
+            <span className="text-slate-400 font-mono text-sm">h</span>
+            <LoaderPinwheel size={16} className="text-orange-600" />
+          </div>
+        </div>
+        <div className="flex gap-6 mb-10">
+          <div className="flex  mt-6 gap-2 items-center mb-2 h-fit">
+            <Button
+              variant="outline"
+              size="icon"
+              className="rounded-xl border-slate-200 hover:bg-teal-50 hover:text-teal-600 transition-all"
+              onClick={() => setWorkingDate(workingDate.subtract(1, "week"))}
+            >
+              <ChevronsLeft size={18} />
+            </Button>
+
+            <Button
+              variant="outline"
+              size="icon"
+              className="rounded-xl border-slate-200 hover:bg-teal-50 hover:text-teal-600 transition-all"
+              onClick={() => setWorkingDate(workingDate.subtract(1, "day"))}
+            >
+              <ChevronLeft size={18} />
+            </Button>
+
+            <div
+              className="flex cursor-pointer items-center gap-4 bg-white p-2 pr-6 rounded-3xl shadow-sm border border-slate-100"
+              onClick={() => setWorkingDate(dayjs())}
+            >
+              <div className="bg-teal-500 text-white w-16 h-16 rounded-2xl flex flex-col items-center justify-center shadow-lg shadow-teal-200">
+                <span className="text-xs uppercase font-bold opacity-80">
+                  {dayjs(workingDate).format("MMM")}
+                </span>
+                <span className="text-2xl font-black">
+                  {dayjs(workingDate).format("DD")}
+                </span>
+              </div>
+              <div>
+                <h2 className="text-2xl font-black text-slate-800 capitalize leading-none">
+                  {dayjs(workingDate).format("dddd")}
+                </h2>
+                <p className="text-slate-400 text-sm font-medium mt-1">
+                  Semaine {dayjs(workingDate).isoWeek()}
+                </p>
+              </div>
+            </div>
+
+            <Button
+              variant="outline"
+              size="icon"
+              className="rounded-xl border-slate-200 hover:bg-teal-50 hover:text-teal-600 transition-all"
+              onClick={() => setWorkingDate(workingDate.add(1, "day"))}
+            >
+              <ChevronRight size={18} />
+            </Button>
+
+            <Button
+              variant="outline"
+              size="icon"
+              className="rounded-xl border-slate-200 hover:bg-teal-50 hover:text-teal-600 transition-all"
+              onClick={() => setWorkingDate(workingDate.add(1, "week"))}
+            >
+              <ChevronsRight size={18} />
+            </Button>
+          </div>
         </div>
         <Dialog
           open={isModalOpen}
@@ -708,38 +804,6 @@ export default function planningAdmin() {
             </DialogFooter>
           </DialogContent>
         </Dialog>
-
-        <Button
-          variant="ghost"
-          onClick={() => setWorkingDate(workingDate.subtract(1, "week"))}
-        >
-          <ChevronsLeft size={30} />
-        </Button>
-        <Button
-          variant="ghost"
-          onClick={() => setWorkingDate(workingDate.subtract(1, "day"))}
-        >
-          <ChevronLeft size={30} />
-        </Button>
-        <div
-          className="m-4 text-accent-foreground text-xl text-center"
-          onClick={() => setWorkingDate(currentDate)}
-        >
-          <p>{`Aujourd'hui : ${currentDate.format("dddd D MMMM YYYY")}`}</p>
-          <p>{`Planning affiché : ${workingDate.format("dddd D MMMM YYYY")}`}</p>
-        </div>
-        <Button
-          variant="ghost"
-          onClick={() => setWorkingDate(workingDate.add(1, "day"))}
-        >
-          <ChevronRight size={30} />
-        </Button>
-        <Button
-          variant="ghost"
-          onClick={() => setWorkingDate(workingDate.add(1, "week"))}
-        >
-          <ChevronsRight size={30} />
-        </Button>
       </div>
       <div className="flex-1 overflow-y-auto min-h-0">
         <div className="flex flex-row w-full border-b border-slate-300 bg-white">
