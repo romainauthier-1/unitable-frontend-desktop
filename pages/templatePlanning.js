@@ -49,33 +49,6 @@ export default function templatePlanning() {
     "dimanche",
   ];
 
-  // const getDefaultTeamsAndRoles = async (businessId) => {
-  //   try {
-  // const response = await fetch(
-  //   `${process.env.NEXT_PUBLIC_URL_BACKEND}/teams/${businessId}`,
-  // );
-  // const data = await response.json();
-  // const teams = data.teaùs;
-  // console.log("Équipes et rôles par défaut récupérés :", teams);
-  //     dispatch(addReferenceTeams({ businessId, teams }));
-  //   } catch (err) {
-  //     toast.error(
-  //       err.message ||
-  //         "Erreur lors de la récupération des équipes et rôles par défaut",
-  //     );
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   if (business[0]?.id) {
-  //     getDefaultTeamsAndRoles(business[0]?.id);
-  //   } else {
-  //     toast.warning(
-  //       "Aucun restaurant trouvé. Veuillez créer un restaurant pour continuer.",
-  //     );
-  //   }
-  // }, []);
-
   const dayServices = (day) => {
     return services
       .filter((service) => service.dayOfWeek?.includes(day))

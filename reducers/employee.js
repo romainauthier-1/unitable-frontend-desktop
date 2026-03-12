@@ -28,15 +28,15 @@ export const employeeSlice = createSlice({
     // Mettre à jour
     updateEmployeeInStore: (state, action) => {
       const index = state.value.employees.findIndex(
-        (employee) => employee.id === action.payload.id,
+        (employee) => employee._id === action.payload.id,
       );
       if (index !== -1) {
         state.value.employees[index] = action.payload;
       }
     },
-      clearEmployee: (state) => { 
+    clearEmployee: (state) => {
       state.value.employees = [];
-      }
+    },
   },
 });
 
@@ -45,7 +45,7 @@ export const {
   addEmployeeToStore,
   removeEmployeeFromStore,
   updateEmployeeInStore,
-  clearEmployee
+  clearEmployee,
 } = employeeSlice.actions;
 
 export default employeeSlice.reducer;

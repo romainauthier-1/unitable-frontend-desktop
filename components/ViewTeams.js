@@ -124,7 +124,6 @@ export default function ViewTeams() {
     fetch("http://localhost:3000/teams/" + business[0].id)
       .then((response) => response.json())
       .then((data) => {
-
         if (!data.result) {
           console.error("Reponse invalide pour les équipes :", data);
           dispatch(setTeamsAction(defaultTeams));
@@ -153,13 +152,12 @@ export default function ViewTeams() {
   // UseEffect sans dépendances pour ne charger qu'au montage du composant.
 
   return (
- 
-    (
-      //ajout du component header HeaderAdminSignUp
+    //ajout du component header HeaderAdminSignUp
 
-      <div className="min-h-screen bg-background p-6">
+    <div className="h-screen bg-background flex flex-col overflow-hidden">
+      <div className="flex-none p-6 space-y-6 max-w-3xl mx-auto w-full">
         <HeaderAdminSignUp />
-        <div className="max-w-3xl mx-auto space-y-6">
+        <div className="space-y-6">
           <h2 className="text-2xl font-semibold">Créer une équipe</h2>
           <p className="text-muted-foreground">
             Connecté en tant que : {user.email}
@@ -175,6 +173,10 @@ export default function ViewTeams() {
               Sauvegarder
             </Button>
           </div>
+        </div>
+      </div>
+      <div className="flex-1 overflow-y-auto w-full min-h-0">
+        <div className="max-w-3xl mx-auto px-6 pb-10">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {teams.map((team, teamIndex) => (
               <TeamCard
@@ -192,6 +194,6 @@ export default function ViewTeams() {
           </div>
         </div>
       </div>
-    )
+    </div>
   );
 }

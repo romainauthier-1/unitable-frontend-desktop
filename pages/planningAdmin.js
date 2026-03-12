@@ -15,8 +15,11 @@ import {
   PlusSquare,
   LoaderPinwheel,
   ChevronDownIcon,
+  Clock,
 } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
+import { fr } from "date-fns/locale";
+
 import {
   Popover,
   PopoverContent,
@@ -62,6 +65,8 @@ require("dayjs/locale/fr");
 const localizedFormat = require("dayjs/plugin/localizedFormat");
 dayjs.locale("fr");
 dayjs.extend(localizedFormat);
+const isoWeek = require("dayjs/plugin/isoWeek");
+dayjs.extend(isoWeek);
 
 export default function planningAdmin() {
   const user = useSelector((state) => state.user.value);
@@ -83,7 +88,7 @@ export default function planningAdmin() {
   const [newCTDate, setNewCTDate] = useState(new Date());
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [selectedRoles, setSelectedRoles] = useState([]);
-  const [startHour, setStartHour] = useState(5);
+  const [startHour, setStartHour] = useState(8);
   const [endHour, setEndHour] = useState(24);
   const referenceTeams = business[0]?.referenceTeams;
   const [services, setServices] = useState([]);
@@ -105,7 +110,7 @@ export default function planningAdmin() {
           className="text-left col-span-4 h-16 border-l border-slate-200 flex-none"
           key={i}
         >
-          <span className="text-slate-400 font-light text-[15px]">{`${correctHour.toString().padStart(2, "0")}h`}</span>
+          <span className="text-slate-400 font-light text-[15px]">{`${correctHour > 24 ? (correctHour - 24).toString().padStart(2, "0") : correctHour.toString().padStart(2, "0")}h`}</span>
         </div>
       );
     },
@@ -154,7 +159,7 @@ export default function planningAdmin() {
       getAllStaff(restaurantId);
       getAllServices(restaurantId);
     }
-    // console.log("Staff: ", staff);
+    console.log("Staff: ", staff);
   }, []);
 
   const updateCT = async (CTToUpdate) => {
@@ -267,13 +272,23 @@ export default function planningAdmin() {
     const allRolesInService = targetService.teams.flatMap((team) => team.roles);
 
     const rolesNeeded = allRolesInService.map((role) => {
-      const CTsWithRole = todayCTs.filter(
+      const CTsInService = todayCTs.filter(
         (CT) =>
-          CT.role.includes(role.name) &&
           CT.startTime < targetService.endTime &&
           CT.endTime > targetService.startTime,
       );
-      return { name: role.name, need: role.need, planned: CTsWithRole.length };
+
+      const planned = CTsInService.reduce((acc, CT) => {
+        if (CT.role.includes(role.name)) {
+          return acc + 1 / CT.role.length;
+        }
+        return acc;
+      }, 0);
+      return {
+        name: role.name,
+        need: role.need,
+        planned: Number(planned.toFixed(2)),
+      };
     });
     // console.log(
     //   `Résultat de roleNeed pour le service ${serviceId}:`,
@@ -304,8 +319,13 @@ export default function planningAdmin() {
 
     return (
       <div
-        className={`w-full flex flex-row border-b border-slate-200 items-stretch min-h-16 ${i % 2 === 0 ? "bg-white" : "bg-slate-50"}`}
+        className={` cursor-pointer w-full flex flex-row border-b border-slate-200 items-stretch min-h-16 ${i % 2 === 0 ? "bg-white" : "bg-slate-50"}`}
         key={employee?._id}
+        onClick={() => {
+          setWorker(employee._id);
+          setNewCTStartTime(convertMinutesToTime(startHour * 60));
+          setIsModalOpen(true);
+        }}
       >
         <div className="sticky left-0 z-20 w-32 shrink-0 bg-inherit border-r flex flex-col justify-center px-3 py-2 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]">
           <span className="text-xs font-bold text-slate-800 truncate">
@@ -456,19 +476,111 @@ export default function planningAdmin() {
       <Toaster richColors position="top-right" />
       <HeaderAdminSignUp />
       <div className="flex flex-none flex-row justify-evenly items-center bg-slate-50/50 border-b border-b-slate-300">
-        <div className="flex flex-row w-1/5">
-          <Label>Début journée</Label>
-          <Input
-            value={startHour}
-            onChange={(e) => setStartHour(Number(e.target.value))}
-            type="number"
-          />
-          <Label>Fin journée</Label>
-          <Input
-            value={endHour}
-            onChange={(e) => setEndHour(Number(e.target.value))}
-            type="number"
-          />
+        <div className="flex items-center gap-4 bg-white p-3 rounded-2xl shadow-sm border border-slate-100">
+          <div className="flex items-center gap-3 px-4 py-2 bg-slate-50 rounded-xl border border-slate-200 focus-within:ring-2 focus-within:ring-teal-500/20 transition-all">
+            <Clock size={16} className="text-teal-600" />
+            <div className="flex flex-col">
+              <Label
+                htmlFor="startHour"
+                className="text-[10px] uppercase tracking-wider font-bold text-slate-400 leading-none mb-1"
+              >
+                Début
+              </Label>
+              <input
+                id="startHour"
+                value={startHour}
+                onChange={(e) => setStartHour(Number(e.target.value))}
+                type="number"
+                className="bg-transparent text-center font-mono text-sm font-bold text-slate-700 w-12 focus:outline-none"
+              />
+            </div>
+            <span className="text-slate-400 font-mono text-sm">h</span>
+          </div>
+
+          <div className="text-slate-300 font-light">
+            <ChevronRight size={20} />
+          </div>
+
+          <div className="flex items-center gap-3 px-4 py-2 bg-slate-50 rounded-xl border border-slate-200 focus-within:ring-2 focus-within:ring-orange-500/20 transition-all">
+            <div className="flex flex-col text-right">
+              <Label
+                htmlFor="endHour"
+                className="text-[10px] uppercase tracking-wider font-bold text-slate-400 leading-none mb-1"
+              >
+                Fin
+              </Label>
+              <input
+                id="endHour"
+                value={endHour}
+                onChange={(e) => setEndHour(Number(e.target.value))}
+                type="number"
+                className="bg-transparent text-center font-mono text-sm font-bold text-slate-700 w-12 focus:outline-none"
+              />
+            </div>
+            <span className="text-slate-400 font-mono text-sm">h</span>
+            <LoaderPinwheel size={16} className="text-orange-600" />
+          </div>
+        </div>
+        <div className="flex gap-6 mb-10">
+          <div className="flex  mt-6 gap-2 items-center mb-2 h-fit">
+            <Button
+              variant="outline"
+              size="icon"
+              className="rounded-xl border-slate-200 hover:bg-teal-50 hover:text-teal-600 transition-all"
+              onClick={() => setWorkingDate(workingDate.subtract(1, "week"))}
+            >
+              <ChevronsLeft size={18} />
+            </Button>
+
+            <Button
+              variant="outline"
+              size="icon"
+              className="rounded-xl border-slate-200 hover:bg-teal-50 hover:text-teal-600 transition-all"
+              onClick={() => setWorkingDate(workingDate.subtract(1, "day"))}
+            >
+              <ChevronLeft size={18} />
+            </Button>
+
+            <div
+              className="flex cursor-pointer items-center gap-4 bg-white p-2 pr-6 rounded-3xl shadow-sm border border-slate-100"
+              onClick={() => setWorkingDate(dayjs())}
+            >
+              <div className="bg-teal-500 text-white w-16 h-16 rounded-2xl flex flex-col items-center justify-center shadow-lg shadow-teal-200">
+                <span className="text-xs uppercase font-bold opacity-80">
+                  {dayjs(workingDate).format("MMM")}
+                </span>
+                <span className="text-2xl font-black">
+                  {dayjs(workingDate).format("DD")}
+                </span>
+              </div>
+              <div>
+                <h2 className="text-2xl font-black text-slate-800 capitalize leading-none">
+                  {dayjs(workingDate).format("dddd")}
+                </h2>
+                <p className="text-slate-400 text-sm font-medium mt-1">
+                  Semaine {dayjs(workingDate).isoWeek()}
+                </p>
+              </div>
+            </div>
+
+            <Button
+              variant="outline"
+              size="icon"
+              className="rounded-xl border-slate-200 hover:bg-teal-50 hover:text-teal-600 transition-all"
+              onClick={() => setWorkingDate(workingDate.add(1, "day"))}
+            >
+              <ChevronRight size={18} />
+            </Button>
+
+            <Button
+              variant="outline"
+              size="icon"
+              className="rounded-xl border-slate-200 hover:bg-teal-50 hover:text-teal-600 transition-all"
+              onClick={() => setWorkingDate(workingDate.add(1, "week"))}
+            >
+              <ChevronsRight size={18} />
+            </Button>
+          </div>
         </div>
         <Dialog
           open={isModalOpen}
@@ -486,7 +598,7 @@ export default function planningAdmin() {
               Planifier
             </Button>
           </DialogTrigger>
-          <DialogContent className="w-full p-4">
+          <DialogContent className="w-full p-2">
             <DialogHeader>
               <DialogTitle className="text-center">
                 Ajouter un créneau de travail
@@ -506,20 +618,45 @@ export default function planningAdmin() {
                 </Button>
               </PopoverTrigger>
               <PopoverContent
-                className="w-100 p-0 shadow-md"
+                // className="w-100 p-0 shadow-md z-50"
+                className="w-auto p-2 h-auto bg-white opacity-100 shadow-2xl border border-slate-200 z-100"
                 align="center"
                 side="bottom"
-                position="popper"
+                sideOffset={4}
+                portal={true}
               >
                 <Calendar
                   mode="single"
+                  locale={fr}
                   selected={newCTDate}
                   onSelect={(date) => {
                     setNewCTDate(date);
                     setIsCalendarOpen(false);
                   }}
                   defaultMonth={newCTDate}
-                  className="bg-white h-full w-full"
+                  classNames={{
+                    months: "flex flex-col space-y-4",
+                    month: "space-y-4",
+                    caption:
+                      "flex justify-center pt-2 relative items-center w-full min-h-[40px]",
+                    caption_label: "text-sm font-medium",
+                    nav: "static",
+                    nav_button:
+                      "h-7 w-full bg-transparent p-0 opacity-50 hover:opacity-100 flex items-center justify-between",
+                    nav_button_previous: "absolute left-2 top-2 z-10",
+                    nav_button_next: "absolute right-2 top-2 z-10",
+                    table: "w-full border-collapse space-y-1",
+                    head_row: "flex justify-between",
+                    head_cell:
+                      "text-slate-500 rounded-md w-9 font-normal text-[0.8rem]",
+                    row: "flex w-full mt-2 justify-between",
+                    cell: "h-9 w-9 text-center text-sm p-0 relative focus-within:relative focus-within:z-20",
+                    day: "h-9 w-9 p-0 font-normal aria-selected:opacity-100 hover:bg-slate-100 rounded-md transition-all",
+                    day_selected:
+                      "bg-teal-500 text-white hover:bg-teal-600 focus:bg-teal-500 focus:text-white",
+                    day_today: "bg-slate-100 text-slate-900",
+                  }}
+                  className="bg-white"
                 />
               </PopoverContent>
             </Popover>
@@ -617,7 +754,7 @@ export default function planningAdmin() {
                     onWheel={(e) => e.stopPropagation()}
                   >
                     <div className="space-y-4 max-h-75 overflow-y-auto">
-                      {referenceTeams.map((team) => (
+                      {referenceTeams?.map((team) => (
                         <div key={team.name} className="space-y-2">
                           {/* Nom de la Team (Cuisine, Salle...) */}
                           <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500 border-b pb-1">
@@ -667,38 +804,6 @@ export default function planningAdmin() {
             </DialogFooter>
           </DialogContent>
         </Dialog>
-
-        <Button
-          variant="ghost"
-          onClick={() => setWorkingDate(workingDate.subtract(1, "week"))}
-        >
-          <ChevronsLeft size={30} />
-        </Button>
-        <Button
-          variant="ghost"
-          onClick={() => setWorkingDate(workingDate.subtract(1, "day"))}
-        >
-          <ChevronLeft size={30} />
-        </Button>
-        <div
-          className="m-4 text-accent-foreground text-xl text-center"
-          onClick={() => setWorkingDate(currentDate)}
-        >
-          <p>{`Aujourd'hui : ${currentDate.format("dddd D MMMM YYYY")}`}</p>
-          <p>{`Planning affiché : ${workingDate.format("dddd D MMMM YYYY")}`}</p>
-        </div>
-        <Button
-          variant="ghost"
-          onClick={() => setWorkingDate(workingDate.add(1, "day"))}
-        >
-          <ChevronRight size={30} />
-        </Button>
-        <Button
-          variant="ghost"
-          onClick={() => setWorkingDate(workingDate.add(1, "week"))}
-        >
-          <ChevronsRight size={30} />
-        </Button>
       </div>
       <div className="flex-1 overflow-y-auto min-h-0">
         <div className="flex flex-row w-full border-b border-slate-300 bg-white">
@@ -718,46 +823,52 @@ export default function planningAdmin() {
       </div>
       <footer className=" flex-none sticky bottom-0 z-50 w-full h-12 bg-white/80 backdrop-blur-md border-t border-slate-200 flex items-center px-4 overflow-visible">
         <div className="flex gap-2 items-center">
-          {services?.map((service) => (
-            <div
-              key={service._id}
-              className="group relative min-w-fit cursor-pointer"
-            >
-              <p className="text-[10px] uppercase tracking-wider font-bold px-2 py-1 rounded-md bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors">
-                {service.name}
-              </p>
+          {services
+            ?.filter((service) =>
+              service.dayOfWeek.includes(
+                dayjs(workingDate).format("dddd").toLowerCase(),
+              ),
+            )
+            .map((service) => (
               <div
-                className="absolute bottom-full left-0 mb-2 z-[9999] 
+                key={service._id}
+                className="group relative min-w-fit cursor-pointer"
+              >
+                <p className="text-[10px] uppercase tracking-wider font-bold px-2 py-1 rounded-md bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors">
+                  {service.name}
+                </p>
+                <div
+                  className="absolute bottom-full left-0 mb-2 z-9999 
                   opacity-0 scale-95 pointer-events-none 
                   transition-all duration-150 
                   group-hover:opacity-100 group-hover:scale-100 
                   group-hover:pointer-events-auto group-hover:-translate-y-1"
-              >
-                <div className="bg-white border z-50 rounded-lg shadow-2xl p-3 min-w-37.5">
-                  <p className="text-xs font-semibold mb-2">{service.name}</p>
-                  <div className="space-y-1">
-                    {roleNeedForService(service._id).map((role) => (
-                      <div
-                        key={role.name}
-                        className="flex justify-between text-[11px]"
-                      >
-                        <span>{role.name}</span>
-                        <span
-                          className={
-                            role.planned < role.need
-                              ? "text-red-500 font-semibold"
-                              : "text-green-600"
-                          }
+                >
+                  <div className="bg-white border z-50 rounded-lg shadow-2xl p-3 min-w-37.5">
+                    <p className="text-xs font-semibold mb-2">{service.name}</p>
+                    <div className="space-y-1">
+                      {roleNeedForService(service._id).map((role) => (
+                        <div
+                          key={role.name}
+                          className="flex justify-between text-[11px]"
                         >
-                          {role.planned} / {role.need}
-                        </span>
-                      </div>
-                    ))}
+                          <span>{role.name}</span>
+                          <span
+                            className={
+                              role.planned < role.need
+                                ? "text-red-500 font-semibold"
+                                : "text-green-600"
+                            }
+                          >
+                            {role.planned} / {role.need}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
         </div>
       </footer>
     </div>
