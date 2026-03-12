@@ -61,10 +61,10 @@ import { useRouter } from "next/router";
 export default function ViewEmployee() {
 	const router = useRouter();
 	const dispatch = useDispatch();
-	const employees = useSelector((state) => state.employee.value.employees);
-	const business = useSelector((state) => state.business.value);
+	const employees = useSelector((state) => state.employee.value?.employees) || [];
+	const business = useSelector((state) => state.business.value) || [];
 	const organizationId = business?.[0]?.id || "";
-
+	const ownerId = business?.[0]?.owner || "";
 	const initialFormState = {
 		firstName: "",
 		lastName: "",
@@ -81,7 +81,7 @@ export default function ViewEmployee() {
 		profil: "user", // Valeur par défaut sur le rôle de l'employé.e
 		dateContract: "",
 		typeContract: "",
-		hourVolumn: "",
+		hourVolumn: 0,
 		contact: "",
 		// organization: organizationId,
 	};
@@ -160,6 +160,10 @@ export default function ViewEmployee() {
 			newErrors.email = "L'email est obligatoire";
 		}
 
+		/*if (!formData.phone) {
+			newErrors.phone = "Le téléphone est obligatoire";
+		}*/
+
 		if (!formData.typeContract) {
 			newErrors.typeContract = "Le type de contrat est obligatoire";
 		}
@@ -183,14 +187,10 @@ export default function ViewEmployee() {
 			return;
 		}
 		if (isEditing) {
-			fetch(
-				`${process.env.NEXT_PUBLIC_URL_BACKEND}/employee/${selectedEmployee._id}`,
-				{
-					method: "PUT",
-					headers: {
-						"Content-Type": "application/json",
-					},
-					body: JSON.stringify(formData),
+			fetch(`${process.env.NEXT_PUBLIC_URL_BACKEND}/employee/${selectedEmployee._id}`, {
+				method: "PUT",
+				headers: {
+					"Content-Type": "application/json",
 				},
 			)
 				.then((res) => res.json())
@@ -234,6 +234,11 @@ export default function ViewEmployee() {
 
 	// supprimer un employé
 	const handleDeleteEmployee = async (employeeId) => {
+		if (employeeId === ownerId) {
+			toast.error("Vous ne pouvez pas supprimer le compte propriétaire de l'organisation");
+			return;
+		}
+
 		if (!confirm("Voulez-vous vraiment supprimer cet employé ?")) return;
 
 		try {
@@ -277,27 +282,22 @@ export default function ViewEmployee() {
 	// envoyer une invitation à un employé
 	const inviteEmployee = async (user) => {
 		try {
-			const res = await fetch(
-				`${process.env.NEXT_PUBLIC_URL_BACKEND}/emails/invitation`,
-				{
-					method: "POST",
-					headers: {
-						"Content-Type": "application/json",
-					},
-					body: JSON.stringify({
-						toEmail: user.email,
-						toName: user.firstName,
-					}),
+			const res = await fetch(`${process.env.NEXT_PUBLIC_URL_BACKEND}/emails/invitation`, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
 				},
 			);
 
 			const data = await res.json();
 
 			if (data.ok) {
-				alert(`Invitation envoyée à ${user.email}`);
+				// remplacer alert par toast
+				 toast.success(`Invitation envoyée à ${user.email}`);
+				//alert(`Invitation envoyée à ${user.email}`);
 			} else {
 				console.error(data);
-				alert("Erreur lors de l'envoi de l'email");
+				toast.error("Erreur lors de l'envoi de l'email");
 			}
 		} catch (error) {
 			console.error("Erreur :", error);

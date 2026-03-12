@@ -48,7 +48,7 @@ import { deleteTeamFromService } from "@/reducers/services";
 
 export default function ServiceWithRolesCard({ service }) {
   const dispatch = useDispatch();
-  const services = useSelector((state) => state.services.value);
+  const services = useSelector((state) => state.services.value) || [];
   const teamAvailable = useSelector(
     (state) => state.business.value[0]?.referenceTeams,
   );

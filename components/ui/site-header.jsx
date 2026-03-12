@@ -6,7 +6,7 @@ import { SidebarTrigger } from "@/components/ui/sidebar"
 // Récupérer le nom du restaurant depuis le store Redux et l'afficher dans le header
   
 export function SiteHeader() {
-  const business = useSelector((state) => state.business.value);
+  const business = useSelector((state) => state.business.value) || [];
   const businessName = business[0].businessCommercialName ;
 
 

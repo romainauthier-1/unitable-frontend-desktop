@@ -21,6 +21,8 @@ import { useRouter } from "next/router";
 import { toast } from "sonner";
 import { Toaster } from "sonner";
 
+const API_BASE = process.env.NEXT_PUBLIC_URL_BACKEND;
+
 export default function SignUpForm(props) {
 	const dispatch = useDispatch();
 	const router = useRouter();
@@ -40,66 +42,66 @@ export default function SignUpForm(props) {
 
 		const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
 
-		if (!passwordRegex.test(password)) {
-			alert(
-				"Le mot de passe doit comporter au moins 8 caractères, dont au moins une majuscule, une minuscule et un chiffre.",
-			);
-			return;
-		}
+    if (!passwordRegex.test(password)) {
+      toast.error(
+        "Le mot de passe doit comporter au moins 8 caractères, dont au moins une majuscule, une minuscule et un chiffre.",
+      );
+      return;
+    }
 
-		if (password !== passwordConfirmation) {
-			alert("Les mots de passe ne correspondent pas !");
-			return;
-		}
+    if (password !== passwordConfirmation) {
+      toast.error("Les mots de passe ne correspondent pas !");
+      return;
+    }
 
-		if (!firstName.trim()) {
-			alert("Veuillez entrer votre prénom !");
-			return;
-		}
+    if (!firstName.trim()) {
+      toast.error("Veuillez entrer votre prénom !");
+      return;
+    }
 
-		if (!lastName.trim()) {
-			alert("Veuillez entrer votre nom !");
-			return;
-		}
+    if (!lastName.trim()) {
+      toast.error("Veuillez entrer votre nom !");
+      return;
+    }
 
-		if (!email.trim()) {
-			alert("Veuillez entrer votre adresse email !");
-			return;
-		}
+    if (!email.trim()) {
+      toast.error("Veuillez entrer votre adresse email !");
+      return;
+    }
 
-		fetch(`${process.env.NEXT_PUBLIC_URL_BACKEND}/users/signup`, {
-			method: "POST",
-			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({
-				firstName,
-				lastName,
-				email,
-				password,
-				isAdmin: true,
-				profil: "admin",
-				firstConnection: false,
-			}),
-		})
-			.then((response) => response.json())
-			.then((data) => {
-				if (data.result) {
-					dispatch(login({ email, token: data.token, id: data.id }));
-					toast.success("Inscription réussie !");
-					setFirstName("");
-					setLastName("");
-					setEmail("");
-					setSignUpPassword("");
-					setPasswordConfirmation("");
-					router.push("/businessForm");
-				} else {
-					alert(data.error || "Inscription échouée.");
-				}
-			})
-			.catch((error) => {
-				console.error("Erreur fetch :", error);
-				alert("Erreur serveur.");
-			});
-	};
+    fetch(`${API_BASE}/users/signup`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        firstName,
+        lastName,
+        email,
+        password,
+        isAdmin: true,
+        profil: "admin",
+        firstConnection: false,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.result) {
+          dispatch(login({ email, token: data.token, id: data.id }));
+          toast.success("Inscription réussie !");
+          setFirstName("");
+          setLastName("");
+          setEmail("");
+          setSignUpPassword("");
+          setPasswordConfirmation("");
+          router.push("/businessForm");
+        } else {
+          toast.error(data.error || "Inscription échouée.");
+        }
+      })
+      .catch((error) => {
+        console.error("Erreur fetch :", error);
+        toast.error("Erreur serveur.");
+      });
+  };
 
 	return (
 		// remplace tous les textes en français
@@ -231,7 +233,7 @@ export default function SignUpForm(props) {
 									type="button"
 									disabled
 									onClick={() =>
-										alert(
+                    toast.info(
 											"Soyez Patient, bientôt disponible !",
 										)
 									}

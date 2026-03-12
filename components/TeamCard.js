@@ -22,6 +22,7 @@ export default function TeamCard({
   updateRole,
   removeTeam,
   serviceId,
+  viewTeam,
   onDeleteTeamFromDB,
 }) {
   const router = useRouter();

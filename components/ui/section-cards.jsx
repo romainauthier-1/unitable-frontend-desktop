@@ -22,9 +22,10 @@ import { useState, useEffect } from "react";
 
 export function SectionCards() {
   // recuperer le nombre d'employee avec reducer employee
-  const employee = useSelector((state) => state.employee.value);
-  const zipCode = useSelector((state) => state.business.value[0]?.zipCode);
-  const numberOfEmployees = employee.employees.length;
+  const employee = useSelector((state) => state.employee.value) || {};
+  const zipCode = useSelector((state) => state.business.value?.[0]?.zipCode);
+  const employees = Array.isArray(employee.employees) ? employee.employees : [];
+  const numberOfEmployees = employees.length;
   const [latitude, setLatitude] = useState("");
   const [longitude, setLongitude] = useState("");
   const [temperature, setTemperature] = useState(null);
@@ -41,21 +42,21 @@ export function SectionCards() {
   );
 
   // recuperer services où dayOfWeek contient currentDay
-  const services = useSelector((state) => state.services.value);
-  // if services is not empty, filter services where dayOfWeek contains currentDay, else return empty array
+  const services = useSelector((state) => state.services.value) || [];
 
-  const servicesOfTheDay =
-    services != undefined
-      ? services.filter((service) => service.dayOfWeek.includes(currentDay))
-      : [];
+  const servicesOfTheDay = Array.isArray(services)
+    ? services.filter((service) => Array.isArray(service.dayOfWeek) && service.dayOfWeek.includes(currentDay))
+    : [];
 
   //const servicesDisplay = servicesOfTheDay.map((service) => (
   //));
 
   let countEmployees = 0;
+  
   servicesOfTheDay.forEach((service) => {
     for (const team of service.teams) {
       team.roles.forEach((role) => {
+
         countEmployees += Number(role.need);
       });
     }
@@ -63,6 +64,7 @@ export function SectionCards() {
   const staffOk = numberOfEmployees >= countEmployees;
 
   const meteo = () => {
+
     if (!zipCode) {
       console.warn("Code postal non disponible");
       return;
@@ -104,7 +106,8 @@ export function SectionCards() {
             "Données météo non disponibles pour les coordonnées fournies.",
           );
         } else {
-          setTemperature(data.main.temp ?? null);
+          // arrondir la température à l'entier le plus proche
+          setTemperature(Math.round(data.main.temp) ?? null);
           setWeatherCode(data.weather?.[0]?.id ?? null);
           setWeatherIcon(data.weather?.[0]?.icon ?? null);
           setWeatherLabel(data.weather?.[0]?.description ?? "");
@@ -159,23 +162,14 @@ export function SectionCards() {
             Réel: {numberOfEmployees}, Attendu: {countEmployees}
           </CardTitle>
           <CardAction>
-            <Badge variant="outline">
-              {staffOk ? <IconCircleCheck /> : <IconAlertTriangle />}
-              {staffOk ? "OK" : "Attention"}
-            </Badge>
+            {staffOk ? <IconCircleCheck /> : <IconAlertTriangle />} {staffOk ? "OK" : "Attention"}
           </CardAction>
         </CardHeader>
-        <CardFooter className="flex-col items-start gap-1.5 text-sm">
-          <div className="line-clamp-1 flex gap-2 font-medium">
-            Affiche en Rouge si Reel inferieur a Attendu, en vert si egal ou
-            superieur? <IconTrendingDown className="size-4" />
-          </div>
-        </CardFooter>
       </Card>
 
       <Card className="@container/card">
         <CardHeader>
-          <CardDescription>Nombre d'employé.es:</CardDescription>
+          <CardDescription >Nombre d'employé.es:</CardDescription>
           <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
             {numberOfEmployees}
           </CardTitle>
@@ -199,8 +193,8 @@ export function SectionCards() {
             {weatherIcon && (
               <Image
                 src={`http://openweathermap.org/img/wn/${weatherIcon}.png`}
-                width={150}
-                height={150}
+                width={60}
+                height={60}
                 alt="Weather Icon"
               />
             )}

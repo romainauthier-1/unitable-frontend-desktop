@@ -40,22 +40,22 @@ export function ForgetPassword({ className, ...props }) {
 		if (password.length > 7) {
 			// je veux faire un put pour changer le mot de passe avec le token de réinitialisation  SUR LA ROUTE PUT /PASSWORD qui prend en body token et password
 
-			fetch(`${process.env.NEXT_PUBLIC_URL_BACKEND}/users/password`, {
-				method: "PUT",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({
-					token: token,
-					password: password,
-				}),
-			})
-				.then((response) => response.json())
-				.then((data) => {
-					if (data.result) {
-						setEmail("");
-						setPassword("");
-						setPasswordConfirmed("");
-						// renvoyez vers la page dashboard ou une page de confirmation
-						// window.location.href = "/dashboard"; // Vérifier le chemin si problème
+      fetch(`${process.env.NEXT_PUBLIC_URL_BACKEND}/users/password`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          token: token,
+          password: password,
+        }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.result) {
+            setEmail("");
+            setPassword("");
+            setPasswordConfirmed("");
+            // renvoyez vers la page dashboard ou une page de confirmation
+            // window.location.href = "/dashboard"; // Vérifier le chemin si problème
 
 						if (data.isAdmin) {
 							// admin = redirection

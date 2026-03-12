@@ -18,32 +18,45 @@ import { toggleInstructions } from "@/reducers/instructions";
 const uid2 = require("uid2");
 
 export default function Services() {
-  const business = useSelector((state) => state.business.value);
-  const services = useSelector((state) => state.services.value);
+  const business = useSelector((state) => state.business.value) || [];
+  const services = useSelector((state) => state.services.value) || [];
   const dispatch = useDispatch();
   const router = useRouter();
-  let count = 0;
+ // let count = 0;
   useEffect(() => {
-    const serviceDejDefault = {
-      id: uid2(10),
-      name: "Déjeuner",
-      startTime: 720,
-      endTime: 840,
-      dayOfWeek: ["mercredi", "jeudi", "vendredi", "samedi", "dimanche"],
-      restaurant: business[0]?.id,
-      teams: [],
-    };
-    const serviceDinerDefault = {
-      id: uid2(10),
-      name: "Dîner",
-      startTime: 1140,
-      endTime: 1260,
-      dayOfWeek: ["mercredi", "jeudi", "vendredi", "samedi"],
-      restaurant: business[0]?.id,
-      teams: [],
-    };
-    services.length === 0 &&
-      dispatch(setServices({ serviceDejDefault, serviceDinerDefault }));
+  //  if (count != 0) {
+   //   return;
+   // } else {
+      console.log("Services page - business from store: ", business);
+      if (services.length > 0 || business.length === 0) return;
+
+      console.log(
+        "Equipes dans le store au chargement: ",
+        business[0]?.referenceTeams,
+      );
+      const serviceDejDefault = {
+        id: uid2(10),
+        name: "Déjeuner",
+        startTime: 720,
+        endTime: 840,
+        dayOfWeek: ["mercredi", "jeudi", "vendredi", "samedi", "dimanche"],
+        restaurant: business[0]?.id,
+        teams: [],
+      };
+      const serviceDinerDefault = {
+        id: uid2(10),
+        name: "Dîner",
+        startTime: 1140,
+        endTime: 1260,
+        dayOfWeek: ["mercredi", "jeudi", "vendredi", "samedi"],
+        restaurant: business[0]?.id,
+        teams: [],
+      };
+      dispatch(setServices([serviceDejDefault, serviceDinerDefault]));
+    //  dispatch(addService(serviceDejDefault));
+     // dispatch(addService(serviceDinerDefault));
+    //  count++;
+   // }
   }, []);
 
   console.log(services);
@@ -62,7 +75,7 @@ export default function Services() {
       .padStart(2, "0")}`;
   };
 
-  const serviceCards = services.map((service, i) => {
+  const serviceCards = Array.isArray(services) && services.map((service, i) => {
     // console.log("Service :", service);
     return (
       <ServiceCard
