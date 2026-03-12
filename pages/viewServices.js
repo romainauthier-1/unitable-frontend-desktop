@@ -47,7 +47,7 @@ export default function Services() {
   // Ajout de l'id du restaurant aux services par défaut du reducer services
   useEffect(() => {
     // Empêche de recharger/réinitialiser si déjà présent dans le store.
-    if (services!= undefined || !business[0]?.id) return;
+    if (services != undefined || !business[0]?.id) return;
 
     fetch("http://localhost:3000/services/" + business[0].id)
       .then((response) => response.json())
@@ -63,7 +63,6 @@ export default function Services() {
           dispatch(setServices(data.services));
           return;
         }
-
 
         dispatch(setServices([serviceDejDefault, serviceDinerDefault]));
       })
@@ -106,24 +105,27 @@ export default function Services() {
       .padStart(2, "0")}`;
   };
   console.log("Services dans le store :", services);
-  const serviceCards = services != undefined ? services.map((service, i) => {
-    // console.log("Service :", service);
-    return (
-      <ServiceCard
-        key={i}
-        timeToMinutes={convertTimeToMinutes}
-        minutesToTime={convertMinutesToTime}
-        name={service.name}
-        dayOfWeek={service.dayOfWeek}
-        startTime={service.startTime}
-        endTime={service.endTime}
-        onUpdate={(newData) =>
-          dispatch(updateService({ id: service.id, ...newData }))
-        }
-        onDelete={() => deleteServiceFromDB(service.id || service._id)}
-      />
-    );
-  }): services;
+  const serviceCards =
+    services != undefined
+      ? services.map((service, i) => {
+          // console.log("Service :", service);
+          return (
+            <ServiceCard
+              key={i}
+              timeToMinutes={convertTimeToMinutes}
+              minutesToTime={convertMinutesToTime}
+              name={service.name}
+              dayOfWeek={service.dayOfWeek}
+              startTime={service.startTime}
+              endTime={service.endTime}
+              onUpdate={(newData) =>
+                dispatch(updateService({ id: service.id, ...newData }))
+              }
+              onDelete={() => deleteServiceFromDB(service.id || service._id)}
+            />
+          );
+        })
+      : services;
 
   // Ajout des services au reducer services
   const handleNewService = () => {
@@ -195,4 +197,13 @@ export default function Services() {
       </Button>
     </div>
   );
+}
+
+export async function getStaticProps() {
+  return {
+    props: {
+      title: "Services - Éditer",
+      description: "Modifier vos services.",
+    },
+  };
 }
