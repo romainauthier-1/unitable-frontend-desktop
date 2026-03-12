@@ -37,6 +37,12 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar-primitives";
 import { logout } from "@/reducers/users";
+import { clearService } from "@/reducers/services";
+import {clearTeams} from "@/reducers/teams";
+import { clearEmployee } from "@/reducers/employee";
+import { clearInstructions } from "@/reducers/instructions";
+import { resetBusiness } from "@/reducers/business";
+// import clear business reducer if needed
 
 const data = {
   user: {
@@ -121,6 +127,14 @@ export function AppSidebar({ user, ...props }) {
 
   const handleLogOut = () => {
     dispatch(logout());
+    // vider tous les reducers à la deconnexion sur service, business, teams, employee, instructions
+    dispatch(clearService());
+    dispatch(clearTeams());
+    dispatch(clearEmployee());
+    dispatch(clearInstructions());
+    dispatch(resetBusiness())
+    // dispatch(clearBusiness()) if needed
+
     router.push("/login");
   };
   return (

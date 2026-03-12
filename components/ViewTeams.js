@@ -124,7 +124,7 @@ export default function ViewTeams() {
     fetch("http://localhost:3000/teams/" + business[0].id)
       .then((response) => response.json())
       .then((data) => {
-        console.log("Équipes récupérées de la BDD :", data);
+
         if (!data.result) {
           console.error("Reponse invalide pour les équipes :", data);
           dispatch(setTeamsAction(defaultTeams));
@@ -153,7 +153,7 @@ export default function ViewTeams() {
   // UseEffect sans dépendances pour ne charger qu'au montage du composant.
 
   return (
-    console.log("Teams dans le state local :", teams) || "",
+ 
     (
       //ajout du component header HeaderAdminSignUp
 

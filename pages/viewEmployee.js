@@ -343,7 +343,8 @@ export default function ViewEmployee() {
 										</TableCell>
 
 										<TableCell>
-											{employee.profil === "admin" ? (
+
+											{employee.profil?.toLowerCase() === "admin" ? (
 												<span className="text-red-600 font-semibold">
 													Admin
 												</span>

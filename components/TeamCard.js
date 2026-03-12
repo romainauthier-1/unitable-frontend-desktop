@@ -26,7 +26,7 @@ export default function TeamCard({
   const deleteTeam = () => {
     onDeleteTeamFromDB(serviceId, team.name);
     removeTeam(teamIndex);
-    console.log("on supprime");
+  
   };
   return (
     <Card>

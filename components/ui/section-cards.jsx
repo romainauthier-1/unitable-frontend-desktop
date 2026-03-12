@@ -34,13 +34,11 @@ export function SectionCards() {
   const [windSpeed, setWindSpeed] = useState(null);
   const [weatherIcon, setWeatherIcon] = useState(null);
   const [meteoLoading, setMeteoLoading] = useState(false);
-  console.log("Nombre d'employés dans le store: ", numberOfEmployees);
 
   // recuperer le jour de la semaine avec date du jour
   const [currentDay, setCurrentDay] = useState(
     new Date().toLocaleDateString("fr-FR", { weekday: "long" }),
   );
-  console.log("Jour de la semaine: ", currentDay);
 
   // recuperer services où dayOfWeek contient currentDay
   const services = useSelector((state) => state.services.value);
@@ -50,7 +48,7 @@ export function SectionCards() {
     services != undefined
       ? services.filter((service) => service.dayOfWeek.includes(currentDay))
       : [];
-  console.log(servicesOfTheDay);
+
   //const servicesDisplay = servicesOfTheDay.map((service) => (
   //));
 
@@ -59,15 +57,10 @@ export function SectionCards() {
     for (const team of service.teams) {
       team.roles.forEach((role) => {
         countEmployees += Number(role.need);
-        console.log(countEmployees);
       });
     }
   });
   const staffOk = numberOfEmployees >= countEmployees;
-  console.log(
-    "Le nombre d'employés est-il suffisant pour les services du jour ? ",
-    staffOk,
-  );
 
   const meteo = () => {
     if (!zipCode) {
@@ -84,18 +77,17 @@ export function SectionCards() {
     }
 
     setMeteoLoading(true);
-    console.log(process.env.OPENWEATHERMAP_API_KEY);
+
     fetch(
       `https://api.openweathermap.org/geo/1.0/zip?zip=${zipCode},FR&appid=${apiKey}`,
     )
       .then((response) => response.json())
       .then((data) => {
-        console.log("Données de localisation:", data);
         if (!data || !data.lat || !data.lon) {
           throw new Warning("Données de localisation invalides");
         }
         const { lat, lon } = data;
-        console.log("COORDONNEES GPS", lat, lon);
+
         setLatitude(lat);
         setLongitude(lon);
 
@@ -178,9 +170,6 @@ export function SectionCards() {
             Affiche en Rouge si Reel inferieur a Attendu, en vert si egal ou
             superieur? <IconTrendingDown className="size-4" />
           </div>
-          <div className="text-muted-foreground">
-            Acquisition needs attention
-          </div>
         </CardFooter>
       </Card>
 
@@ -205,13 +194,15 @@ export function SectionCards() {
           <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
             {temperature ? `${temperature}°C` : "N/A"}
           </CardTitle>
-         
+
           <CardAction>
-            {weatherCode && (
-              <Badge variant="outline">Code: {weatherCode}</Badge>
-            )}
             {weatherIcon && (
-              <Image src={`http://openweathermap.org/img/wn/${weatherIcon}.png`} width={150} height={150} alt="Weather Icon" />
+              <Image
+                src={`http://openweathermap.org/img/wn/${weatherIcon}.png`}
+                width={150}
+                height={150}
+                alt="Weather Icon"
+              />
             )}
           </CardAction>
         </CardHeader>

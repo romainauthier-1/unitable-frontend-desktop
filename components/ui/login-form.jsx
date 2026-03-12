@@ -46,14 +46,14 @@ export function LoginForm({ className, ...props }) {
       })
         .then((response) => response.json())
         .then((data) => {
-          console.log("Response from backend:", data);
+    
           if (data.result) {
             // recuperer organisation de l'utilisateur et l'ajouter au store
             // fetch user search by email to get organization id, then fetch organization by id to get organization details and add to store
             fetch(`http://localhost:3000/users/search/by/${email}`)
               .then((response) => response.json())
               .then((userData) => {
-                console.log("data user search by email", userData);
+              
                 if (userData.result && userData.user?.organization) {
                   const organizationId = userData.user.organization;
                   const name =
@@ -71,7 +71,7 @@ export function LoginForm({ className, ...props }) {
                   )
                     .then((response) => response.json())
                     .then((organizationData) => {
-                      console.log("data business ajoute", organizationData);
+                      
                       if (
                         organizationData.result &&
                         organizationData.organization
@@ -101,7 +101,7 @@ export function LoginForm({ className, ...props }) {
                   })
                     .then((response) => response.json())
                     .then((servicesData) => {
-                      console.log("data services ajoute", servicesData);
+                   
                       dispatch(setServices(servicesData.services || []));
                     });
 
@@ -111,7 +111,7 @@ export function LoginForm({ className, ...props }) {
                   })
                     .then((response) => response.json())
                     .then((employeesData) => {
-                      console.log("data employees ajoute", employeesData);
+                     
                       dispatch(
                         setEmployeesInStore(employeesData.employees || []),
                       );
@@ -125,7 +125,7 @@ export function LoginForm({ className, ...props }) {
                   return;
                 }
               });
-            console.log("businessId dans handleConnection", businessId);
+          
 
             setEmail("");
             setPassword("");
