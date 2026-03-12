@@ -8,6 +8,7 @@ import {
   updateIdRestaurant,
   addService,
   deleteService,
+  setServices,
 } from "@/reducers/services";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -21,16 +22,8 @@ export default function Services() {
   const services = useSelector((state) => state.services.value);
   const dispatch = useDispatch();
   const router = useRouter();
-  let count =0
+  let count = 0;
   useEffect(() => {
-    count ++
-    console.log("Services page - business from store: ", business);
-    if (services.length > 0 || business.length === 0) return;
-
-    console.log(
-      "Equipes dans le store au chargement: ",
-      business[0]?.referenceTeams,
-    );
     const serviceDejDefault = {
       id: uid2(10),
       name: "Déjeuner",
@@ -49,9 +42,8 @@ export default function Services() {
       restaurant: business[0]?.id,
       teams: [],
     };
-    dispatch(addService(serviceDejDefault));
-    dispatch(addService(serviceDinerDefault));
-  
+    services.length === 0 &&
+      dispatch(setServices({ serviceDejDefault, serviceDinerDefault }));
   }, []);
 
   console.log(services);

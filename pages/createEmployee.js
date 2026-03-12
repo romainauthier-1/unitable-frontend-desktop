@@ -393,6 +393,8 @@ export default function CreateEmployee() {
                 <Input
                   id="birthDate"
                   type="date"
+                  min="1900-01-01"
+                  max="2026-12-31"
                   value={formData.birthDate}
                   onChange={handleChange}
                 />

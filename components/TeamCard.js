@@ -10,6 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useRouter } from "next/router";
 
 export default function TeamCard({
   team,
@@ -23,10 +24,16 @@ export default function TeamCard({
   serviceId,
   onDeleteTeamFromDB,
 }) {
+  const router = useRouter();
+
   const deleteTeam = () => {
-    onDeleteTeamFromDB(serviceId, team.name);
-    removeTeam(teamIndex);
-  
+    if (router.pathname === "/viewTeams") {
+      onDeleteTeamFromDB(serviceId, team.name);
+      removeTeam(teamIndex);
+    }
+    if (router.pathname === "/createTeams") {
+      removeTeam(teamIndex);
+    }
   };
   return (
     <Card>
@@ -36,11 +43,7 @@ export default function TeamCard({
           value={team.name}
           onChange={(e) => updateTeamName(teamIndex, e.target.value)}
         />
-        <Button
-          variant="destructive"
-          size="sm"
-          onClick={deleteTeam}
-        >
+        <Button variant="destructive" size="sm" onClick={deleteTeam}>
           Supprimer l'équipe
         </Button>
       </CardHeader>

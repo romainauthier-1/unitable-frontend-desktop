@@ -268,13 +268,23 @@ export default function planningAdmin() {
     const allRolesInService = targetService.teams.flatMap((team) => team.roles);
 
     const rolesNeeded = allRolesInService.map((role) => {
-      const CTsWithRole = todayCTs.filter(
+      const CTsInService = todayCTs.filter(
         (CT) =>
-          CT.role.includes(role.name) &&
           CT.startTime < targetService.endTime &&
           CT.endTime > targetService.startTime,
       );
-      return { name: role.name, need: role.need, planned: CTsWithRole.length };
+
+      const planned = CTsInService.reduce((acc, CT) => {
+        if (CT.role.includes(role.name)) {
+          return acc + 1 / CT.role.length;
+        }
+        return acc;
+      }, 0);
+      return {
+        name: role.name,
+        need: role.need,
+        planned: Number(planned.toFixed(2)),
+      };
     });
     // console.log(
     //   `Résultat de roleNeed pour le service ${serviceId}:`,
@@ -648,7 +658,7 @@ export default function planningAdmin() {
                     onWheel={(e) => e.stopPropagation()}
                   >
                     <div className="space-y-4 max-h-75 overflow-y-auto">
-                      {referenceTeams.map((team) => (
+                      {referenceTeams?.map((team) => (
                         <div key={team.name} className="space-y-2">
                           {/* Nom de la Team (Cuisine, Salle...) */}
                           <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500 border-b pb-1">
@@ -749,46 +759,52 @@ export default function planningAdmin() {
       </div>
       <footer className=" flex-none sticky bottom-0 z-50 w-full h-12 bg-white/80 backdrop-blur-md border-t border-slate-200 flex items-center px-4 overflow-visible">
         <div className="flex gap-2 items-center">
-          {services?.map((service) => (
-            <div
-              key={service._id}
-              className="group relative min-w-fit cursor-pointer"
-            >
-              <p className="text-[10px] uppercase tracking-wider font-bold px-2 py-1 rounded-md bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors">
-                {service.name}
-              </p>
+          {services
+            ?.filter((service) =>
+              service.dayOfWeek.includes(
+                dayjs(workingDate).format("dddd").toLowerCase(),
+              ),
+            )
+            .map((service) => (
               <div
-                className="absolute bottom-full left-0 mb-2 z-9999 
+                key={service._id}
+                className="group relative min-w-fit cursor-pointer"
+              >
+                <p className="text-[10px] uppercase tracking-wider font-bold px-2 py-1 rounded-md bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors">
+                  {service.name}
+                </p>
+                <div
+                  className="absolute bottom-full left-0 mb-2 z-9999 
                   opacity-0 scale-95 pointer-events-none 
                   transition-all duration-150 
                   group-hover:opacity-100 group-hover:scale-100 
                   group-hover:pointer-events-auto group-hover:-translate-y-1"
-              >
-                <div className="bg-white border z-50 rounded-lg shadow-2xl p-3 min-w-37.5">
-                  <p className="text-xs font-semibold mb-2">{service.name}</p>
-                  <div className="space-y-1">
-                    {roleNeedForService(service._id).map((role) => (
-                      <div
-                        key={role.name}
-                        className="flex justify-between text-[11px]"
-                      >
-                        <span>{role.name}</span>
-                        <span
-                          className={
-                            role.planned < role.need
-                              ? "text-red-500 font-semibold"
-                              : "text-green-600"
-                          }
+                >
+                  <div className="bg-white border z-50 rounded-lg shadow-2xl p-3 min-w-37.5">
+                    <p className="text-xs font-semibold mb-2">{service.name}</p>
+                    <div className="space-y-1">
+                      {roleNeedForService(service._id).map((role) => (
+                        <div
+                          key={role.name}
+                          className="flex justify-between text-[11px]"
                         >
-                          {role.planned} / {role.need}
-                        </span>
-                      </div>
-                    ))}
+                          <span>{role.name}</span>
+                          <span
+                            className={
+                              role.planned < role.need
+                                ? "text-red-500 font-semibold"
+                                : "text-green-600"
+                            }
+                          >
+                            {role.planned} / {role.need}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
         </div>
       </footer>
     </div>
