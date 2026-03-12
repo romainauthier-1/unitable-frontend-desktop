@@ -54,178 +54,173 @@ import {
 import { useRouter } from "next/router";
 
 export default function CreateEmployee() {
-	const router = useRouter();
-	const dispatch = useDispatch();
-	const employees = useSelector((state) => state.employee.value.employees);
-	const business = useSelector((state) => state.business.value);
-	const organizationId = business?.[0]?.id || "";
+  const router = useRouter();
+  const dispatch = useDispatch();
+  const employees = useSelector((state) => state.employee.value?.employees) || [];
+  const business = useSelector((state) => state.business.value) || [];
+  const organizationId = business?.[0]?.id || "";
 
-	const initialFormState = {
-		firstName: "",
-		lastName: "",
-		birthDate: "",
-		email: "",
-		secuNumber: undefined,
-		address: {
-			street: "",
-			city: "",
-			zipCode: "",
-		},
-		phone: "",
-		position: "",
-		profil: "user", // Valeur par défaut sur le rôle de l'employé.e
-		dateContract: "",
-		typeContract: "",
-		hourVolumn: "",
-		contact: "",
-		organization: business[0]?.id,
-	};
+  const initialFormState = {
+    firstName: "",
+    lastName: "",
+    birthDate: "",
+    email: "",
+    secuNumber: undefined,
+    address: {
+      street: "",
+      city: "",
+      zipCode: "",
+    },
+    phone: "",
+    position: "",
+    profil: "user", // Valeur par défaut sur le rôle de l'employé.e
+    dateContract: "",
+    typeContract: "",
+    hourVolumn: "",
+    contact: "",
+    organization: business[0]?.id,
+  };
 
-	const [formData, setFormData] = useState(initialFormState);
-	const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-	const [errors, setErrors] = useState({});
+  const [formData, setFormData] = useState(initialFormState);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [errors, setErrors] = useState({});
 
-	// Gestion des inputs standards (prénom, nom, etc.)
-	const handleChange = (event) => {
-		const { id, value } = event.target;
-		setFormData((prev) => ({ ...prev, [id]: value }));
-	};
+  // Gestion des inputs standards (prénom, nom, etc.)
+  const handleChange = (event) => {
+    const { id, value } = event.target;
+    setFormData((prev) => ({ ...prev, [id]: value }));
+  };
 
-	// Gestion pour l'adresse
-	const handleAddressChange = (event) => {
-		const { id, value } = event.target;
-		setFormData((prev) => ({
-			...prev,
-			address: { ...prev.address, [id]: value },
-		}));
-	};
+  // Gestion pour l'adresse
+  const handleAddressChange = (event) => {
+    const { id, value } = event.target;
+    setFormData((prev) => ({
+      ...prev,
+      address: { ...prev.address, [id]: value },
+    }));
+  };
 
-	// Gestion pour le select
-	const handleSelectChange = (fieldName, value) => {
-		setFormData((prev) => ({ ...prev, [fieldName]: value }));
-	};
+  // Gestion pour le select
+  const handleSelectChange = (fieldName, value) => {
+    setFormData((prev) => ({ ...prev, [fieldName]: value }));
+  };
 
-	// Gestion pour le radio group
-	const handleRadioChange = (value) => {
-		setFormData((prev) => ({ ...prev, profil: value }));
-	};
+  // Gestion pour le radio group
+  const handleRadioChange = (value) => {
+    setFormData((prev) => ({ ...prev, profil: value }));
+  };
 
-	// Envoie des données du formulaire
-	const handleSubmit = (event) => {
-		// Fetch le backend ${process.env.NEXT_PUBLIC_URL_BACKEND}/users/signup pour créer un nouvel utilisateur/employé
-		event.preventDefault();
+  // Envoie des données du formulaire
+  const handleSubmit = (event) => {
+    // Fetch le backend ${process.env.NEXT_PUBLIC_URL_BACKEND}/users/signup pour créer un nouvel utilisateur/employé
+    event.preventDefault();
 
-		let newErrors = {};
+    let newErrors = {};
 
-		if (!formData.lastName) {
-			newErrors.lastName = "Le nom est obligatoire";
-		}
+    if (!formData.lastName) {
+      newErrors.lastName = "Le nom est obligatoire";
+    }
 
-		if (!formData.firstName) {
-			newErrors.firstName = "Le prénom est obligatoire";
-		}
+    if (!formData.firstName) {
+      newErrors.firstName = "Le prénom est obligatoire";
+    }
 
-		if (!formData.email) {
-			newErrors.email = "L'email est obligatoire";
-		}
+    if (!formData.email) {
+      newErrors.email = "L'email est obligatoire";
+    }
 
-		if (!formData.phone) {
-			newErrors.phone = "Le téléphone est obligatoire";
-		}
+    if (!formData.phone) {
+      newErrors.phone = "Le téléphone est obligatoire";
+    }
 
-		if (!formData.typeContract) {
-			newErrors.typeContract = "Le type de contrat est obligatoire";
-		}
+    if (!formData.typeContract) {
+      newErrors.typeContract = "Le type de contrat est obligatoire";
+    }
 
-		if (!formData.position) {
-			newErrors.position = "Le poste est obligatoire";
-		}
+    if (!formData.position) {
+      newErrors.position = "Le poste est obligatoire";
+    }
 
-		if (Object.keys(newErrors).length > 0) {
-			setErrors(newErrors);
-			return;
-		}
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
 
-		setErrors({});
+    setErrors({});
 
-		if (!organizationId) {
-			setErrors((prev) => ({
-				...prev,
-				organization: "Aucune organisation trouvée",
-			}));
-			return;
-		}
+    if (!organizationId) {
+      setErrors((prev) => ({
+        ...prev,
+        organization: "Aucune organisation trouvée",
+      }));
+      return;
+    }
 
-		fetch(`${process.env.NEXT_PUBLIC_URL_BACKEND}/employee`, {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({
-				...formData,
-				organization: organizationId,
-			}),
-		})
-			.then((response) => {
-				if (!response.ok) {
-					throw new Error("Erreur lors de la création de l'employé");
-				}
-				return response.json();
-			})
-			.then((data) => {
-				console.log("Résultat ajout employé: ", data);
-				if (!data.employee || !data.employee._id) {
-					throw new Error(
-						"Le backend doit renvoyer l'employé avec un id",
-					);
-				}
+    fetch(`${process.env.NEXT_PUBLIC_URL_BACKEND}/employee", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        ...formData,
+        organization: organizationId,
+      }),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Erreur lors de la création de l'employé");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log("Résultat ajout employé: ", data);
+        if (!data.employee || !data.employee._id) {
+          throw new Error("Le backend doit renvoyer l'employé avec un id");
+        }
 
-				dispatch(addEmployeeToStore(data.employee));
+        dispatch(addEmployeeToStore(data.employee));
 
-				setFormData(initialFormState); // Reset le formulaire après création
-				console.log("Employé créé, formData : ", formData);
-				console.log("Employé créé, data : ", data.employee);
-				setIsDrawerOpen(false);
-			})
-			.catch((error) => {
-				console.error("Erreur:", error);
-			});
-	};
+        setFormData(initialFormState); // Reset le formulaire après création
+        console.log("Employé créé, formData : ", formData);
+        console.log("Employé créé, data : ", data.employee);
+        setIsDrawerOpen(false);
+      })
+      .catch((error) => {
+        console.error("Erreur:", error);
+      });
+  };
 
-	// Reset le formulaire
-	const handleReset = () => {
-		setFormData(initialFormState);
-	};
+  // Reset le formulaire
+  const handleReset = () => {
+    setFormData(initialFormState);
+  };
 
-	// supprimer un employé
-	const handleDeleteEmployee = async (employeeId) => {
-		if (!confirm("Voulez-vous vraiment supprimer cet employé ?")) return;
+  // supprimer un employé
+  const handleDeleteEmployee = async (employeeId) => {
+    if (!confirm("Voulez-vous vraiment supprimer cet employé ?")) return;
 
-		try {
-			const res = await fetch(
-				`${process.env.NEXT_PUBLIC_URL_BACKEND}/employee/${employeeId}`,
-				{
-					method: "DELETE",
-				},
-			);
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_URL_BACKEND}/employee/${employeeId}`, {
+        method: "DELETE",
+      });
 
-			const data = await res.json();
+      const data = await res.json();
 
-			if (data.result) {
-				dispatch(removeEmployeeFromStore(employeeId)); // <- utiliser l'action du slice
-				console.log("Employé supprimé :", data.employee);
-			} else {
-				alert("Erreur lors de la suppression : " + data.error);
-			}
-		} catch (err) {
-			console.error(err);
-			alert("Erreur serveur lors de la suppression");
-		}
-	};
+      if (data.result) {
+        dispatch(removeEmployeeFromStore(employeeId)); // <- utiliser l'action du slice
+        console.log("Employé supprimé :", data.employee);
+      } else {
+        alert("Erreur lors de la suppression : " + data.error);
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Erreur serveur lors de la suppression");
+    }
+  };
 
-	return (
-		<div className="min-h-screen min-w-screen bg-background flex rounded-lg justify-evenly flex-col items-center  p-4">
-			{/* <div className="mt-6">
+  return (
+    <div className="min-h-screen min-w-screen bg-background flex rounded-lg justify-evenly flex-col items-center  p-4">
+      {/* <div className="mt-6">
 				<h2 className="text-lg font-semibold mb-4">
 					Liste des employés
 				</h2>

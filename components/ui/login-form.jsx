@@ -35,121 +35,97 @@ export function LoginForm({ className, ...props }) {
 	const handleConnection = (e) => {
 		e.preventDefault();
 
-		if (password.length > 1 && email.length > 0) {
-			fetch(`${process.env.NEXT_PUBLIC_URL_BACKEND}/users/signin`, {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({
-					email,
-					password,
-				}),
-			})
-				.then((response) => response.json())
-				.then((data) => {
-					if (data.result) {
-						// recuperer organisation de l'utilisateur et l'ajouter au store
-						// fetch user search by email to get organization id, then fetch organization by id to get organization details and add to store
-						fetch(
-							`${process.env.NEXT_PUBLIC_URL_BACKEND}/users/search/by/${email}`,
-						)
-							.then((response) => response.json())
-							.then((userData) => {
-								if (
-									userData.result &&
-									userData.user?.organization
-								) {
-									const organizationId =
-										userData.user.organization;
-									const name =
-										userData.user.firstName +
-										" " +
-										userData.user.lastName;
-									dispatch(
-										login({
-											email,
-											token: data.token,
-											name: name,
-											id: userData.user._id,
-										}),
-									);
-									fetch(
-										`${process.env.NEXT_PUBLIC_URL_BACKEND}/organizations/search/by/${organizationId}`,
-									)
-										.then((response) => response.json())
-										.then((organizationData) => {
-											if (
-												organizationData.result &&
-												organizationData.organization
-											) {
-												const {
-													businessCommercialName,
-													owner,
-													_id,
-													referenceTeams,
-													businessAddress,
-												} =
-													organizationData.organization;
-												const zipCode =
-													businessAddress?.zipCode;
-												dispatch(
-													addBusiness({
-														businessCommercialName,
-														owner,
-														id: _id,
-														referenceTeams:
-															referenceTeams,
-														zipCode: zipCode,
-													}),
-												);
-											}
-										});
-									fetch(
-										`${process.env.NEXT_PUBLIC_URL_BACKEND}/${organizationId}`,
-										{
-											method: "GET",
-											headers: {
-												"Content-Type":
-													"application/json",
-											},
-										},
-									)
-										.then((response) => response.json())
-										.then((servicesData) => {
-											dispatch(
-												setServices(
-													servicesData.services || [],
-												),
-											);
-										});
+    if (password.length > 1 && email.length > 0) {
+      fetch(`${process.env.NEXT_PUBLIC_URL_BACKEND}/users/signin`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+    
+          if (data.result) {
+            // recuperer organisation de l'utilisateur et l'ajouter au store
+            // fetch user search by email to get organization id, then fetch organization by id to get organization details and add to store
+            fetch(`${process.env.NEXT_PUBLIC_URL_BACKEND}/users/search/by/${email}`)
+              .then((response) => response.json())
+              .then((userData) => {
+              
+                if (userData.result && userData.user?.organization) {
+                  const organizationId = userData.user.organization;
+                  const name =
+                    userData.user.firstName + " " + userData.user.lastName;
+                  dispatch(
+                    login({
+                      email,
+                      token: data.token,
+                      name: name,
+                      id: userData.user._id,
+                    }),
+                  );
+                  fetch(
+                    `${process.env.NEXT_PUBLIC_URL_BACKEND}/organizations/search/by/${organizationId}`,
+                  )
+                    .then((response) => response.json())
+                    .then((organizationData) => {
+                      
+                      if (
+                        organizationData.result &&
+                        organizationData.organization
+                      ) {
+                        const {
+                          businessCommercialName,
+                          owner,
+                          _id,
+                          referenceTeams,
+                          businessAddress,
+                        } = organizationData.organization;
+                        const zipCode = businessAddress?.zipCode;
+                        dispatch(
+                          addBusiness({
+                            businessCommercialName,
+                            owner,
+                            id: _id,
+                            referenceTeams: referenceTeams,
+                            zipCode: zipCode,
+                          }),
+                        );
+                      }
+                    });
+                  fetch(`${process.env.NEXT_PUBLIC_URL_BACKEND}/services/${organizationId}`, {
+                    method: "GET",
+                    headers: { "Content-Type": "application/json" },
+                  })
+                    .then((response) => response.json())
+                    .then((servicesData) => {
+                   
+                      dispatch(setServices(servicesData.services || []));
+                    });
 
-									fetch(
-										`${process.env.NEXT_PUBLIC_URL_BACKEND}/employee/${organizationId}`,
-										{
-											method: "GET",
-											headers: {
-												"Content-Type":
-													"application/json",
-											},
-										},
-									)
-										.then((response) => response.json())
-										.then((employeesData) => {
-											dispatch(
-												setEmployeesInStore(
-													employeesData.employees ||
-														[],
-												),
-											);
-										});
-								}
-								if (!userData.result) {
-									console.error(
-										"Reponse invalide pour la recherche de l'utilisateur par email:",
-										userData,
-									);
-									return;
-								}
-							});
+                  fetch(`${process.env.NEXT_PUBLIC_URL_BACKEND}/employee/${organizationId}`, {
+                    method: "GET",
+                    headers: { "Content-Type": "application/json" },
+                  })
+                    .then((response) => response.json())
+                    .then((employeesData) => {
+                     
+                      dispatch(
+                        setEmployeesInStore(employeesData.employees || []),
+                      );
+                    });
+                }
+                if (!userData.result) {
+                  console.error(
+                    "Reponse invalide pour la recherche de l'utilisateur par email:",
+                    userData,
+                  );
+                  return;
+                }
+              });
+          
 
 						setEmail("");
 						setPassword("");

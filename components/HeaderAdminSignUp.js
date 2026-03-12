@@ -8,7 +8,7 @@ import { onboardingInfos } from "./ModalOnboarding";
 import { useRouter } from "next/router";
 
 export default function HeaderAdminSignUp() {
-  const business = useSelector((state) => state.business.value);
+  const business = useSelector((state) => state.business.value) || [];
   const user = useSelector((state) => state.user.value);
   const router = useRouter();
 

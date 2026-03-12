@@ -150,10 +150,15 @@ export default function ViewTeamSaveReducer() {
 			return;
 		}
 
-		// Ne pas refetch si on a déjà chargé les referenceTeams depuis business
-		if (hasLoadedFromBusiness) {
-			return;
-		}
+    fetch(`${process.env.NEXT_PUBLIC_URL_BACKEND}/services/${organizationId}`)
+      .then((response) => response.json())
+      .then((data) => {
+    
+        if (!data.result) {
+          console.error("Reponse invalide pour les équipes :", data);
+          setTeams(defaultTeams);
+          return;
+        }
 
 		fetch(
 			`${process.env.NEXT_PUBLIC_URL_BACKEND}/services/` + organizationId,
@@ -250,37 +255,38 @@ export default function ViewTeamSaveReducer() {
 				<div className="flex justify-between">
 					<Button onClick={addTeamLocal}>Ajouter une équipe</Button>
 
-					<Button
-						variant="outline"
-						onClick={handleSave}
-						disabled={
-							!Array.isArray(teams) ||
-							teams.length === 0 ||
-							!organizationId
-						}
-					>
-						Sauvegarder
-					</Button>
-				</div>
-				<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-					{Array.isArray(teams) &&
-						teams.map((team, teamIndex) => (
-							<TeamCard
-								key={teamIndex}
-								team={team}
-								teamIndex={teamIndex}
-								// roles={roles}
-								updateTeamName={updateTeamName}
-								addRole={addRole}
-								removeRole={removeRole}
-								updateRole={updateRole}
-								removeTeam={removeTeam}
-								serviceId={team.serviceId}
-								onDeleteTeamFromDB={deleteTeamFromDB}
-							/>
-						))}
-				</div>
-			</div>
-		</div>
-	);
+            <Button
+              variant="outline"
+              onClick={handleSave}
+              disabled={
+                !Array.isArray(teams) || teams.length === 0 || !organizationId
+              }
+            >
+              Sauvegarder
+            </Button>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+           
+            {Array.isArray(teams) &&
+              teams.map((team, teamIndex) => (
+                <TeamCard
+                  key={teamIndex}
+                  team={team}
+                  teamIndex={teamIndex}
+                  // roles={roles}
+                  updateTeamName={updateTeamName}
+                  addRole={addRole}
+                  removeRole={removeRole}
+                  updateRole={updateRole}
+                  removeTeam={removeTeam}
+                  serviceId={team.serviceId}
+                  viewTeam={true}
+                  onDeleteTeamFromDB={deleteTeamFromDB}
+                />
+              ))}
+          </div>
+        </div>
+      </div>
+    )
+  );
 }

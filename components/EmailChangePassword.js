@@ -19,65 +19,53 @@ export function EmailChangePassword({ className, ...props }) {
 	const handleSendEmail = (e) => {
 		e.preventDefault();
 
-		email.trim();
-		email.length > 0 &&
-			//  `${process.env.NEXT_PUBLIC_URL_BACKEND}/users/search/by/${encodeURIComponent(email)}`
-			fetch(
-				`${process.env.NEXT_PUBLIC_URL_BACKEND}/users/search/by/` +
-					encodeURIComponent(email),
-				{
-					method: "GET",
-					headers: { "Content-Type": "application/json" },
-				},
-			)
-				.then((response) => response.json())
-				.then((data) => {
-					if (
-						data.user != undefined &&
-						data.user.token != undefined
-					) {
-						{
-							// fetch envoie un mail de réinitialisation du mot de passe avec cette route: /emails/resetpassword
-							fetch(
-								`${process.env.NEXT_PUBLIC_URL_BACKEND}/emails/resetpassword`,
-								{
-									method: "POST",
-									headers: {
-										"Content-Type": "application/json",
-									},
-									body: JSON.stringify({
-										toEmail: email,
-										toName: data.user.firstName || "", // optionnel
-										tags: ["reset-password"], // optionnel
-									}),
-								},
-							);
-							setEmailSend(true);
-						}
-					}
-				});
-	};
-	return (
-		// centrer le formulaire dans la page et lui donner une largeur maximale de 400px
-		<div
-			className={cn(
-				"flex flex-col gap-6 max-w-[400px] mx-auto",
-				className,
-			)}
-			{...props}
-		>
-			<form onSubmit={handleSendEmail}>
-				<FieldGroup>
-					<div className="flex flex-col items-center gap-2 text-center">
-						<a
-							href="#"
-							className="flex flex-col items-center gap-2 font-medium"
-						>
-							<div className="flex size-8 items-center justify-center rounded-md">
-								<GalleryVerticalEnd className="size-6" />
-							</div>
-							<span className="sr-only">UniTable</span>
-						</a>
+    email.trim();
+    email.length > 0 &&
+      //  `${process.env.NEXT_PUBLIC_URL_BACKEND}/users/search/by/${encodeURIComponent(email)}`
+      fetch(
+        `${process.env.NEXT_PUBLIC_URL_BACKEND}/users/search/by/` + encodeURIComponent(email),
+        {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+        },
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.user != undefined && data.user.token != undefined) {
+            {
+              // fetch envoie un mail de réinitialisation du mot de passe avec cette route: /emails/resetpassword
+              fetch(`${process.env.NEXT_PUBLIC_URL_BACKEND}/emails/resetpassword`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  toEmail: email,
+                  toName: data.user.firstName || "", // optionnel
+                  tags: ["reset-password"], // optionnel
+                }),
+              });
+              setEmailSend(true);
+            }
+          }
+        });
+  };
+  return (
+    // centrer le formulaire dans la page et lui donner une largeur maximale de 400px
+    <div
+      className={cn("flex flex-col gap-6 max-w-[400px] mx-auto", className)}
+      {...props}
+    >
+      <form onSubmit={handleSendEmail}>
+        <FieldGroup>
+          <div className="flex flex-col items-center gap-2 text-center">
+            <a
+              href="#"
+              className="flex flex-col items-center gap-2 font-medium"
+            >
+              <div className="flex size-8 items-center justify-center rounded-md">
+                <GalleryVerticalEnd className="size-6" />
+              </div>
+              <span className="sr-only">UniTable</span>
+            </a>
 
 						<h1 className="text-xl font-bold">
 							Réintialiser votre mot de passe

@@ -26,7 +26,7 @@ export function ServiceCard({
   dayOfWeek,
   onDelete,
 }) {
-  const services = useSelector((state) => state.services.value);
+  const services = useSelector((state) => state.services.value) || [];
   return (
     <>
       <Card className="w-full max-w-100 border border-slate-300 m-6 ">

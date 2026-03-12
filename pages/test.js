@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Toaster, toast } from "sonner";
 
 function TestPage() {
 	const [users, setUsers] = useState([]);
@@ -20,35 +21,30 @@ function TestPage() {
 
 	const inviteUser = async (user) => {
 		try {
-			const res = await fetch(
-				`${process.env.NEXT_PUBLIC_URL_BACKEND}/emails/invitation`,
-				{
-					method: "POST",
-					headers: {
-						"Content-Type": "application/json",
-					},
-					body: JSON.stringify({
-						toEmail: user.email,
-						toName: user.firstName,
-					}),
+			const res = await fetch(`${process.env.NEXT_PUBLIC_URL_BACKEND}/emails/invitation`, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
 				},
 			);
 
 			const data = await res.json();
 
 			if (data.ok) {
-				alert(`Invitation envoyée à ${user.email}`);
+				toast.success(`Invitation envoyée à ${user.email}`);
 			} else {
 				console.error(data);
-				alert("Erreur lors de l'envoi de l'email");
+				toast.error("Erreur lors de l'envoi de l'email");
 			}
 		} catch (error) {
 			console.error("Erreur :", error);
+			toast.error("Erreur réseau lors de l'envoi de l'invitation");
 		}
 	};
 
 	return (
 		<div className="flex min-h-screen w-full items-center justify-center p-6 md:p-10">
+			<Toaster richColors position="top-right" />
 			<div className="w-full max-w-sm">
 				{users.length === 0 && <p>Aucun utilisateur à afficher</p>}
 

@@ -25,12 +25,12 @@ const columns = [
 ];
 
 export default function Dashboard() {
-	const router = useRouter();
-	const dispatch = useDispatch();
-	const business = useSelector((state) => state.business.value);
-	const user = useSelector((state) => state.user.value);
-	const email = user?.email;
-	const token = user?.token;
+  const router = useRouter();
+  const dispatch = useDispatch();
+  const business = useSelector((state) => state.business.value) || [];
+  const user = useSelector((state) => state.user.value);
+  const email = user?.email;
+  const token = user?.token;
 
 	useEffect(() => {
 		if (!email || !token) return;
@@ -38,14 +38,15 @@ export default function Dashboard() {
 		// Ne charger que si le store business est vide
 		if (business.length > 0) return;
 
-		const fetchUserData = async () => {
-			try {
-				const response = await fetch(
-					`${process.env.NEXT_PUBLIC_URL_BACKEND}/users/search/by/${email}`,
-					{
-						method: "GET",
-					},
-				);
+    const fetchUserData = async () => {
+      try {
+        const backendUrl = process.env.NEXT_PUBLIC_URL_BACKEND;
+        const response = await fetch(
+          `${backendUrl}/users/search/by/${email}`,
+          {
+            method: "GET",
+          },
+        );
 
 				if (!response.ok) {
 					throw new Error(
