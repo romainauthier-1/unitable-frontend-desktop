@@ -155,7 +155,7 @@ export default function planningAdmin() {
       getAllStaff(restaurantId);
       getAllServices(restaurantId);
     }
-    // console.log("Staff: ", staff);
+    console.log("Staff: ", staff);
   }, []);
 
   const updateCT = async (CTToUpdate) => {
