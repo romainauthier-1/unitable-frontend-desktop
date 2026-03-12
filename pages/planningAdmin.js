@@ -17,6 +17,7 @@ import {
   ChevronDownIcon,
 } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
+import { fr } from "date-fns/locale";
 import {
   Popover,
   PopoverContent,
@@ -83,7 +84,7 @@ export default function planningAdmin() {
   const [newCTDate, setNewCTDate] = useState(new Date());
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [selectedRoles, setSelectedRoles] = useState([]);
-  const [startHour, setStartHour] = useState(5);
+  const [startHour, setStartHour] = useState(8);
   const [endHour, setEndHour] = useState(24);
   const referenceTeams = business[0]?.referenceTeams;
   const [services, setServices] = useState([]);
@@ -105,7 +106,7 @@ export default function planningAdmin() {
           className="text-left col-span-4 h-16 border-l border-slate-200 flex-none"
           key={i}
         >
-          <span className="text-slate-400 font-light text-[15px]">{`${correctHour.toString().padStart(2, "0")}h`}</span>
+          <span className="text-slate-400 font-light text-[15px]">{`${correctHour > 24 ? (correctHour - 24).toString().padStart(2, "0") : correctHour.toString().padStart(2, "0")}h`}</span>
         </div>
       );
     },
@@ -304,8 +305,13 @@ export default function planningAdmin() {
 
     return (
       <div
-        className={`w-full flex flex-row border-b border-slate-200 items-stretch min-h-16 ${i % 2 === 0 ? "bg-white" : "bg-slate-50"}`}
+        className={` cursor-pointer w-full flex flex-row border-b border-slate-200 items-stretch min-h-16 ${i % 2 === 0 ? "bg-white" : "bg-slate-50"}`}
         key={employee?._id}
+        onClick={() => {
+          setWorker(employee._id);
+          setNewCTStartTime(convertMinutesToTime(startHour * 60));
+          setIsModalOpen(true);
+        }}
       >
         <div className="sticky left-0 z-20 w-32 shrink-0 bg-inherit border-r flex flex-col justify-center px-3 py-2 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]">
           <span className="text-xs font-bold text-slate-800 truncate">
@@ -486,7 +492,7 @@ export default function planningAdmin() {
               Planifier
             </Button>
           </DialogTrigger>
-          <DialogContent className="w-full p-4">
+          <DialogContent className="w-full p-2">
             <DialogHeader>
               <DialogTitle className="text-center">
                 Ajouter un créneau de travail
@@ -506,21 +512,45 @@ export default function planningAdmin() {
                 </Button>
               </PopoverTrigger>
               <PopoverContent
-                className="w-100 p-0 shadow-md"
+                // className="w-100 p-0 shadow-md z-50"
+                className="w-auto p-2 h-auto bg-white opacity-100 shadow-2xl border border-slate-200 z-100"
                 align="center"
                 side="bottom"
-                position="popper"
+                sideOffset={4}
+                portal={true}
               >
                 <Calendar
                   mode="single"
-                  locale="fr"
+                  locale={fr}
                   selected={newCTDate}
                   onSelect={(date) => {
                     setNewCTDate(date);
                     setIsCalendarOpen(false);
                   }}
                   defaultMonth={newCTDate}
-                  className="bg-white h-full w-full"
+                  classNames={{
+                    months: "flex flex-col space-y-4",
+                    month: "space-y-4",
+                    caption:
+                      "flex justify-center pt-2 relative items-center w-full min-h-[40px]",
+                    caption_label: "text-sm font-medium",
+                    nav: "static",
+                    nav_button:
+                      "h-7 w-full bg-transparent p-0 opacity-50 hover:opacity-100 flex items-center justify-between",
+                    nav_button_previous: "absolute left-2 top-2 z-10",
+                    nav_button_next: "absolute right-2 top-2 z-10",
+                    table: "w-full border-collapse space-y-1",
+                    head_row: "flex justify-between",
+                    head_cell:
+                      "text-slate-500 rounded-md w-9 font-normal text-[0.8rem]",
+                    row: "flex w-full mt-2 justify-between",
+                    cell: "h-9 w-9 text-center text-sm p-0 relative focus-within:relative focus-within:z-20",
+                    day: "h-9 w-9 p-0 font-normal aria-selected:opacity-100 hover:bg-slate-100 rounded-md transition-all",
+                    day_selected:
+                      "bg-teal-500 text-white hover:bg-teal-600 focus:bg-teal-500 focus:text-white",
+                    day_today: "bg-slate-100 text-slate-900",
+                  }}
+                  className="bg-white"
                 />
               </PopoverContent>
             </Popover>
