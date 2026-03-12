@@ -581,6 +581,8 @@ export default function planningAdmin() {
                   name="breakTime"
                   type="number"
                   step="15"
+                  min="0"
+                  max="120"
                   value={newCTBreakTime}
                   onChange={(e) => setNewCTBreakTime(e.target.value)}
                 />
