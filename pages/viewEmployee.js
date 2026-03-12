@@ -157,10 +157,6 @@ export default function ViewEmployee() {
       newErrors.email = "L'email est obligatoire";
     }
 
-    if (!formData.phone) {
-      newErrors.phone = "Le téléphone est obligatoire";
-    }
-
     if (!formData.typeContract) {
       newErrors.typeContract = "Le type de contrat est obligatoire";
     }
@@ -474,9 +470,7 @@ export default function ViewEmployee() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="phone">
-                  Numéro de téléphone <span className="text-red-500">*</span>
-                </Label>
+                <Label htmlFor="phone">Numéro de téléphone</Label>
                 <Input
                   id="phone"
                   type="tel"
@@ -486,7 +480,6 @@ export default function ViewEmployee() {
                   pattern="[0-9]{10}"
                   required
                 />
-                {errors.phone && <FieldError>{errors.phone}</FieldError>}
               </div>
 
               <div className="grid grid-cols-3 gap-4">
