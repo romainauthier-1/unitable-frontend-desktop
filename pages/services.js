@@ -21,8 +21,10 @@ export default function Services() {
   const services = useSelector((state) => state.services.value);
   const dispatch = useDispatch();
   const router = useRouter();
-
+  let count =0
   useEffect(() => {
+    count ++
+    console.log("Services page - business from store: ", business);
     if (services.length > 0 || business.length === 0) return;
 
     console.log(
@@ -49,8 +51,10 @@ export default function Services() {
     };
     dispatch(addService(serviceDejDefault));
     dispatch(addService(serviceDinerDefault));
+  
   }, []);
 
+  console.log(services);
   // Transformer l'heure (format 12:30) en 'minutes depuis minuit' pour l'envoyer à la BDD
   const convertTimeToMinutes = (timeString) => {
     const [hours, minutes] = timeString.split(":").map(Number);

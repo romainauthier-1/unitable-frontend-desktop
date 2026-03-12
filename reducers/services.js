@@ -144,6 +144,7 @@ export const serviceSlice = createSlice({
     },
     addService: (state, action) => {
       // Vérifier si le service n'existe pas déjà dans le store
+      console.log("Payload", action.payload);
       const serviceExists = state.value.find(
         (service) => service.id === action.payload.id,
       );
