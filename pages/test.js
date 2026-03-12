@@ -4,7 +4,7 @@ function TestPage() {
 	const [users, setUsers] = useState([]);
 
 	useEffect(() => {
-		fetch("http://localhost:3000/users/search/all")
+		fetch(`${process.env.NEXT_PUBLIC_URL_BACKEND}/users/search/all`)
 			.then((response) => response.json())
 			.then((data) => {
 				console.log(data);
@@ -20,16 +20,19 @@ function TestPage() {
 
 	const inviteUser = async (user) => {
 		try {
-			const res = await fetch("http://localhost:3000/emails/invitation", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
+			const res = await fetch(
+				`${process.env.NEXT_PUBLIC_URL_BACKEND}/emails/invitation`,
+				{
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({
+						toEmail: user.email,
+						toName: user.firstName,
+					}),
 				},
-				body: JSON.stringify({
-					toEmail: user.email,
-					toName: user.firstName,
-				}),
-			});
+			);
 
 			const data = await res.json();
 
