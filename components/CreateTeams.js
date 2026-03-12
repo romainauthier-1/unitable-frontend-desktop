@@ -115,7 +115,7 @@ export default function CreateTeams() {
       // console.log("Info dispatch - format teams : ", teams);
       teams.length === 0 && toast.error("Pas d'équipe enregistrée");
 
-      console.log("Teams à envoyer en BDD:", teams);
+
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_URL_BACKEND}/organizations/addReferenceTeams/${organizationId}`,
         {
@@ -126,7 +126,6 @@ export default function CreateTeams() {
       );
 
       const data = await response.json();
-      console.log("Réponse fetch:", data);
       if (data.result) {
         dispatch(addReferenceTeams({ businessId: organizationId, teams }));
         toast.success("Équipes sauvegardées avec succès !");

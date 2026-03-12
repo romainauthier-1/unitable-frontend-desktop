@@ -18,8 +18,11 @@ export const instructionsSlice = createSlice({
         state.value[route] = !state.value[route];
       }
     },
+    clearInstructions: (state) => { 
+      state.value.employees = [];
+      }
   },
 });
 
-export const { toggleInstructions } = instructionsSlice.actions;
+export const { toggleInstructions, clearInstructions } = instructionsSlice.actions;
 export default instructionsSlice.reducer;

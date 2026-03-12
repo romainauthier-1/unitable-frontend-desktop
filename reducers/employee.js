@@ -34,6 +34,9 @@ export const employeeSlice = createSlice({
         state.value.employees[index] = action.payload;
       }
     },
+      clearEmployee: (state) => { 
+      state.value.employees = [];
+      }
   },
 });
 
@@ -42,6 +45,7 @@ export const {
   addEmployeeToStore,
   removeEmployeeFromStore,
   updateEmployeeInStore,
+  clearEmployee
 } = employeeSlice.actions;
 
 export default employeeSlice.reducer;

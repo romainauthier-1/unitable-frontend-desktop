@@ -9,7 +9,7 @@ export const businessSlice = createSlice({
   initialState,
   reducers: {
     addBusiness: (state, action) => {
-      console.log("PAYLOAD RECU DANS LE REDUCER BUSINESS: ", action.payload);
+  
       // Vérifier que le business n'existe pas déjà avant de l'ajouter
       const businessExists = state.value.find(
         (business) => business.id === action.payload.id,

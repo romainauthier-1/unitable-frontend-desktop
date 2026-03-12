@@ -47,18 +47,23 @@ export const serviceSlice = createSlice({
     },
     addTeamToService: (state, action) => {
       const { id, teamName, roles } = action.payload;
+      console.log("Payload reçu dans addTeamToService:", action.payload);
       const serviceToUpdate = state.value.find(
-        (service) => service._id === id || service.id === id,
+        (service) => (service.id || service._id) === id,
       );
-
+   
       if (!serviceToUpdate) {
         console.log("Service introuvable pour l'id:", id);
         return;
       }
       //teamName prend Team Name et le Nom du service pour éviter les doublons de nom d'équipe entre les services
       const uniqueTeamName = `${teamName} - ${serviceToUpdate.name} - {${serviceToUpdate.dayOfWeek}}`;
-
-      serviceToUpdate.teams.push({ teamName: uniqueTeamName, roles });
+      const alreadyExists = serviceToUpdate.teams?.some(
+        (team) => team.teamName === uniqueTeamName,
+      );
+      if (!alreadyExists) {
+        serviceToUpdate.teams.push({ teamName: uniqueTeamName, roles });
+      }
     },
     updateTeamName: (state, action) => {
       const { id, teamName } = action.payload;
@@ -139,6 +144,7 @@ export const serviceSlice = createSlice({
     },
     addService: (state, action) => {
       // Vérifier si le service n'existe pas déjà dans le store
+      console.log("Payload", action.payload);
       const serviceExists = state.value.find(
         (service) => service.id === action.payload.id,
       );
@@ -156,6 +162,9 @@ export const serviceSlice = createSlice({
         (service) => (service._id || service.id) !== action.payload,
       );
     },
+    clearService:(state) =>{
+      state.value = [];
+    }
   },
 });
 
@@ -170,5 +179,6 @@ export const {
   updateRoleNeed,
   addTeamToService,
   deleteTeamFromService,
+  clearService,
 } = serviceSlice.actions;
 export default serviceSlice.reducer;

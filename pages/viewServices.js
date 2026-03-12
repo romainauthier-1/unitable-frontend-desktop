@@ -25,25 +25,25 @@ export default function Services() {
   const dispatch = useDispatch();
   const router = useRouter();
 
-  console.log("Business dans le store: ", business);
-  const serviceDejDefault = {
-    id: uid2(10),
-    name: "Déjeuner",
-    startTime: 720,
-    endTime: 840,
-    dayOfWeek: ["mercredi", "jeudi", "vendredi", "samedi", "dimanche"],
-    restaurant: business[0]?.id || null,
-    teams: [],
-  };
-  const serviceDinerDefault = {
-    id: uid2(10),
-    name: "Dîner",
-    startTime: 1140,
-    endTime: 1260,
-    dayOfWeek: ["mercredi", "jeudi", "vendredi", "samedi"],
-    restaurant: business[0]?.id || null,
-    teams: [],
-  };
+
+          const serviceDejDefault = {
+          id: uid2(10),
+          name: "Déjeuner",
+          startTime: 720,
+          endTime: 840,
+          dayOfWeek: ["mercredi", "jeudi", "vendredi", "samedi", "dimanche"],
+          restaurant: business[0]?.id || null,
+          teams: [],
+        };
+        const serviceDinerDefault = {
+          id: uid2(10),
+          name: "Dîner",
+          startTime: 1140,
+          endTime: 1260,
+          dayOfWeek: ["mercredi", "jeudi", "vendredi", "samedi"],
+          restaurant: business[0]?.id || null,
+          teams: [],
+        };
   // Ajout de l'id du restaurant aux services par défaut du reducer services
   useEffect(() => {
     // Empêche de recharger/réinitialiser si déjà présent dans le store.
@@ -52,8 +52,7 @@ export default function Services() {
     fetch("http://localhost:3000/services/" + business[0].id)
       .then((response) => response.json())
       .then((data) => {
-        console.log(business[0]);
-        console.log("Services récupérés de la BDD :", data);
+   
         if (!data.result) {
           dispatch(setServices([serviceDejDefault, serviceDinerDefault]));
           console.error("Reponse invalide pour les services :", data);

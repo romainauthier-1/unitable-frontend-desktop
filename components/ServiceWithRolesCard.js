@@ -53,14 +53,17 @@ export default function ServiceWithRolesCard({ service }) {
     (state) => state.business.value[0]?.referenceTeams,
   );
   //const teamAvailable = useSelector((state) => state.teams.value);
+  console.log("Teams disponibles pour ajout : ", teamAvailable);
   const teamDropdown = teamAvailable?.map((equipe) => (
     <DropdownMenuItem
       key={equipe.name}
       onClick={() => {
+        // recuperer l'id du service concerné pour l'ajout de l'équipe
+        const serviceId = service.id || service._id;
         console.log(equipe);
         dispatch(
           addTeamToService({
-            id: service.id,
+            id: serviceId,
             teamName: equipe.name,
             roles: equipe.roles,
           }),
@@ -88,12 +91,12 @@ export default function ServiceWithRolesCard({ service }) {
 
   const teamsToDisplay =
     // service.teams.length > 1 &&
-    service.teams?.map((team) => {
+    service.teams?.map((team, teamIndex) => {
       const roleDropdown = team.roles?.map((role) => (
         <DropdownMenuItem key={role.name}>{role.name}</DropdownMenuItem>
       ));
       return (
-        <div key={team.teamName} className="p-1">
+        <div key={`${team.teamName}-${teamIndex}`} className="p-1">
           <div className="flex flex-row justify-between">
             <p className="text-sm font-bold">{team.teamName.split(" {")[0]}</p>
             <MinusCircle
