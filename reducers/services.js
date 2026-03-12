@@ -36,7 +36,9 @@ export const serviceSlice = createSlice({
     updateService: (state, action) => {
       const { id, name, startTime, endTime, dayOfWeek, restaurant } =
         action.payload;
-      const serviceToUpdate = state.value.find((service) => service.id === id);
+      const serviceToUpdate = state.value.find(
+        (service) => service._id === id || service.id === id,
+      );
       name && (serviceToUpdate.name = name);
       startTime && (serviceToUpdate.startTime = startTime);
       endTime && (serviceToUpdate.endTime = endTime);
@@ -45,7 +47,9 @@ export const serviceSlice = createSlice({
     },
     addTeamToService: (state, action) => {
       const { id, teamName, roles } = action.payload;
-      const serviceToUpdate = state.value.find((service) => service.id === id);
+      const serviceToUpdate = state.value.find(
+        (service) => service._id === id || service.id === id,
+      );
 
       if (!serviceToUpdate) {
         console.log("Service introuvable pour l'id:", id);
@@ -58,7 +62,9 @@ export const serviceSlice = createSlice({
     },
     updateTeamName: (state, action) => {
       const { id, teamName } = action.payload;
-      const serviceToUpdate = state.value.find((service) => service.id === id);
+      const serviceToUpdate = state.value.find(
+        (service) => service._id === id || service.id === id,
+      );
       if (serviceToUpdate) {
         serviceToUpdate.teams = serviceToUpdate.teams.map((team) => {
           if (team.teamName === action.payload.oldTeamName) {
@@ -70,7 +76,9 @@ export const serviceSlice = createSlice({
     },
     updateRoleName: (state, action) => {
       const { id, teamName, roleName, oldRoleName } = action.payload;
-      const serviceToUpdate = state.value.find((service) => service.id === id);
+      const serviceToUpdate = state.value.find(
+        (service) => service._id === id || service.id === id,
+      );
       if (serviceToUpdate) {
         // On cherche l'équipe concernée
         serviceToUpdate.teams = serviceToUpdate.teams.map((team) => {
@@ -93,7 +101,9 @@ export const serviceSlice = createSlice({
     },
     updateRoleNeed: (state, action) => {
       const { id, teamName, roleName, need } = action.payload;
-      const serviceToUpdate = state.value.find((service) => service.id === id);
+      const serviceToUpdate = state.value.find(
+        (service) => service._id === id || service.id === id,
+      );
       if (serviceToUpdate) {
         // On cherche l'équipe concernée
         serviceToUpdate.teams = serviceToUpdate.teams.map((team) => {
@@ -116,14 +126,15 @@ export const serviceSlice = createSlice({
     },
     deleteTeamFromService: (state, action) => {
       const { id, teamName } = action.payload;
-      const serviceToUpdate = state.value.find((service) => service.id === id);
+      const serviceToUpdate = state.value.find(
+        (service) => service._id === id || service.id === id,
+      );
       if (serviceToUpdate) {
         serviceToUpdate.teams = serviceToUpdate.teams.filter(
           (team) => team.teamName !== teamName,
         );
-        console.log("service",id)
-        console.log("teamName",teamName)
-       
+        console.log("service", id);
+        console.log("teamName", teamName);
       }
     },
     addService: (state, action) => {
@@ -137,12 +148,12 @@ export const serviceSlice = createSlice({
     },
     setServices: (state, action) => {
       state.value = action.payload;
-      console.log("Services dans le store après setServices:", state.value);
+      // console.log("Services dans le store après setServices:", state.value);
     },
     deleteService: (state, action) => {
       state.value = state.value.filter(
         //  (service) => service.id !== action.payloadctio,
-        (service) => (service.id || service._id) !== action.payload,
+        (service) => (service._id || service.id) !== action.payload,
       );
     },
   },
