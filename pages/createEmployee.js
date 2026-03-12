@@ -156,7 +156,7 @@ export default function CreateEmployee() {
       return;
     }
 
-    fetch(`${process.env.NEXT_PUBLIC_URL_BACKEND}/employee", {
+    fetch(`${process.env.NEXT_PUBLIC_URL_BACKEND}/employee`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

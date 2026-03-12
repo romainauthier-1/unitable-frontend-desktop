@@ -192,7 +192,11 @@ export default function ViewEmployee() {
 				headers: {
 					"Content-Type": "application/json",
 				},
-			)
+				body: JSON.stringify({
+					...formData,
+					organization: organizationId,
+				}),
+			})
 				.then((res) => res.json())
 				.then((data) => {
 					dispatch(updateEmployeeInStore(data.employee));
@@ -287,7 +291,7 @@ export default function ViewEmployee() {
 				headers: {
 					"Content-Type": "application/json",
 				},
-			);
+			});
 
 			const data = await res.json();
 
