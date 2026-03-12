@@ -140,8 +140,7 @@ export const serviceSlice = createSlice({
         serviceToUpdate.teams = serviceToUpdate.teams.filter(
           (team) => team.teamName !== teamName,
         );
-        console.log("service", id);
-        console.log("teamName", teamName);
+        console.log("4. Suppression du store de l'équipe", teamName);
       }
     },
     addService: (state, action) => {

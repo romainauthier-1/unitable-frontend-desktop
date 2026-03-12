@@ -4,11 +4,11 @@ import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { ServiceCard } from "../components/ServiceCard";
 import {
-	updateService,
-	updateIdRestaurant,
-	addService,
-	setServices,
-	deleteService,
+  updateService,
+  updateIdRestaurant,
+  addService,
+  setServices,
+  deleteService,
 } from "@/reducers/services";
 import { Button } from "@/components/ui/button";
 import { Toaster } from "sonner";
@@ -24,28 +24,43 @@ export default function Services() {
   const user = useSelector((state) => state.user.value);
   const dispatch = useDispatch();
   const router = useRouter();
+  const restaurantId = business[0]?.id;
 
+  const getAllServices = async (restaurantId) => {
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_URL_BACKEND}/services/${restaurantId}`,
+      );
+      const data = await response.json();
+      if (data.result) {
+        const foundServices = await data.services;
+        dispatch(setServices(foundServices));
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
-          const serviceDejDefault = {
-          id: uid2(10),
-          name: "Déjeuner",
-          startTime: 720,
-          endTime: 840,
-          dayOfWeek: ["mercredi", "jeudi", "vendredi", "samedi", "dimanche"],
-          restaurant: business[0]?.id || null,
-          teams: [],
-        };
-        const serviceDinerDefault = {
-          id: uid2(10),
-          name: "Dîner",
-          startTime: 1140,
-          endTime: 1260,
-          dayOfWeek: ["mercredi", "jeudi", "vendredi", "samedi"],
-          restaurant: business[0]?.id || null,
-          teams: [],
-        };
   // Ajout de l'id du restaurant aux services par défaut du reducer services
   useEffect(() => {
+    const serviceDejDefault = {
+      id: uid2(10),
+      name: "Déjeuner",
+      startTime: 720,
+      endTime: 840,
+      dayOfWeek: ["mercredi", "jeudi", "vendredi", "samedi", "dimanche"],
+      restaurant: business[0]?.id || null,
+      teams: [],
+    };
+    const serviceDinerDefault = {
+      id: uid2(10),
+      name: "Dîner",
+      startTime: 1140,
+      endTime: 1260,
+      dayOfWeek: ["mercredi", "jeudi", "vendredi", "samedi"],
+      restaurant: business[0]?.id || null,
+      teams: [],
+    };
     // Empêche de recharger/réinitialiser si déjà présent dans le store.
     if ((Array.isArray(services) && services.length > 0) || !business[0]?.id)
       return;
@@ -53,7 +68,6 @@ export default function Services() {
     fetch(`${process.env.NEXT_PUBLIC_URL_BACKEND}/services/${business[0].id}`)
       .then((response) => response.json())
       .then((data) => {
-   
         if (!data.result) {
           dispatch(setServices([serviceDejDefault, serviceDinerDefault]));
           console.error("Reponse invalide pour les services :", data);
@@ -112,7 +126,7 @@ export default function Services() {
           // console.log("Service :", service);
           return (
             <ServiceCard
-              key={i}
+              key={service._id || service.id}
               timeToMinutes={convertTimeToMinutes}
               minutesToTime={convertMinutesToTime}
               name={service.name}
@@ -120,9 +134,11 @@ export default function Services() {
               startTime={service.startTime}
               endTime={service.endTime}
               onUpdate={(newData) =>
-                dispatch(updateService({ id: service.id || service._id, ...newData }))
+                dispatch(
+                  updateService({ id: service._id || service.id, ...newData }),
+                )
               }
-              onDelete={() => deleteServiceFromDB(service.id || service._id)}
+              onDelete={() => deleteServiceFromDB(service._id || service.id)}
             />
           );
         })
@@ -142,42 +158,43 @@ export default function Services() {
     dispatch(addService(newService));
   };
 
-  // Envoi des services à la BDD
-  // const handleValidation = async (services) => {
-  //   // On extrait l'id du reducer avant d'envoyer en BDD
-  //   for (const service of services) {
-  //     const { id, ...servicesWithoutId } = service;
-  //     const response = await fetch(
-  //       `${process.env.NEXT_PUBLIC_URL_BACKEND}/services`,
-  //       {
-  //         method: "POST",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //         },
-  //         body: JSON.stringify(servicesWithoutId),
-  //       },
-  //     );
+  const handleValidation = async (servicesToDB) => {
+    try {
+      const promises = servicesToDB.map(async (service) => {
+        // console.log("DEBUG SERVICE", JSON.stringify(service));
+        // On extrait l'id utilisé dans le store de chaque service
+        const existingService = service._id ? true : false;
+        const method = existingService ? "PUT" : "POST";
+        const url = existingService
+          ? `${process.env.NEXT_PUBLIC_URL_BACKEND}/services/${service?._id}`
+          : `${process.env.NEXT_PUBLIC_URL_BACKEND}/services`;
+        const { id, _id, ...serviceWithoutId } = service;
+        // console.log("Voici le service en traitement: ", service);
+        // console.log("serviceWithoutId.teams", serviceWithoutId.teams);
 
-  //     const data = await response.json();
-  //     if (data.result) {
-  //       toast.success(data.message);
-  //       // On attend 2 secondes avant la redirection
-  //       setTimeout(() => {
-  //         router.push("/templatePlanning");
-  //       }, 2000);
-  //     } else {
-  //       toast.error(data.message);
-  //       return;
-  //     }
-  //   }
-  // };
+        const response = await fetch(url, {
+          method: method,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(serviceWithoutId),
+        });
 
-  // Les données sont enregistrées au fur et à mesure dans le store, on passe à la page suivante
-  const handleValidation = () => {
-    toast.success("Services enregistrés");
-    setTimeout(() => {
-      router.push("/viewPlanning");
-    }, 1000);
+        const data = await response.json();
+
+        if (!data.result) {
+          throw new Error(data.message || "Un problème est survenu");
+        }
+
+        return data;
+      });
+
+      await Promise.all(promises);
+
+      toast.success("Mise à jour réussie !");
+      getAllServices(restaurantId);
+    } catch (err) {
+      console.log(err.message);
+      toast.error(err.message);
+    }
   };
 
   return (
@@ -194,17 +211,17 @@ export default function Services() {
         className="mt-6"
         onClick={() => handleValidation(services)}
       >
-        Valider
+        Mettre à jour
       </Button>
     </div>
   );
 }
 
 export async function getStaticProps() {
-	return {
-		props: {
-			title: "Services - Éditer",
-			description: "Modifier vos services.",
-		},
-	};
+  return {
+    props: {
+      title: "Services - Éditer",
+      description: "Modifier vos services.",
+    },
+  };
 }
