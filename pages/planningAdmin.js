@@ -248,8 +248,7 @@ export default function planningAdmin() {
         );
       })
       .reduce((acc, CT) => {
-        const duration =
-          CT.endTime - CT.startTime - (Number(CT.breakTime) || 0);
+        const duration = CT.endTime - CT.startTime - (Number(CT.pause) || 0);
         return acc + duration;
       }, 0);
 
