@@ -513,6 +513,7 @@ export default function planningAdmin() {
               >
                 <Calendar
                   mode="single"
+                  locale="fr"
                   selected={newCTDate}
                   onSelect={(date) => {
                     setNewCTDate(date);
@@ -727,7 +728,7 @@ export default function planningAdmin() {
                 {service.name}
               </p>
               <div
-                className="absolute bottom-full left-0 mb-2 z-[9999] 
+                className="absolute bottom-full left-0 mb-2 z-9999 
                   opacity-0 scale-95 pointer-events-none 
                   transition-all duration-150 
                   group-hover:opacity-100 group-hover:scale-100 
