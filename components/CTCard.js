@@ -36,6 +36,7 @@ export default function CTCard({
           <Card
             style={style}
             className="flex flex-col justify-center p-1 gap-0 overflow-hidden h-full shadow-sm border-l-2 border-l-accent-foreground"
+            onClick={(e) => e.stopPropagation()}
           >
             <CardHeader className="flex flex-row justify-evenly w-full p-1 ">
               <p className="min-w-0 truncate text-xs">

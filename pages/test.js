@@ -26,11 +26,7 @@ function TestPage() {
 				headers: {
 					"Content-Type": "application/json",
 				},
-				body: JSON.stringify({
-					toEmail: user.email,
-					toName: user.firstName,
-				}),
-			});
+			);
 
 			const data = await res.json();
 

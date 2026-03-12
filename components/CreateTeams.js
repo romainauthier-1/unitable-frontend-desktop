@@ -116,7 +116,6 @@ export default function CreateTeams() {
       // console.log("Info dispatch - format teams : ", teams);
       teams.length === 0 && toast.error("Pas d'équipe enregistrée");
 
-
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_URL_BACKEND}/organizations/addReferenceTeams/${organizationId}`,
         {
@@ -140,7 +139,6 @@ export default function CreateTeams() {
   return (
     <div className="min-h-screen min-w-screen bg-background p-6">
       <HeaderAdminSignUp />
-      <Toaster richColors />
       <div className="max-w-3xl mx-auto space-y-6">
         <h2 className="text-2xl font-semibold">Créer une équipe</h2>
         <p className="text-muted-foreground">

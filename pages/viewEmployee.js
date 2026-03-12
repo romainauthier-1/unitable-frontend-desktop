@@ -192,8 +192,7 @@ export default function ViewEmployee() {
 				headers: {
 					"Content-Type": "application/json",
 				},
-				body: JSON.stringify(formData),
-			})
+			)
 				.then((res) => res.json())
 				.then((data) => {
 					dispatch(updateEmployeeInStore(data.employee));
@@ -288,11 +287,7 @@ export default function ViewEmployee() {
 				headers: {
 					"Content-Type": "application/json",
 				},
-				body: JSON.stringify({
-					toEmail: user.email,
-					toName: user.firstName,
-				}),
-			});
+			);
 
 			const data = await res.json();
 
@@ -350,8 +345,8 @@ export default function ViewEmployee() {
 										</TableCell>
 
 										<TableCell>
-
-											{employee.profil?.toLowerCase() === "admin" ? (
+											{employee.profil?.toLowerCase() ===
+											"admin" ? (
 												<span className="text-red-600 font-semibold">
 													Admin
 												</span>
@@ -510,6 +505,8 @@ export default function ViewEmployee() {
 								<Input
 									id="birthDate"
 									type="date"
+									min="1900-01-01"
+									max="2026-12-31"
 									value={formData.birthDate}
 									onChange={handleChange}
 								/>
@@ -517,8 +514,7 @@ export default function ViewEmployee() {
 
 							<div className="space-y-2">
 								<Label htmlFor="phone">
-									Numéro de téléphone{" "}
-									<span className="text-red-500">*</span>
+									Numéro de téléphone
 								</Label>
 								<Input
 									id="phone"
@@ -529,9 +525,6 @@ export default function ViewEmployee() {
 									pattern="[0-9]{10}"
 									required
 								/>
-								{errors.phone && (
-									<FieldError>{errors.phone}</FieldError>
-								)}
 							</div>
 
 							<div className="grid grid-cols-3 gap-4">

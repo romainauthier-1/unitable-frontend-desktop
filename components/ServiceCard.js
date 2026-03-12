@@ -77,7 +77,7 @@ export function ServiceCard({
             <ToggleGroup
               type="multiple"
               className="grid w-max grid-cols-2"
-              value={dayOfWeek}
+              value={dayOfWeek || []}
               onValueChange={(value) => onUpdate({ dayOfWeek: value })}
             >
               <ToggleGroupItem className="text-sm" value="lundi">

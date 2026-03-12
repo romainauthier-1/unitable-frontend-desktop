@@ -54,7 +54,7 @@ export default function ViewPlanning() {
         dispatch(setServices(foundServices));
       }
     } catch (err) {
-      console.log(err);
+      console.log(err.message);
     }
   };
 

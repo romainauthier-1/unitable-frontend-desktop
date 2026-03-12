@@ -10,18 +10,18 @@ import HeaderAdminSignUp from "@/components/HeaderAdminSignUp";
 import data from "../../data.json";
 
 const columns = [
-  {
-    accessorKey: "name",
-    header: "Name",
-  },
-  {
-    accessorKey: "email",
-    header: "Email",
-  },
-  {
-    accessorKey: "role",
-    header: "Role",
-  },
+	{
+		accessorKey: "name",
+		header: "Name",
+	},
+	{
+		accessorKey: "email",
+		header: "Email",
+	},
+	{
+		accessorKey: "role",
+		header: "Role",
+	},
 ];
 
 export default function Dashboard() {
@@ -32,11 +32,11 @@ export default function Dashboard() {
   const email = user?.email;
   const token = user?.token;
 
-  useEffect(() => {
-    if (!email || !token) return;
+	useEffect(() => {
+		if (!email || !token) return;
 
-    // Ne charger que si le store business est vide
-    if (business.length > 0) return;
+		// Ne charger que si le store business est vide
+		if (business.length > 0) return;
 
     const fetchUserData = async () => {
       try {
@@ -48,40 +48,41 @@ export default function Dashboard() {
           },
         );
 
-        if (!response.ok) {
-          throw new Error(`Request failed with status ${response.status}`);
-        }
+				if (!response.ok) {
+					throw new Error(
+						`Request failed with status ${response.status}`,
+					);
+				}
 
-        const contentType = response.headers.get("content-type") || "";
-        if (!contentType.includes("application/json")) {
-          throw new Error(
-            "Expected JSON response but received non-JSON content",
-          );
-        }
+				const contentType = response.headers.get("content-type") || "";
+				if (!contentType.includes("application/json")) {
+					throw new Error(
+						"Expected JSON response but received non-JSON content",
+					);
+				}
 
-        const data = await response.json();
-   
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-      }
-    };
+				const data = await response.json();
+			} catch (error) {
+				console.error("Error fetching user data:", error);
+			}
+		};
 
-    fetchUserData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [email, token, dispatch]);
+		fetchUserData();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [email, token, dispatch]);
 
-  return (
-    <>
-      <HeaderAdminSignUp />
+	return (
+		<>
+			<HeaderAdminSignUp />
 
-      <div className="flex flex-1 flex-col">
-        <div className="@container/main flex flex-1 flex-col gap-2">
-          <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-            <SectionCards />
-            <ChartAreaInteractive />
-          </div>
-        </div>
-      </div>
-    </>
-  );
+			<div className="flex flex-1 flex-col">
+				<div className="@container/main flex flex-1 flex-col gap-2">
+					<div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
+						<SectionCards />
+						<ChartAreaInteractive />
+					</div>
+				</div>
+			</div>
+		</>
+	);
 }

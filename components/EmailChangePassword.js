@@ -3,21 +3,21 @@ import { GalleryVerticalEnd } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
-  Field,
-  FieldDescription,
-  FieldGroup,
-  FieldLabel,
+	Field,
+	FieldDescription,
+	FieldGroup,
+	FieldLabel,
 } from "@/components/ui/field";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { Input } from "@/components/ui/input";
 
 export function EmailChangePassword({ className, ...props }) {
-  const dispatch = useDispatch();
-  const [email, setEmail] = useState("");
-  const [emailSend, setEmailSend] = useState(false);
-  const handleSendEmail = (e) => {
-    e.preventDefault();
+	const dispatch = useDispatch();
+	const [email, setEmail] = useState("");
+	const [emailSend, setEmailSend] = useState(false);
+	const handleSendEmail = (e) => {
+		e.preventDefault();
 
     email.trim();
     email.length > 0 &&
@@ -67,37 +67,37 @@ export function EmailChangePassword({ className, ...props }) {
               <span className="sr-only">UniTable</span>
             </a>
 
-            <h1 className="text-xl font-bold">
-              Réintialiser votre mot de passe
-            </h1>
-          </div>
+						<h1 className="text-xl font-bold">
+							Réintialiser votre mot de passe
+						</h1>
+					</div>
 
-          <Field>
-            <FieldLabel htmlFor="email">E-mail</FieldLabel>
-            <Input
-              id="email"
-              type="email"
-              placeholder="m@exemple.com"
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </Field>
-          <Field>
-            <FieldDescription>
-              Un email de réinitialisation du mot de passe sera envoyé si le
-              compte existe.
-            </FieldDescription>
-            <Button type="submit" >
-              Reinitialiser le mot de passe
-            </Button>
-          </Field>
-        </FieldGroup>
-      </form>
-      {emailSend && (
-        <div className="p-4 mt-4 text-green-700 bg-green-100 rounded">
-          Un email de réinitialisation du mot de passe a été envoyé.
-        </div>
-      )}
-    </div>
-  );
+					<Field>
+						<FieldLabel htmlFor="email">E-mail</FieldLabel>
+						<Input
+							id="email"
+							type="email"
+							placeholder="m@exemple.com"
+							onChange={(e) => setEmail(e.target.value)}
+							required
+						/>
+					</Field>
+					<Field>
+						<FieldDescription>
+							Un email de réinitialisation du mot de passe sera
+							envoyé si le compte existe.
+						</FieldDescription>
+						<Button type="submit">
+							Reinitialiser le mot de passe
+						</Button>
+					</Field>
+				</FieldGroup>
+			</form>
+			{emailSend && (
+				<div className="p-4 mt-4 text-green-700 bg-green-100 rounded">
+					Un email de réinitialisation du mot de passe a été envoyé.
+				</div>
+			)}
+		</div>
+	);
 }

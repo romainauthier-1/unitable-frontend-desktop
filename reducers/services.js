@@ -34,16 +34,18 @@ export const serviceSlice = createSlice({
       state.value = updatedServices;
     },
     updateService: (state, action) => {
-      const { id, name, startTime, endTime, dayOfWeek, restaurant } =
-        action.payload;
+      const { id, ...updates } = action.payload;
       const serviceToUpdate = state.value.find(
-        (service) => service._id === id || service.id === id,
+        (service) => (service._id || service.id) === id,
       );
-      name && (serviceToUpdate.name = name);
-      startTime && (serviceToUpdate.startTime = startTime);
-      endTime && (serviceToUpdate.endTime = endTime);
-      dayOfWeek && (serviceToUpdate.dayOfWeek = dayOfWeek);
-      restaurant && (serviceToUpdate.restaurant = restaurant);
+
+      if (serviceToUpdate) {
+        Object.keys(updates).forEach((key) => {
+          if (updates[key] !== undefined) {
+            serviceToUpdate[key] = updates[key];
+          }
+        });
+      }
     },
     addTeamToService: (state, action) => {
       const { id, teamName, roles } = action.payload;
@@ -51,7 +53,7 @@ export const serviceSlice = createSlice({
       const serviceToUpdate = state.value.find(
         (service) => (service.id || service._id) === id,
       );
-   
+
       if (!serviceToUpdate) {
         console.log("Service introuvable pour l'id:", id);
         return;
@@ -162,9 +164,9 @@ export const serviceSlice = createSlice({
         (service) => (service._id || service.id) !== action.payload,
       );
     },
-    clearService:(state) =>{
+    clearService: (state) => {
       state.value = [];
-    }
+    },
   },
 });
 

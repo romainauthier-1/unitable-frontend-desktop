@@ -4,11 +4,11 @@ import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { ServiceCard } from "../components/ServiceCard";
 import {
-  updateService,
-  updateIdRestaurant,
-  addService,
-  setServices,
-  deleteService,
+	updateService,
+	updateIdRestaurant,
+	addService,
+	setServices,
+	deleteService,
 } from "@/reducers/services";
 import { Button } from "@/components/ui/button";
 import { Toaster } from "sonner";
@@ -201,10 +201,10 @@ export default function Services() {
 }
 
 export async function getStaticProps() {
-  return {
-    props: {
-      title: "Services - Éditer",
-      description: "Modifier vos services.",
-    },
-  };
+	return {
+		props: {
+			title: "Services - Éditer",
+			description: "Modifier vos services.",
+		},
+	};
 }
