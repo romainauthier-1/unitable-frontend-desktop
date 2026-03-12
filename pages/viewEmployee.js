@@ -277,16 +277,19 @@ export default function ViewEmployee() {
 	// envoyer une invitation à un employé
 	const inviteEmployee = async (user) => {
 		try {
-			const res = await fetch("http://localhost:3000/emails/invitation", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
+			const res = await fetch(
+				`${process.env.NEXT_PUBLIC_URL_BACKEND}/emails/invitation`,
+				{
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({
+						toEmail: user.email,
+						toName: user.firstName,
+					}),
 				},
-				body: JSON.stringify({
-					toEmail: user.email,
-					toName: user.firstName,
-				}),
-			});
+			);
 
 			const data = await res.json();
 

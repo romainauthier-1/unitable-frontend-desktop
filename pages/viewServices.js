@@ -156,7 +156,7 @@ export default function Services() {
 						/>
 					);
 				})
-			: services;
+			: [];
 
 	// Ajout des services au reducer services
 	const handleNewService = () => {
