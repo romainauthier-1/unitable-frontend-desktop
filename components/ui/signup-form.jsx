@@ -67,7 +67,7 @@ export default function SignUpForm(props) {
 			return;
 		}
 
-		fetch("${process.env.NEXT_PUBLIC_URL_BACKEND}/users/signup", {
+		fetch(`${process.env.NEXT_PUBLIC_URL_BACKEND}/users/signup`, {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify({
