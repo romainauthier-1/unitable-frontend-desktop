@@ -12,7 +12,6 @@ export default function HeaderAdminSignUp() {
   const user = useSelector((state) => state.user.value);
   const router = useRouter();
 
-
   return (
     <div className=" rounded-lg bg-white border border-accent shadow-lg flex flex-row w-full justify-evenly h-28 items-center p-6">
       <Toaster richColors position="top-right" />
@@ -29,7 +28,7 @@ export default function HeaderAdminSignUp() {
       </div>
       {onboardingInfos[router.pathname] && (
         <ActionButton
-          action={toggleInstructions}
+          action={toggleInstructions(router.pathname)}
           label="Infos"
           icon={Info}
           variant="outline"
