@@ -73,7 +73,7 @@ function AppLayout({ Component, pageProps }) {
 		if (!isAuthenticated) {
 			router.replace("/login");
 		}
-	}, [isAuthenticated, router]);
+	}, [currentUser, isAuthenticated, router]);
 
 	const routesWithoutSidebar = [
 		"/",
