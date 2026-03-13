@@ -2,9 +2,10 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   value: {
-    "/services": true,
-    "/templatePlanning": true,
-    "/createTeams": true,
+    "/services": false,
+    "/createEmployee": false,
+    "/templatePlanning": false,
+    "/createTeams": false,
   },
 };
 
@@ -18,11 +19,12 @@ export const instructionsSlice = createSlice({
         state.value[route] = !state.value[route];
       }
     },
-    clearInstructions: (state) => { 
+    clearInstructions: (state) => {
       state.value.employees = [];
-      }
+    },
   },
 });
 
-export const { toggleInstructions, clearInstructions } = instructionsSlice.actions;
+export const { toggleInstructions, clearInstructions } =
+  instructionsSlice.actions;
 export default instructionsSlice.reducer;

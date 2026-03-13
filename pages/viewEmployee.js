@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
-	setEmployeesInStore,
-	addEmployeeToStore,
-	removeEmployeeFromStore,
-	updateEmployeeInStore,
+  setEmployeesInStore,
+  addEmployeeToStore,
+  removeEmployeeFromStore,
+  updateEmployeeInStore,
 } from "../reducers/employee";
 import { User } from "lucide-react";
 import { Toaster } from "sonner";
@@ -14,763 +14,688 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
-	Card,
-	CardContent,
-	CardHeader,
-	CardTitle,
-	CardDescription,
-	CardFooter,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardFooter,
 } from "@/components/ui/card";
 import {
-	Table,
-	TableBody,
-	TableCell,
-	TableHead,
-	TableHeader,
-	TableRow,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from "@/components/ui/table";
 import {
-	Field,
-	FieldContent,
-	FieldDescription,
-	FieldLabel,
-	FieldTitle,
-	FieldError,
+  Field,
+  FieldContent,
+  FieldDescription,
+  FieldLabel,
+  FieldTitle,
+  FieldError,
 } from "@/components/ui/field";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
-	Select,
-	SelectContent,
-	SelectGroup,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import {
-	Drawer,
-	DrawerClose,
-	DrawerContent,
-	DrawerDescription,
-	DrawerFooter,
-	DrawerHeader,
-	DrawerTitle,
-	DrawerTrigger,
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
 } from "@/components/ui/drawer";
 import { useRouter } from "next/router";
 
 export default function ViewEmployee() {
-	const router = useRouter();
-	const dispatch = useDispatch();
-	const employees = useSelector((state) => state.employee.value?.employees) || [];
-	const business = useSelector((state) => state.business.value) || [];
-	const organizationId = business?.[0]?.id || "";
-	const ownerId = business?.[0]?.owner || "";
-	const initialFormState = {
-		firstName: "",
-		lastName: "",
-		birthDate: "",
-		email: "",
-		secuNumber: "",
-		address: {
-			street: "",
-			city: "",
-			zipCode: "",
-		},
-		phone: "",
-		position: "",
-		profil: "user", // Valeur par défaut sur le rôle de l'employé.e
-		dateContract: "",
-		typeContract: "",
-		hourVolumn: 0,
-		contact: "",
-		// organization: organizationId,
-	};
+  const router = useRouter();
+  const dispatch = useDispatch();
+  const employees =
+    useSelector((state) => state.employee.value?.employees) || [];
+  const business = useSelector((state) => state.business.value) || [];
+  const organizationId = business?.[0]?.id || "";
+  const ownerId = business?.[0]?.owner || "";
+  const initialFormState = {
+    firstName: "",
+    lastName: "",
+    birthDate: "",
+    email: "",
+    secuNumber: "",
+    address: {
+      street: "",
+      city: "",
+      zipCode: "",
+    },
+    phone: "",
+    position: "",
+    profil: "user", // Valeur par défaut sur le rôle de l'employé.e
+    dateContract: "",
+    typeContract: "",
+    hourVolumn: 0,
+    contact: "",
+    // organization: organizationId,
+  };
 
-	const [formData, setFormData] = useState(initialFormState);
-	const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-	const [errors, setErrors] = useState({});
-	const [selectedEmployee, setSelectedEmployee] = useState(null);
-	const [isEditing, setIsEditing] = useState(false);
+  const [formData, setFormData] = useState(initialFormState);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [errors, setErrors] = useState({});
+  const [selectedEmployee, setSelectedEmployee] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
 
-	useEffect(() => {
-		if (!organizationId) return;
+  useEffect(() => {
+    if (!organizationId) return;
 
-		const fetchEmployees = async () => {
-			try {
-				const response = await fetch(
-					`${process.env.NEXT_PUBLIC_URL_BACKEND}/employee/${organizationId}`,
-				);
-				const data = await response.json();
+    const fetchEmployees = async () => {
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_URL_BACKEND}/employee/${organizationId}`,
+        );
+        const data = await response.json();
 
-				if (data.result && Array.isArray(data.employees)) {
-					dispatch(setEmployeesInStore(data.employees));
-				}
-			} catch (error) {
-				console.error(
-					"Erreur lors de la récupération des employés:",
-					error,
-				);
-			}
-		};
+        if (data.result && Array.isArray(data.employees)) {
+          dispatch(setEmployeesInStore(data.employees));
+        }
+      } catch (error) {
+        console.error("Erreur lors de la récupération des employés:", error);
+      }
+    };
 
-		fetchEmployees();
-	}, [dispatch, organizationId]);
+    fetchEmployees();
+  }, [dispatch, organizationId]);
 
-	// Gestion des inputs standards (prénom, nom, etc.)
-	const handleChange = (event) => {
-		const { id, value } = event.target;
-		setFormData((prev) => ({ ...prev, [id]: value }));
-	};
+  // Gestion des inputs standards (prénom, nom, etc.)
+  const handleChange = (event) => {
+    const { id, value } = event.target;
+    setFormData((prev) => ({ ...prev, [id]: value }));
+  };
 
-	// Gestion pour l'adresse
-	const handleAddressChange = (event) => {
-		const { id, value } = event.target;
-		setFormData((prev) => ({
-			...prev,
-			address: { ...prev.address, [id]: value },
-		}));
-	};
+  // Gestion pour l'adresse
+  const handleAddressChange = (event) => {
+    const { id, value } = event.target;
+    setFormData((prev) => ({
+      ...prev,
+      address: { ...prev.address, [id]: value },
+    }));
+  };
 
-	// Gestion pour le select
-	const handleSelectChange = (fieldName, value) => {
-		setFormData((prev) => ({ ...prev, [fieldName]: value }));
-	};
+  // Gestion pour le select
+  const handleSelectChange = (fieldName, value) => {
+    setFormData((prev) => ({ ...prev, [fieldName]: value }));
+  };
 
-	// Gestion pour le radio group
-	const handleRadioChange = (value) => {
-		setFormData((prev) => ({ ...prev, profil: value }));
-	};
+  // Gestion pour le radio group
+  const handleRadioChange = (value) => {
+    setFormData((prev) => ({ ...prev, profil: value }));
+  };
 
-	// Envoie des données du formulaire
-	const handleSubmit = (event) => {
-		// Fetch le backend ${process.env.NEXT_PUBLIC_URL_BACKEND}/users/signup pour créer un nouvel utilisateur/employé
-		event.preventDefault();
+  const phonePattern = /^[0-9]{10}$/;
 
-		let newErrors = {};
+  // Envoie des données du formulaire
+  const handleSubmit = (event) => {
+    // Fetch le backend ${process.env.NEXT_PUBLIC_URL_BACKEND}/users/signup pour créer un nouvel utilisateur/employé
+    event.preventDefault();
 
-		if (!formData.lastName) {
-			newErrors.lastName = "Le nom est obligatoire";
-		}
+    let newErrors = {};
 
-		if (!formData.firstName) {
-			newErrors.firstName = "Le prénom est obligatoire";
-		}
+    if (!formData.lastName) {
+      newErrors.lastName = "Le nom est obligatoire";
+    }
 
-		if (!formData.email) {
-			newErrors.email = "L'email est obligatoire";
-		}
+    if (!formData.firstName) {
+      newErrors.firstName = "Le prénom est obligatoire";
+    }
 
-		/*if (!formData.phone) {
-			newErrors.phone = "Le téléphone est obligatoire";
-		}*/
+    if (!formData.email) {
+      newErrors.email = "L'email est obligatoire";
+    }
 
-		if (!formData.typeContract) {
-			newErrors.typeContract = "Le type de contrat est obligatoire";
-		}
+    if (formData.phone && phonePattern.test(formData.phone) === false) {
+      newErrors.phone = "Veuillez respecter le format 0612345678";
+    }
 
-		if (!formData.position) {
-			newErrors.position = "Le poste est obligatoire";
-		}
+    if (!formData.typeContract) {
+      newErrors.typeContract = "Le type de contrat est obligatoire";
+    }
 
-		if (Object.keys(newErrors).length > 0) {
-			setErrors(newErrors);
-			return;
-		}
+    if (!formData.position) {
+      newErrors.position = "Le poste est obligatoire";
+    }
 
-		setErrors({});
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
 
-		if (!organizationId) {
-			setErrors((prev) => ({
-				...prev,
-				organization: "Aucune organisation trouvée",
-			}));
-			return;
-		}
-		if (isEditing) {
-			fetch(`${process.env.NEXT_PUBLIC_URL_BACKEND}/employee/${selectedEmployee._id}`, {
-				method: "PUT",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({
-					...formData,
-					organization: organizationId,
-				}),
-			})
-				.then((res) => res.json())
-				.then((data) => {
-					dispatch(updateEmployeeInStore(data.employee));
-					toast.success("Employé modifié");
+    setErrors({});
 
-					setIsEditing(false);
-					setSelectedEmployee(null);
-					setFormData(initialFormState);
-					setIsDrawerOpen(false);
-				});
-		} else {
-			fetch(`${process.env.NEXT_PUBLIC_URL_BACKEND}/employee`, {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({
-					...formData,
-					organization: organizationId,
-				}),
-			})
-				.then((response) => response.json())
-				.then((data) => {
-					dispatch(addEmployeeToStore(data.employee));
-					toast.success("Employé créé");
+    if (!organizationId) {
+      setErrors((prev) => ({
+        ...prev,
+        organization: "Aucune organisation trouvée",
+      }));
+      return;
+    }
+    if (isEditing) {
+      fetch(
+        `${process.env.NEXT_PUBLIC_URL_BACKEND}/employee/${selectedEmployee._id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            ...formData,
+            phone: formData.phone || "",
+            organization: organizationId,
+          }),
+        },
+      )
+        .then((res) => res.json())
+        .then((data) => {
+          dispatch(updateEmployeeInStore(data.employee));
+          toast.success("Employé modifié");
 
-					setFormData(initialFormState);
-					setIsDrawerOpen(false);
-				});
-		}
-	};
+          setIsEditing(false);
+          setSelectedEmployee(null);
+          setFormData(initialFormState);
+          setIsDrawerOpen(false);
+        });
+    } else {
+      fetch(`${process.env.NEXT_PUBLIC_URL_BACKEND}/employee`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...formData,
+          organization: organizationId,
+        }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          dispatch(addEmployeeToStore(data.employee));
+          toast.success("Employé créé");
 
-	// Reset le formulaire
-	const handleReset = () => {
-		setFormData({ ...initialFormState });
-		setIsEditing(false);
-		setSelectedEmployee(null);
-	};
+          setFormData(initialFormState);
+          setIsDrawerOpen(false);
+        });
+    }
+  };
 
-	// supprimer un employé
-	const handleDeleteEmployee = async (employeeId) => {
-		if (employeeId === ownerId) {
-			toast.error("Vous ne pouvez pas supprimer le compte propriétaire de l'organisation");
-			return;
-		}
+  // Reset le formulaire
+  const handleReset = () => {
+    setFormData({ ...initialFormState });
+    setIsEditing(false);
+    setSelectedEmployee(null);
+  };
 
-		if (!confirm("Voulez-vous vraiment supprimer cet employé ?")) return;
+  // supprimer un employé
+  const handleDeleteEmployee = async (employeeId) => {
+    if (employeeId === ownerId) {
+      toast.error(
+        "Vous ne pouvez pas supprimer le compte propriétaire de l'organisation",
+      );
+      return;
+    }
 
-		try {
-			const res = await fetch(
-				`${process.env.NEXT_PUBLIC_URL_BACKEND}/employee/${employeeId}`,
-				{
-					method: "DELETE",
-				},
-			);
+    if (!confirm("Voulez-vous vraiment supprimer cet employé ?")) return;
 
-			const data = await res.json();
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_URL_BACKEND}/employee/${employeeId}`,
+        {
+          method: "DELETE",
+        },
+      );
 
-			if (data.result) {
-				dispatch(removeEmployeeFromStore(employeeId)); // <- utiliser l'action du slice
-				console.log("Employé supprimé :", data.employee);
-			} else {
-				alert("Erreur lors de la suppression : " + data.error);
-			}
-		} catch (err) {
-			console.error(err);
-			alert("Erreur serveur lors de la suppression");
-		}
-	};
-	// éditer un employé
-	const handleEditEmployee = (employee) => {
-		setSelectedEmployee(employee);
-		setIsEditing(true);
+      const data = await res.json();
 
-		setFormData({
-			...employee,
-			address: employee.address || {
-				street: "",
-				city: "",
-				zipCode: "",
-			},
-		});
+      if (data.result) {
+        dispatch(removeEmployeeFromStore(employeeId)); // <- utiliser l'action du slice
+        console.log("Employé supprimé :", data.employee);
+      } else {
+        alert("Erreur lors de la suppression : " + data.error);
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Erreur serveur lors de la suppression");
+    }
+  };
+  // éditer un employé
+  const handleEditEmployee = (employee) => {
+    setSelectedEmployee(employee);
+    setIsEditing(true);
 
-		setIsDrawerOpen(true);
-	};
+    setFormData({
+      ...employee,
+      phone: employee.phone || "",
+      address: employee.address || {
+        street: "",
+        city: "",
+        zipCode: "",
+      },
+    });
 
-	// envoyer une invitation à un employé
-	const inviteEmployee = async (user) => {
-		try {
-			const res = await fetch(`${process.env.NEXT_PUBLIC_URL_BACKEND}/emails/invitation`, {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-			});
+    setIsDrawerOpen(true);
+  };
 
-			const data = await res.json();
+  // envoyer une invitation à un employé
+  const inviteEmployee = async (user) => {
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_URL_BACKEND}/emails/invitation`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
+      );
 
-			if (data.ok) {
-				// remplacer alert par toast
-				 toast.success(`Invitation envoyée à ${user.email}`);
-				//alert(`Invitation envoyée à ${user.email}`);
-			} else {
-				console.error(data);
-				toast.error("Erreur lors de l'envoi de l'email");
-			}
-		} catch (error) {
-			console.error("Erreur :", error);
-		}
-	};
+      const data = await res.json();
 
-	return (
-		<div>
-			<HeaderAdminSignUp />
-			<div className="mt-6">
-				<h2 className="text-lg font-semibold mb-4">
-					Liste des employés
-				</h2>
+      if (data.ok) {
+        // remplacer alert par toast
+        toast.success(`Invitation envoyée à ${user.email}`);
+        //alert(`Invitation envoyée à ${user.email}`);
+      } else {
+        console.error(data);
+        toast.error("Erreur lors de l'envoi de l'email");
+      }
+    } catch (error) {
+      console.error("Erreur :", error);
+    }
+  };
 
-				{employees.length === 0 ? (
-					<p>Aucun employé créé.</p>
-				) : (
-					<div className="rounded-md border">
-						<Table>
-							<TableHeader>
-								<TableRow>
-									<TableHead>Nom</TableHead>
-									<TableHead>Email</TableHead>
-									<TableHead>Poste</TableHead>
-									<TableHead>Profil</TableHead>
-									<TableHead>Status</TableHead>
-									<TableHead className="text-right">
-										Actions
-									</TableHead>
-								</TableRow>
-							</TableHeader>
+  return (
+    <div>
+      <HeaderAdminSignUp />
+      <div className="mt-6">
+        <h2 className="text-lg font-semibold mb-4">Liste des employés</h2>
 
-							<TableBody>
-								{employees?.map((employee) => (
-									<TableRow key={employee._id}>
-										<TableCell className="font-medium">
-											{employee.firstName}{" "}
-											{employee.lastName}
-										</TableCell>
+        {employees.length === 0 ? (
+          <p>Aucun employé créé.</p>
+        ) : (
+          <div className="rounded-md border">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Nom</TableHead>
+                  <TableHead>Email</TableHead>
+                  <TableHead>Poste</TableHead>
+                  <TableHead>Profil</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
 
-										<TableCell>{employee.email}</TableCell>
+              <TableBody>
+                {employees?.map((employee) => (
+                  <TableRow key={employee._id}>
+                    <TableCell className="font-medium">
+                      {employee.firstName} {employee.lastName}
+                    </TableCell>
 
-										<TableCell>
-											{employee.position}
-										</TableCell>
+                    <TableCell>{employee.email}</TableCell>
 
-										<TableCell>
-											{employee.profil?.toLowerCase() ===
-											"admin" ? (
-												<span className="text-red-600 font-semibold">
-													Admin
-												</span>
-											) : (
-												<span className="text-green-600 font-semibold">
-													User
-												</span>
-											)}
-										</TableCell>
+                    <TableCell>{employee.position}</TableCell>
 
-										<TableCell>
-											{employee.firstConnection
-												? "Inactif"
-												: "Actif"}
-										</TableCell>
+                    <TableCell>
+                      {employee.profil?.toLowerCase() === "admin" ? (
+                        <span className="text-red-600 font-semibold">
+                          Admin
+                        </span>
+                      ) : (
+                        <span className="text-green-600 font-semibold">
+                          User
+                        </span>
+                      )}
+                    </TableCell>
 
-										<TableCell className="text-right space-x-2">
-											{employee.firstConnection && (
-												<Button
-													variant="outline"
-													size="sm"
-													onClick={() =>
-														inviteEmployee(employee)
-													}
-												>
-													Envoyer une invitation
-												</Button>
-											)}
-											<Button
-												variant="outline"
-												size="sm"
-												onClick={() =>
-													handleEditEmployee(employee)
-												}
-											>
-												Modifier
-											</Button>
-											<Button
-												variant="destructive"
-												size="sm"
-												onClick={() =>
-													handleDeleteEmployee(
-														employee._id,
-													)
-												}
-											>
-												Supprimer
-											</Button>
-										</TableCell>
-									</TableRow>
-								))}
-							</TableBody>
-						</Table>
-					</div>
-				)}
-			</div>
-			<Drawer
-				direction="right"
-				open={isDrawerOpen}
-				onOpenChange={setIsDrawerOpen}
-			>
-				<DrawerTrigger asChild>
-					<Button
-						variant="default"
-						onClick={() => {
-							setIsEditing(false);
-							setSelectedEmployee(null);
-							setFormData(initialFormState);
-						}}
-					>
-						Ajouter un employé
-					</Button>
-				</DrawerTrigger>
+                    <TableCell>
+                      {employee.firstConnection ? "Inactif" : "Actif"}
+                    </TableCell>
 
-				<DrawerContent>
-					<DrawerHeader>
-						<DrawerTitle>
-							{isEditing
-								? "Modifier l'employé"
-								: "Ajouter un employé"}
-						</DrawerTitle>
-						<DrawerDescription>
-							{isEditing
-								? "Vous pouvez modifier les informations de l'employé."
-								: "Remplissez les informations pour ajouter un nouvel employé."}
-						</DrawerDescription>
-					</DrawerHeader>
+                    <TableCell className="text-right space-x-2">
+                      {employee.firstConnection && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => inviteEmployee(employee)}
+                        >
+                          Envoyer une invitation
+                        </Button>
+                      )}
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleEditEmployee(employee)}
+                      >
+                        Modifier
+                      </Button>
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => handleDeleteEmployee(employee._id)}
+                      >
+                        Supprimer
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        )}
+      </div>
+      <Drawer
+        direction="right"
+        open={isDrawerOpen}
+        onOpenChange={setIsDrawerOpen}
+      >
+        <DrawerTrigger asChild>
+          <Button
+            variant="default"
+            onClick={() => {
+              setIsEditing(false);
+              setSelectedEmployee(null);
+              setFormData(initialFormState);
+            }}
+          >
+            Ajouter un employé
+          </Button>
+        </DrawerTrigger>
 
-					<div className="no-scrollbar overflow-y-auto px-4 space-y-4">
-						<form
-							id="employeeForm"
-							className="space-y-4"
-							onSubmit={handleSubmit}
-						>
-							<div className="grid grid-cols-2 gap-4">
-								<div className="space-y-2">
-									<Label htmlFor="lastName">
-										Nom{" "}
-										<span className="text-red-500">*</span>
-									</Label>
-									<Input
-										id="lastName"
-										placeholder="Dupont"
-										value={formData.lastName}
-										onChange={handleChange}
-										required
-									/>
-									{errors.lastName && (
-										<FieldError>
-											{errors.lastName}
-										</FieldError>
-									)}
-								</div>
-								<div className="space-y-2">
-									<Label htmlFor="firstName">
-										Prénom{" "}
-										<span className="text-red-500">*</span>
-									</Label>
-									<Input
-										id="firstName"
-										placeholder="Jean"
-										value={formData.firstName}
-										onChange={handleChange}
-										required
-									/>
-									{errors.firstName && (
-										<FieldError>
-											{errors.firstName}
-										</FieldError>
-									)}
-								</div>
-							</div>
+        <DrawerContent>
+          <DrawerHeader>
+            <DrawerTitle>
+              {isEditing ? "Modifier l'employé" : "Ajouter un employé"}
+            </DrawerTitle>
+            <DrawerDescription>
+              {isEditing
+                ? "Vous pouvez modifier les informations de l'employé."
+                : "Remplissez les informations pour ajouter un nouvel employé."}
+            </DrawerDescription>
+          </DrawerHeader>
 
-							<div className="space-y-2">
-								<Label htmlFor="email">
-									Email{" "}
-									<span className="text-red-500">*</span>
-								</Label>
-								<Input
-									id="email"
-									type="email"
-									placeholder="jean.dupont@exemple.com"
-									value={formData.email}
-									onChange={handleChange}
-									required
-								/>
-								{errors.email && (
-									<FieldError>{errors.email}</FieldError>
-								)}
-							</div>
+          <div className="no-scrollbar overflow-y-auto px-4 space-y-4">
+            <form
+              id="employeeForm"
+              className="space-y-4"
+              onSubmit={handleSubmit}
+            >
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="lastName">
+                    Nom <span className="text-red-500">*</span>
+                  </Label>
+                  <Input
+                    id="lastName"
+                    placeholder="Dupont"
+                    value={formData.lastName}
+                    onChange={handleChange}
+                    required
+                  />
+                  {errors.lastName && (
+                    <FieldError>{errors.lastName}</FieldError>
+                  )}
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="firstName">
+                    Prénom <span className="text-red-500">*</span>
+                  </Label>
+                  <Input
+                    id="firstName"
+                    placeholder="Jean"
+                    value={formData.firstName}
+                    onChange={handleChange}
+                    required
+                  />
+                  {errors.firstName && (
+                    <FieldError>{errors.firstName}</FieldError>
+                  )}
+                </div>
+              </div>
 
-							<div className="space-y-2">
-								<Label htmlFor="birthDate">
-									Date de naissance
-								</Label>
-								<Input
-									id="birthDate"
-									type="date"
-									min="1900-01-01"
-									max="2026-12-31"
-									value={formData.birthDate}
-									onChange={handleChange}
-								/>
-							</div>
+              <div className="space-y-2">
+                <Label htmlFor="email">
+                  Email <span className="text-red-500">*</span>
+                </Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="jean.dupont@exemple.com"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                />
+                {errors.email && <FieldError>{errors.email}</FieldError>}
+              </div>
 
-							<div className="space-y-2">
-								<Label htmlFor="phone">
-									Numéro de téléphone
-								</Label>
-								<Input
-									id="phone"
-									type="tel"
-									placeholder="0123456789"
-									value={formData.phone}
-									onChange={handleChange}
-									pattern="[0-9]{10}"
-									required
-								/>
-							</div>
+              <div className="space-y-2">
+                <Label htmlFor="birthDate">Date de naissance</Label>
+                <Input
+                  id="birthDate"
+                  type="date"
+                  min="1900-01-01"
+                  max="2026-12-31"
+                  value={formData.birthDate}
+                  onChange={handleChange}
+                />
+              </div>
 
-							<div className="grid grid-cols-3 gap-4">
-								<div className="space-y-2 col-span-2">
-									<Label htmlFor="street">Rue</Label>
-									<Input
-										id="street"
-										placeholder="1 rue de Paris"
-										value={formData.address.street}
-										onChange={handleAddressChange}
-									/>
-								</div>
-								<div className="space-y-2">
-									<Label htmlFor="zipCode">Code postal</Label>
-									<Input
-										id="zipCode"
-										placeholder="75000"
-										value={formData.address.zipCode}
-										onChange={handleAddressChange}
-										pattern="[0-9]{5}"
-									/>
-								</div>
-								<div className="space-y-2 col-span-3">
-									<Label htmlFor="city">Ville</Label>
-									<Input
-										id="city"
-										placeholder="Paris"
-										value={formData.address.city}
-										onChange={handleAddressChange}
-									/>
-								</div>
-							</div>
+              <div className="space-y-2">
+                <Label htmlFor="phone">Numéro de téléphone</Label>
+                <Input
+                  id="phone"
+                  type="tel"
+                  placeholder="0123456789"
+                  value={formData.phone}
+                  onChange={handleChange}
+                />
+                {errors.phone && <FieldError>{errors.phone}</FieldError>}
+              </div>
 
-							<div className="space-y-2">
-								<Label htmlFor="secuNumber">
-									Numéro de sécurité social
-								</Label>
-								<Input
-									id="secuNumber"
-									placeholder="123456789"
-									value={formData.secuNumber}
-									onChange={handleChange}
-									pattern="[1-2][0-9]{14}"
-								/>
-							</div>
+              <div className="grid grid-cols-3 gap-4">
+                <div className="space-y-2 col-span-2">
+                  <Label htmlFor="street">Rue</Label>
+                  <Input
+                    id="street"
+                    placeholder="1 rue de Paris"
+                    value={formData.address.street}
+                    onChange={handleAddressChange}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="zipCode">Code postal</Label>
+                  <Input
+                    id="zipCode"
+                    placeholder="75000"
+                    value={formData.address.zipCode}
+                    onChange={handleAddressChange}
+                    pattern="[0-9]{5}"
+                  />
+                </div>
+                <div className="space-y-2 col-span-3">
+                  <Label htmlFor="city">Ville</Label>
+                  <Input
+                    id="city"
+                    placeholder="Paris"
+                    value={formData.address.city}
+                    onChange={handleAddressChange}
+                  />
+                </div>
+              </div>
 
-							<div className="space-y-2">
-								<Label htmlFor="dateContract">
-									Date d'embauche
-								</Label>
-								<Input
-									id="dateContract"
-									type="date"
-									value={formData.dateContract}
-									onChange={handleChange}
-								/>
-							</div>
+              <div className="space-y-2">
+                <Label htmlFor="secuNumber">Numéro de sécurité social</Label>
+                <Input
+                  id="secuNumber"
+                  placeholder="123456789"
+                  value={formData.secuNumber}
+                  onChange={handleChange}
+                  pattern="[1-2][0-9]{14}"
+                />
+              </div>
 
-							<div className="space-y-2">
-								<Label>
-									Type de contrat{" "}
-									<span className="text-red-500">*</span>
-								</Label>
-								<Select
-									onValueChange={(value) =>
-										handleSelectChange(
-											"typeContract",
-											value,
-										)
-									}
-									value={formData.typeContract}
-									required
-								>
-									<SelectTrigger className="w-full">
-										<SelectValue placeholder="Type de contrat" />
-									</SelectTrigger>
-									<SelectContent>
-										<SelectGroup>
-											<SelectItem value="cdd">
-												CDD
-											</SelectItem>
-											<SelectItem value="cdi">
-												CDI
-											</SelectItem>
-											<SelectItem value="intérim">
-												Intérim
-											</SelectItem>
-											<SelectItem value="saisonnier">
-												Saisonnier
-											</SelectItem>
-											<SelectItem value="stagiaire">
-												Stagiaire
-											</SelectItem>
-											<SelectItem value="alternant">
-												Alternant.e
-											</SelectItem>
-										</SelectGroup>
-									</SelectContent>
-									{errors.typeContract && (
-										<FieldError>
-											{errors.typeContract}
-										</FieldError>
-									)}
-								</Select>
-							</div>
+              <div className="space-y-2">
+                <Label htmlFor="dateContract">Date d'embauche</Label>
+                <Input
+                  id="dateContract"
+                  type="date"
+                  value={formData.dateContract}
+                  onChange={handleChange}
+                />
+              </div>
 
-							<div className="space-y-2">
-								<Label>
-									Emploi{" "}
-									<span className="text-red-500">*</span>
-								</Label>
-								<Select
-									onValueChange={(value) =>
-										handleSelectChange("position", value)
-									}
-									value={formData.position}
-									required
-								>
-									<SelectTrigger className="w-full">
-										<SelectValue placeholder="Sélectionner un emploi" />
-									</SelectTrigger>
-									<SelectContent>
-										<SelectGroup>
-											<SelectItem value="runner">
-												Runner
-											</SelectItem>
-											<SelectItem value="serveur">
-												Serveur.se
-											</SelectItem>
-											<SelectItem value="chefRang">
-												Chef.fe de rang
-											</SelectItem>
-											<SelectItem value="manager">
-												Manager
-											</SelectItem>
-											<SelectItem value="barman">
-												Barman/Barmaid
-											</SelectItem>
-											<SelectItem value="chefCuisine">
-												Chef.fe de cuisine
-											</SelectItem>
-											<SelectItem value="secondCuisine">
-												Second.e de cuisine
-											</SelectItem>
-											<SelectItem value="chefPartie">
-												Chef.fe de partie
-											</SelectItem>
-											<SelectItem value="commisCuisine">
-												Commis de cuisine
-											</SelectItem>
-											<SelectItem value="plongeur">
-												Plongeur
-											</SelectItem>
-											<SelectItem value="direction">
-												Direction
-											</SelectItem>
-										</SelectGroup>
-									</SelectContent>
-									{errors.position && (
-										<FieldError>
-											{errors.position}
-										</FieldError>
-									)}
-								</Select>
-							</div>
+              <div className="space-y-2">
+                <Label>
+                  Type de contrat <span className="text-red-500">*</span>
+                </Label>
+                <Select
+                  onValueChange={(value) =>
+                    handleSelectChange("typeContract", value)
+                  }
+                  value={formData.typeContract}
+                  required
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Type de contrat" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectItem value="cdd">CDD</SelectItem>
+                      <SelectItem value="cdi">CDI</SelectItem>
+                      <SelectItem value="intérim">Intérim</SelectItem>
+                      <SelectItem value="saisonnier">Saisonnier</SelectItem>
+                      <SelectItem value="stagiaire">Stagiaire</SelectItem>
+                      <SelectItem value="alternant">Alternant.e</SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                  {errors.typeContract && (
+                    <FieldError>{errors.typeContract}</FieldError>
+                  )}
+                </Select>
+              </div>
 
-							<div className="space-y-2">
-								<Label htmlFor="hourVolumn">
-									Volume horaire hebdomadaire
-								</Label>
-								<Input
-									id="hourVolumn"
-									type="number"
-									min="0"
-									max="50"
-									placeholder="35"
-									value={formData.hourVolumn}
-									onChange={handleChange}
-								/>
-							</div>
+              <div className="space-y-2">
+                <Label>
+                  Emploi <span className="text-red-500">*</span>
+                </Label>
+                <Select
+                  onValueChange={(value) =>
+                    handleSelectChange("position", value)
+                  }
+                  value={formData.position}
+                  required
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Sélectionner un emploi" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectItem value="runner">Runner</SelectItem>
+                      <SelectItem value="serveur">Serveur.se</SelectItem>
+                      <SelectItem value="chefRang">Chef.fe de rang</SelectItem>
+                      <SelectItem value="manager">Manager</SelectItem>
+                      <SelectItem value="barman">Barman/Barmaid</SelectItem>
+                      <SelectItem value="chefCuisine">
+                        Chef.fe de cuisine
+                      </SelectItem>
+                      <SelectItem value="secondCuisine">
+                        Second.e de cuisine
+                      </SelectItem>
+                      <SelectItem value="chefPartie">
+                        Chef.fe de partie
+                      </SelectItem>
+                      <SelectItem value="commisCuisine">
+                        Commis de cuisine
+                      </SelectItem>
+                      <SelectItem value="plongeur">Plongeur</SelectItem>
+                      <SelectItem value="direction">Direction</SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                  {errors.position && (
+                    <FieldError>{errors.position}</FieldError>
+                  )}
+                </Select>
+              </div>
 
-							<div className="space-y-2">
-								<Label>
-									Rôle de l'employé.e{" "}
-									<span className="text-red-500">*</span>
-								</Label>
-								<RadioGroup
-									value={formData.profil}
-									onValueChange={handleRadioChange}
-									className="max-w-sm"
-									required
-								>
-									<FieldLabel htmlFor="admin">
-										<Field orientation="horizontal">
-											<FieldContent>
-												<FieldTitle>Admin</FieldTitle>
-												<FieldDescription>
-													Idéal pour les managers.
-												</FieldDescription>
-											</FieldContent>
-											<RadioGroupItem
-												value="admin"
-												id="admin"
-											/>
-										</Field>
-									</FieldLabel>
-									<FieldLabel htmlFor="user">
-										<Field orientation="horizontal">
-											<FieldContent>
-												<FieldTitle>User</FieldTitle>
-												<FieldDescription>
-													Rôle par défaut pour les
-													employé.es.
-												</FieldDescription>
-											</FieldContent>
-											<RadioGroupItem
-												value="user"
-												id="user"
-											/>
-										</Field>
-									</FieldLabel>
-								</RadioGroup>
-							</div>
-							<DrawerFooter className="flex flex-row border-t px-4">
-								<Button
-									variant="outline"
-									onClick={handleReset}
-									className="flex-1"
-								>
-									Annuler
-								</Button>
+              <div className="space-y-2">
+                <Label htmlFor="hourVolumn">Volume horaire hebdomadaire</Label>
+                <Input
+                  id="hourVolumn"
+                  type="number"
+                  min="0"
+                  max="50"
+                  placeholder="35"
+                  value={formData.hourVolumn}
+                  onChange={handleChange}
+                />
+              </div>
 
-								<Button type="submit" className="flex-1">
-									{isEditing
-										? "Modifier l'employé"
-										: "Créer l'employé"}
-								</Button>
-							</DrawerFooter>
-						</form>
-					</div>
-				</DrawerContent>
-			</Drawer>
-		</div>
-	);
+              <div className="space-y-2">
+                <Label>
+                  Rôle de l'employé.e <span className="text-red-500">*</span>
+                </Label>
+                <RadioGroup
+                  value={formData.profil}
+                  onValueChange={handleRadioChange}
+                  className="max-w-sm"
+                  required
+                >
+                  <FieldLabel htmlFor="admin">
+                    <Field orientation="horizontal">
+                      <FieldContent>
+                        <FieldTitle>Admin</FieldTitle>
+                        <FieldDescription>
+                          Idéal pour les managers.
+                        </FieldDescription>
+                      </FieldContent>
+                      <RadioGroupItem value="admin" id="admin" />
+                    </Field>
+                  </FieldLabel>
+                  <FieldLabel htmlFor="user">
+                    <Field orientation="horizontal">
+                      <FieldContent>
+                        <FieldTitle>User</FieldTitle>
+                        <FieldDescription>
+                          Rôle par défaut pour les employé.es.
+                        </FieldDescription>
+                      </FieldContent>
+                      <RadioGroupItem value="user" id="user" />
+                    </Field>
+                  </FieldLabel>
+                </RadioGroup>
+              </div>
+              <DrawerFooter className="flex flex-row border-t px-4">
+                <Button
+                  variant="outline"
+                  onClick={handleReset}
+                  className="flex-1"
+                >
+                  Annuler
+                </Button>
+
+                <Button type="submit" className="flex-1">
+                  {isEditing ? "Modifier l'employé" : "Créer l'employé"}
+                </Button>
+              </DrawerFooter>
+            </form>
+          </div>
+        </DrawerContent>
+      </Drawer>
+    </div>
+  );
 }
