@@ -28,7 +28,7 @@ import { Label } from "@/components/ui/label";
 import { useEffect, useState } from "react";
 import { toggleInstructions } from "@/reducers/instructions";
 
-// Test deploy
+// Deploy
 
 const reducers = combineReducers({
 	business,
