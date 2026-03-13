@@ -5,6 +5,7 @@ import {
   removeEmployeeFromStore,
   updateEmployeeInStore,
 } from "../reducers/employee";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -77,7 +78,7 @@ export default function CreateEmployee() {
     profil: "user", // Valeur par défaut sur le rôle de l'employé.e
     dateContract: "",
     typeContract: "",
-    hourVolumn: "",
+    hourVolumn: 0,
     contact: "",
     organization: business[0]?.id,
   };
@@ -85,6 +86,8 @@ export default function CreateEmployee() {
   const [formData, setFormData] = useState(initialFormState);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [errors, setErrors] = useState({});
+  const [selectedEmployee, setSelectedEmployee] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
 
   // Gestion des inputs standards (prénom, nom, etc.)
   const handleChange = (event) => {
@@ -159,43 +162,80 @@ export default function CreateEmployee() {
       return;
     }
 
-    fetch(`${process.env.NEXT_PUBLIC_URL_BACKEND}/employee`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        ...formData,
-        organization: organizationId,
-      }),
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Erreur lors de la création de l'employé");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        console.log("Résultat ajout employé: ", data);
-        if (!data.employee || !data.employee._id) {
-          throw new Error("Le backend doit renvoyer l'employé avec un id");
-        }
+    if (isEditing) {
+      try {
+        fetch(
+          `${process.env.NEXT_PUBLIC_URL_BACKEND}/employee/${selectedEmployee._id}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              ...formData,
+              phone: formData.phone || "",
+              organization: organizationId,
+            }),
+          },
+        )
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.result) {
+              dispatch(updateEmployeeInStore(data.employee));
+              toast.success("Employé modifié");
 
-        dispatch(addEmployeeToStore(data.employee));
-
-        setFormData(initialFormState); // Reset le formulaire après création
-        console.log("Employé créé, formData : ", formData);
-        console.log("Employé créé, data : ", data.employee);
-        setIsDrawerOpen(false);
+              setIsEditing(false);
+              setSelectedEmployee(null);
+              setFormData(initialFormState);
+              setIsDrawerOpen(false);
+            } else {
+              toast.error(data.message || "Erreur lors de la modification");
+            }
+          });
+      } catch (err) {
+        console.error(err);
+      }
+    } else {
+      fetch(`${process.env.NEXT_PUBLIC_URL_BACKEND}/employee`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...formData,
+          organization: organizationId,
+        }),
       })
-      .catch((error) => {
-        console.error("Erreur:", error);
-      });
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Erreur lors de la création de l'employé");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          console.log("Résultat ajout employé: ", data);
+          if (!data.employee || !data.employee._id) {
+            throw new Error("Le backend doit renvoyer l'employé avec un id");
+          }
+
+          dispatch(addEmployeeToStore(data.employee));
+
+          setFormData(initialFormState); // Reset le formulaire après création
+          console.log("Employé créé, formData : ", formData);
+          console.log("Employé créé, data : ", data.employee);
+          setIsDrawerOpen(false);
+        })
+        .catch((error) => {
+          console.error("Erreur:", error);
+        });
+    }
   };
 
   // Reset le formulaire
   const handleReset = () => {
-    setFormData(initialFormState);
+    setFormData({ ...initialFormState });
+    setIsEditing(false);
+    setSelectedEmployee(null);
   };
 
   // supprimer un employé
@@ -222,6 +262,24 @@ export default function CreateEmployee() {
       console.error(err);
       alert("Erreur serveur lors de la suppression");
     }
+  };
+
+  // éditer un employé
+  const handleEditEmployee = (employee) => {
+    setSelectedEmployee(employee);
+    setIsEditing(true);
+
+    setFormData({
+      ...employee,
+      phone: employee.phone || "",
+      address: employee.address || {
+        street: "",
+        city: "",
+        zipCode: "",
+      },
+    });
+
+    setIsDrawerOpen(true);
   };
 
   return (
@@ -305,7 +363,11 @@ export default function CreateEmployee() {
                     </TableCell>
 
                     <TableCell className="text-right space-x-2">
-                      <Button variant="outline" size="sm">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleEditEmployee(employee)}
+                      >
                         Modifier
                       </Button>
                       <Button
@@ -329,14 +391,27 @@ export default function CreateEmployee() {
         onOpenChange={setIsDrawerOpen}
       >
         <DrawerTrigger asChild>
-          <Button variant="default">Ajouter un employé</Button>
+          <Button
+            variant="default"
+            onClick={() => {
+              setIsEditing(false);
+              setSelectedEmployee(null);
+              setFormData(initialFormState);
+            }}
+          >
+            Ajouter un employé
+          </Button>
         </DrawerTrigger>
 
         <DrawerContent>
           <DrawerHeader>
-            <DrawerTitle>Ajout d'un nouvel employé</DrawerTitle>
+            <DrawerTitle>
+              {isEditing ? "Modifier l'employé" : "Ajouter un employé"}
+            </DrawerTitle>
             <DrawerDescription>
-              Remplissez les informations pour ajouter un nouvel employé.
+              {isEditing
+                ? "Vous pouvez modifier les informations de l'employé."
+                : "Remplissez les informations pour ajouter un nouvel employé."}
             </DrawerDescription>
           </DrawerHeader>
 
@@ -600,7 +675,7 @@ export default function CreateEmployee() {
                 </Button>
 
                 <Button type="submit" className="flex-1">
-                  Créer l'employé
+                  {isEditing ? "Modifier l'employé" : "Créer l'employé"}
                 </Button>
               </DrawerFooter>
             </form>

@@ -71,7 +71,7 @@ export default function ViewEmployee() {
     lastName: "",
     birthDate: "",
     email: "",
-    secuNumber: "",
+    secuNumber: undefined,
     address: {
       street: "",
       city: "",
@@ -300,6 +300,10 @@ export default function ViewEmployee() {
           headers: {
             "Content-Type": "application/json",
           },
+          body: JSON.stringify({
+            toEmail: user.email,
+            toName: user.firstName,
+          }),
         },
       );
 
