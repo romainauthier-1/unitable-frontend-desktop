@@ -68,8 +68,8 @@ export default function ViewPlanning() {
     "dimanche",
   ];
   useEffect(() => {
-    getAllServices(restaurantId);
-  }, []);
+    restaurantId && getAllServices(restaurantId);
+  }, [restaurantId]);
 
   const dayServices = (day) => {
     return services
@@ -137,11 +137,11 @@ export default function ViewPlanning() {
 
       await Promise.all(promises);
 
-      toast.success("Mise à jour réussie !");
       getAllServices(restaurantId);
+      toast.success("Mise à jour réussie !");
       //redirection vers dashboard
-      
-      router.push("/dashboard")
+
+      router.push("/dashboard");
     } catch (err) {
       console.log(err);
       toast.error(err.message);

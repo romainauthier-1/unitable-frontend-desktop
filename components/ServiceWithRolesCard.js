@@ -54,6 +54,67 @@ export default function ServiceWithRolesCard({ service }) {
   );
   //const teamAvailable = useSelector((state) => state.teams.value);
   console.log("Teams disponibles pour ajout : ", teamAvailable);
+
+  const deleteServiceFromDB = async (serviceId) => {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_URL_BACKEND}/services/${serviceId}`,
+    );
+    const data = await response.json();
+    if (!data.result) {
+      toast.error(data.message);
+    } else {
+      dispatch(deleteService(serviceId));
+
+      toast.success(data.message);
+    }
+  };
+  const warnAndDeleteService = (serviceId) => {
+    toast.warning("Êtes-vous sûr de vouloir supprimer ce service ?", {
+      description:
+        "Cette action est irréversible et supprimera le service de tous les jours.",
+      action: {
+        label: "Confirmer la suppression",
+        onClick: () => deleteServiceFromDB(serviceId),
+      },
+    });
+  };
+
+  const deleteTeamFromDB = async (serviceId, teamName) => {
+    console.log(
+      `1. lancement du fetch pour supprimer l'équipe ${teamName} du service ${serviceId}`,
+    );
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_URL_BACKEND}/services/${serviceId}/teams/${teamName}`,
+      {
+        method: "DELETE",
+      },
+    );
+    const data = await response.json();
+    console.log(`2. résultats du fetch; ${data}`);
+
+    if (!data.result) {
+      toast.error(data.message);
+      return;
+    } else {
+      toast.success(data.message);
+      console.log(
+        `3. lancement dispatch pour supprimer l'équipe ${teamName} du service ${serviceId}`,
+      );
+      dispatch(deleteTeamFromService({ id: serviceId, teamName }));
+      console.log(`5. dispatch terminé pour l'équipe ${teamName}`);
+    }
+  };
+
+  const warnAndDeleteTeam = (serviceId, teamName) => {
+    toast.warning("Êtes-vous sûr de vouloir supprimer cette équipe ?", {
+      description: "Cette action supprimera l'équipe sur tous les services.",
+      action: {
+        label: "Confirmer la suppression",
+        onClick: () => deleteTeamFromDB(serviceId, teamName),
+      },
+    });
+  };
+
   const teamDropdown = teamAvailable?.map((equipe) => (
     <DropdownMenuItem
       key={equipe.name}
@@ -142,28 +203,6 @@ export default function ServiceWithRolesCard({ service }) {
         </div>
       );
     });
-
-  const warnAndDeleteService = (serviceId) => {
-    toast.warning("Êtes-vous sûr de vouloir supprimer ce service ?", {
-      description:
-        "Cette action est irréversible et supprimera le service de tous les jours.",
-      action: {
-        label: "Confirmer la suppression",
-        onClick: () => dispatch(deleteService(serviceId)),
-      },
-    });
-  };
-
-  const warnAndDeleteTeam = (serviceId, teamName) => {
-    toast.warning("Êtes-vous sûr de vouloir supprimer cette équipe ?", {
-      description: "Cette action supprimera l'équipe sur tous les services.",
-      action: {
-        label: "Confirmer la suppression",
-        onClick: () =>
-          dispatch(deleteTeamFromService({ id: serviceId, teamName })),
-      },
-    });
-  };
 
   return (
     <>
