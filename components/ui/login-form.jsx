@@ -61,7 +61,7 @@ export function LoginForm({ className, ...props }) {
             )
               .then((response) => response.json())
               .then((userData) => {
-                if (userData.result && userData.user?.organization) {
+                if (userData.result && userData.user?.organization && (userData.user?.isAdmin === true || userData.user?.profil==="admin")) {
                   const organizationId = userData.user.organization;
                   const name =
                     userData.user.firstName + " " + userData.user.lastName;
