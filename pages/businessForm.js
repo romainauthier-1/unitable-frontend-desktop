@@ -258,6 +258,7 @@ export default function BusinessForm() {
 					businessCommercialName,
 					owner: user.name,
 					id: data.id,
+					zipCode: zipCode,
 					referenceTeams: [],
 				}),
 				// Ajout dans la bdd l'id du restaurant sur la route put users/organization avec email et organizationId dans le body pour faire le lien entre les deux
