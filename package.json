@@ -69,14 +69,10 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
-    "@testing-library/jest-dom": "^5.16.4",
-    "@testing-library/react": "^13.2.0",
     "@types/node": "^22",
     "@types/react": "^19.2.14",
     "@types/react-dom": "19.2.3",
     "autoprefixer": "^10.4.27",
-    "jest": "^28.1.0",
-    "jest-environment-jsdom": "^28.1.0",
     "postcss": "^8.5",
     "shadcn": "^3.8.5",
     "tailwindcss": "^4.2.0",
